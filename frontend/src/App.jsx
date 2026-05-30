@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import Problems from "./pages/Problems";
 import Dashboard from "./pages/Dashboard";
 import Submissions from "./pages/Submissions";
+import WriteCode from "./pages/WriteCode";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -20,6 +21,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/problems" element={<Problems />} />
             <Route path="/submissions" element={<Submissions />} />
+            <Route path="/write-code" element={<WriteCode />} />
           </Routes>
       </div>
     </>
