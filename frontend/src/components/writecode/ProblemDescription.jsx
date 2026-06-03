@@ -1,18 +1,117 @@
-import React from 'react';
-import { ThumbsUp, ThumbsDown, Star } from 'lucide-react';
+import React from "react";
+import { ThumbsUp, ThumbsDown, Star } from "lucide-react";
 
 export default function ProblemDescription() {
+  const problem = {
+    title: "Two Sum",
+    difficulty: "Easy",
+    description:
+      "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.\nYou can return the answer in any order.",
+    tags: ["array", "hash-table", "two-pointers"],
+
+    constraints: [
+      "2 <= nums.length <= 10^4",
+      "-10^9 <= nums[i] <= 10^9",
+      "-10^9 <= target <= 10^9",
+      "Only one valid answer exists.",
+    ],
+
+    examples: [
+      {
+        input: {
+          nums: [[2, 7, 11, 15]],
+          target: 9,
+        },
+        output: [0, 1],
+        explanation: "Because nums[0] + nums[1] == 9, we return [0, 1].",
+      },
+      {
+        input: {
+          nums: [3, 2, 4],
+          target: 6,
+        },
+        output: [1, 2],
+        explanation: "nums[1] + nums[2] = 2 + 4 = 6",
+      },
+    ],
+
+    tags: ["Array", "Hash Table"],
+
+    testCases: [
+      {
+        input: {
+          nums: [2, 7, 11, 15],
+          target: 9,
+        },
+        expectedOutput: [0, 1],
+      },
+      {
+        input: {
+          nums: [3, 2, 4],
+          target: 6,
+        },
+        expectedOutput: [1, 2],
+      },
+      {
+        input: {
+          nums: [3, 3],
+          target: 6,
+        },
+        expectedOutput: [0, 1],
+      },
+      {
+        input: {
+          nums: [1, 5, 8, 10],
+          target: 18,
+        },
+        expectedOutput: [2, 3],
+      },
+    ],
+  };
+
+  const formatValue = (value) => {
+    if (Array.isArray(value)) {
+      return `[${value.map((item) => formatValue(item)).join(", ")}]`;
+    }
+
+    if (value !== null && typeof value === "object") {
+      return `{ ${Object.entries(value)
+        .map(([key, nestedValue]) => `${key}: ${formatValue(nestedValue)}`)
+        .join(", ")} }`;
+    }
+
+    return String(value);
+  };
+
+  const formatInput = (input) => {
+    return Object.entries(input)
+      .map(([key, value]) => `${key} = ${formatValue(value)}`)
+      .join(", ");
+  };
+
   return (
-    <div className="p-5 lg:p-7 space-y-5">
+    <div className="p-5 lg:p-7 space-y-5 overflow-y-auto">
       {/* Title Header */}
       <div className="space-y-2">
         <div className="flex flex-wrap items-center gap-2">
-          <h1 className="text-xl lg:text-2xl font-extrabold text-white tracking-tight">
-            42. Trapping Rain Water
+          <h1 className="text-2xl lg:text-3xl font-extrabold text-white tracking-tight">
+            {problem.title}
           </h1>
           <span className="text-[10px] uppercase font-extrabold tracking-wider bg-rose-500/10 text-rose-400 px-2 py-0.5 rounded border border-rose-500/20">
-            Hard
+            {problem.difficulty}
           </span>
+        </div>
+        {/* Tags */}
+        <div className="flex flex-wrap gap-2">
+          {problem.tags &&
+            problem.tags.map((t, i) => (
+              <span
+                key={i}
+                className="text-[11px] text-gray-300 bg-gray-800/30 px-2 py-0.5 rounded border border-gray-700"
+              >
+                {t}
+              </span>
+            ))}
         </div>
 
         {/* Interaction Stats */}
@@ -30,19 +129,78 @@ export default function ProblemDescription() {
       </div>
 
       {/* Markdown / Body Prompt Text */}
-      <div className="text-sm text-gray-300 leading-relaxed max-w-2xl font-medium">
-        Given <code className="bg-gray-800/80 px-1.5 py-0.5 rounded text-gray-200 font-mono text-xs">n</code> non-negative integers representing an elevation map where the width of each bar is <code className="bg-gray-800/80 px-1.5 py-0.5 rounded text-gray-200 font-mono text-xs">1</code>, compute how much water it can trap after raining.
+      <div className="text-lg text-gray-300 leading-relaxed max-w-2xl font-medium whitespace-pre-line">
+        {problem.description}
+      </div>
+
+      {/* Examples then Constraints */}
+      <div className="space-y-6">
+        {/* Examples Box */}
+        <div>
+          <h3 className="text-sm font-semibold text-gray-200 mb-2">Examples</h3>
+          <div className="space-y-3">
+            {problem.examples.map((ex, idx) => (
+              <div
+                key={idx}
+                className="bg-[#0b1220] border border-gray-800/60 p-3 rounded-lg"
+              >
+                <div className="space-y-3">
+                  {/* Input */}
+                  <div>
+                    <div className="text-xs text-gray-300 font-semibold mb-1">
+                      Input
+                    </div>
+                    <pre className="text-xs font-mono text-gray-200 bg-gray-900/30 p-2 rounded overflow-auto">
+                      {formatInput(ex.input)}
+                    </pre>
+                  </div>
+
+                  {/* Output */}
+                  <div>
+                    <div className="text-xs text-gray-300 font-semibold mb-1">
+                      Output
+                    </div>
+                    <div className="text-sm font-medium text-emerald-300 font-mono bg-gray-900/20 px-2 py-1.5 rounded border border-gray-800/50 inline-flex">
+                      {formatValue(ex.output)}
+                    </div>
+                  </div>
+
+                  {/* Explanation */}
+                  {ex.explanation && (
+                    <div>
+                      <div className="text-xs text-gray-300 font-semibold mb-1">
+                        Explanation
+                      </div>
+                      <div className="text-xs text-gray-400">
+                        {ex.explanation}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Constraints */}
+        <div>
+          <h3 className="text-sm font-semibold text-gray-200 mb-2">
+            Constraints
+          </h3>
+          <ul className="space-y-2">
+            {problem.constraints.map((c, i) => (
+              <li
+                key={i}
+                className="text-xs text-gray-300 bg-gray-800/30 px-3 py-2 rounded border border-gray-700"
+              >
+                {c}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
 
       {/* Embedded Visual Prompt Asset */}
-      <div className="relative rounded-xl border border-gray-800/80 bg-[#0f1422] aspect-[4/3] max-w-xl overflow-hidden shadow-2xl">
-        <img 
-          src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80" /* High quality replacement vector */
-          alt="Elevation map visualization"
-          className="w-full h-full object-cover mix-blend-lighten opacity-80"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0f1422] via-transparent to-transparent"></div>
-      </div>
     </div>
   );
 }

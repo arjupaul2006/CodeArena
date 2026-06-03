@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import Editor, { DiffEditor, useMonaco, loader } from "@monaco-editor/react";
-import { ChevronDown, RotateCcw, Maximize2 } from "lucide-react";
+import Editor from "@monaco-editor/react";
+import { RotateCcw, Maximize2 } from "lucide-react";
 import ExecutionTerminal from "./ExecutionTerminal";
+import axios from "axios";
 
 export default function CodeEditorPanel() {
   const languageOptions = [
@@ -62,10 +63,35 @@ export default function CodeEditorPanel() {
     },
   ];
 
+  // Inputs
+  const input = "5";
+
+  const [code, setCode] = useState(languageOptions[0].codeLines);
+
   const [selectedLanguage, setSelectedLanguage] = useState("python");
+  const [isTerminalOpen, setIsTerminalOpen] = useState(true);
+
+  // Function to handle code execution
+  const handleCodeExecution = async () => {
+    console.log("Executed code:", code)
+
+    try {
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/execute`,
+        {
+          code,
+          input,
+        },
+      );
+
+      console.log("Execution response:", data);
+    } catch (error) {
+      console.error("Error during code execution:", error);
+    }
+  };
 
   return (
-    <div className="flex-1 flex flex-col h-full">
+    <div className="relative flex flex-col h-full min-h-0 overflow-hidden">
       {/* Editor Controls Bar */}
       <div className="h-11 border-b border-gray-800/80 bg-[#131929]/60 px-4 flex items-center justify-between shrink-0">
         {/* Select Language */}
@@ -81,10 +107,15 @@ export default function CodeEditorPanel() {
           ))}
         </select>
 
+        {/* buttons */}
         <div className="flex items-center gap-2">
-          <button className="px-3 py-1 text-xs font-semibold rounded-md bg-emerald-600/90 hover:bg-emerald-500 text-white transition-colors">
+          <button
+            className="px-3 py-1 text-xs font-semibold rounded-md bg-emerald-600/90 hover:bg-emerald-500 text-white transition-colors"
+            onClick={handleCodeExecution}
+          >
             Run
           </button>
+
           <button className="px-3 py-1 text-xs font-semibold rounded-md bg-blue-600/90 hover:bg-blue-500 text-white transition-colors">
             Submit
           </button>
@@ -100,13 +131,9 @@ export default function CodeEditorPanel() {
       {/* Core Editor */}
       <div className="flex-1 min-h-0 relative">
         <Editor
-          height="65vh"
+          height="90%"
           language={selectedLanguage}
-          value={
-            languageOptions
-              .find((opt) => opt.value === selectedLanguage)
-              ?.codeLines || ""
-          }
+          value={code}
           theme="vs-dark"
           options={{
             minimap: { enabled: false },
@@ -115,12 +142,15 @@ export default function CodeEditorPanel() {
             fontFamily: "Fira Code, monospace",
             automaticLayout: true,
           }}
-          onChange={(value) => console.log(value)}
+          onChange={(value) => setCode(value)}
         />
       </div>
 
       {/* Terminal Sheet Execution Trays Container */}
-      <ExecutionTerminal />
+      <ExecutionTerminal
+        isOpen={isTerminalOpen}
+        onToggle={() => setIsTerminalOpen((current) => !current)}
+      />
     </div>
   );
 }

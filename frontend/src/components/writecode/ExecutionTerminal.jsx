@@ -1,53 +1,132 @@
-import React from 'react';
-import { Terminal, Play, CheckCircle } from 'lucide-react';
+import React, { useMemo, useState } from "react";
+import { ChevronUp, Terminal, CheckCircle, Play } from "lucide-react";
 
-export default function ExecutionTerminal() {
+export default function ExecutionTerminal({ isOpen, onToggle }) {
+  const [activeTab, setActiveTab] = useState("testcase");
+
+  const testCases = useMemo(
+    () => [
+      {
+        id: 1,
+        input: "nums = [2, 7, 11, 15], target = 9",
+        output: "[0, 1]",
+      },
+      {
+        id: 2,
+        input: "nums = [3, 2, 4], target = 6",
+        output: "[1, 2]",
+      },
+      {
+        id: 3,
+        input: "nums = [3, 3], target = 6",
+        output: "[0, 1]",
+      },
+    ],
+    [],
+  );
+
   return (
-    <div className="border-t border-gray-800/80 bg-[#0f1422] shrink-0">
-      {/* Sheet Segment Title Tabs */}
-      <div className="h-10 px-4 border-b border-gray-800/60 bg-[#131929]/30 flex items-center gap-4 text-xs font-bold text-gray-400">
-        <button className="text-white border-b-2 border-blue-500 h-full px-1">Test Results</button>
-        <button className="hover:text-white transition-colors h-full px-1">Submissions</button>
-      </div>
+    <div
+      className={`absolute inset-x-0 bottom-0 z-20 border-t border-gray-800/80 bg-[#0f1422] shadow-[0_-20px_40px_rgba(0,0,0,0.35)] transition-transform duration-300 ease-out ${
+        isOpen ? "translate-y-0" : "translate-y-[calc(100%-3.25rem)]"
+      }`}
+    >
+      <button
+        type="button"
+        onClick={onToggle}
+        className="h-12 w-full px-4 border-b border-gray-800/60 bg-[#131929]/85 flex items-center justify-between text-xs font-bold text-gray-200 hover:text-white transition-colors"
+      >
+        <span className="flex items-center gap-2">
+          <Terminal className="w-3.5 h-3.5" />
+          Testcase
+        </span>
+        <ChevronUp
+          className={`w-4 h-4 transition-transform duration-300 ${isOpen ? "rotate-0" : "rotate-180"}`}
+        />
+      </button>
 
-      {/* Active Output State Container */}
-      <div className="p-4 space-y-4">
-        <div className="flex items-center gap-2 text-xs font-bold text-emerald-400">
-          <CheckCircle className="w-4 h-4 fill-emerald-500/10" />
-          <span>Accepted</span>
-          <span className="text-gray-500 font-medium font-mono ml-2">Runtime: 12ms</span>
+      <div className="max-h-[38vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
+        <div className="px-4 pt-3 pb-2 border-b border-gray-800/60 bg-[#101624]">
+          <div className="flex items-center gap-2 text-[11px] font-semibold text-gray-400 mb-3">
+            <span className="inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            Runtime: 12ms
+          </div>
+
+          <div className="flex items-center gap-2 text-xs font-bold">
+            <button
+              type="button"
+              onClick={() => setActiveTab("testcase")}
+              className={`h-9 px-3 rounded-t-md border-b-2 transition-colors ${
+                activeTab === "testcase"
+                  ? "text-white border-blue-500 bg-[#131929]/80"
+                  : "text-gray-400 border-transparent hover:text-white hover:bg-[#131929]/50"
+              }`}
+            >
+              Testcase
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("result")}
+              className={`h-9 px-3 rounded-t-md border-b-2 transition-colors ${
+                activeTab === "result"
+                  ? "text-white border-blue-500 bg-[#131929]/80"
+                  : "text-gray-400 border-transparent hover:text-white hover:bg-[#131929]/50"
+              }`}
+            >
+              Result
+            </button>
+          </div>
         </div>
 
-        {/* Dynamic Multi-Case Test Matrix Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {[
-            { id: 1, input: '[0,1,0,2,1,0,1,3,2,1,2,1]', output: '6' },
-            { id: 2, input: '[4,2,0,3,2,5]', output: '9' }
-          ].map((caseData) => (
-            <div key={caseData.id} className="p-3 bg-[#131929]/50 border border-gray-800/60 rounded-lg space-y-1.5 font-mono text-xs">
-              <span className="text-gray-400 font-bold block">Case {caseData.id}</span>
-              <div className="space-y-0.5">
-                <div className="text-[11px]"><span className="text-gray-500">Input:</span> <span className="text-gray-300 font-semibold">{caseData.input}</span></div>
-                <div className="text-[11px]"><span className="text-gray-500">Output:</span> <span className="text-emerald-400 font-semibold">{caseData.output}</span></div>
-              </div>
+        {activeTab === "testcase" ? (
+          <div className="p-4 space-y-4">
+            <div className="flex items-center gap-2 text-xs font-bold text-emerald-400">
+              <CheckCircle className="w-4 h-4 fill-emerald-500/10" />
+              <span>Accepted</span>
             </div>
-          ))}
-        </div>
-      </div>
 
-      {/* Core Operational Footer Actions */}
-      <div className="p-3 bg-[#131929]/60 border-t border-gray-800/60 flex items-center justify-between">
-        <button className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-white font-bold px-3 py-1.5 rounded hover:bg-gray-800/50 transition-colors">
-          <Terminal className="w-3.5 h-3.5" /> Console
-        </button>
-        <div className="flex items-center gap-2">
-          <button className="bg-gray-800/80 hover:bg-gray-700 text-xs font-bold text-gray-200 px-4 py-2 rounded-lg transition-colors">
-            Run Code
-          </button>
-          <button className="bg-blue-600 hover:bg-blue-500 text-xs font-bold text-white px-4 py-2 rounded-lg shadow-md shadow-blue-900/20 transition-all">
-            Submit
-          </button>
-        </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {testCases.map((caseData) => (
+                <div
+                  key={caseData.id}
+                  className="p-3 bg-[#131929]/55 border border-gray-800/70 rounded-xl space-y-2 font-mono text-xs"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-300 font-bold block">
+                      Case {caseData.id}
+                    </span>
+                    <span className="text-[10px] uppercase tracking-wider text-gray-500">
+                      Auto
+                    </span>
+                  </div>
+                  <div className="space-y-1.5 text-[11px]">
+                    <div>
+                      <span className="text-gray-500">Input:</span>{" "}
+                      <span className="text-gray-200 font-semibold">
+                        {caseData.input}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">Output:</span>{" "}
+                      <span className="text-emerald-400 font-semibold">
+                        {caseData.output}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="p-4 space-y-3">
+            <div className="text-xs text-gray-400 font-medium">
+              Results will appear here after running the code.
+            </div>
+            <div className="p-3 rounded-xl border border-dashed border-gray-700 bg-[#131929]/30 text-xs text-gray-500">
+              No output yet.
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
