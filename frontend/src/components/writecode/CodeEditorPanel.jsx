@@ -81,6 +81,7 @@ export default function CodeEditorPanel() {
         {
           code,
           input,
+          language: selectedLanguage,
         },
       );
 

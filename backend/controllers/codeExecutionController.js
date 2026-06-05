@@ -4,9 +4,54 @@ const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 const { exec } = require("child_process");
 
+const languages = {
+  c: {
+    filename: "main.c",
+    image: "codearena-judge",
+    command:
+      "gcc /app/main.c -o /app/main && /usr/bin/time -v /app/main < /app/input.txt",
+  },
+
+  cpp: {
+    filename: "main.cpp",
+    image: "codearena-judge",
+    command:
+      "g++ /app/main.cpp -o /app/main && /usr/bin/time -v /app/main < /app/input.txt",
+  },
+
+  python: {
+    filename: "main.py",
+    image: "codearena-judge",
+    command: "/usr/bin/time -v python3 /app/main.py < /app/input.txt",
+  },
+
+  javascript: {
+    filename: "main.js",
+    image: "codearena-judge",
+    command: "/usr/bin/time -v node /app/main.js < /app/input.txt",
+  },
+
+  java: {
+    filename: "Main.java",
+    image: "codearena-judge",
+    command:
+      "javac /app/Main.java && /usr/bin/time -v java -cp /app Main < /app/input.txt",
+  },
+};
+
 module.exports.executeCode = async (req, res) => {
   try {
-    const { code, input } = req.body;
+    const { code, input, language } = req.body;
+
+    // if the language is not supported, return an error
+    if (!languages[language]) {
+      return res.status(400).json({
+        success: false,
+        error: "Unsupported language",
+      });
+    }
+
+    const config = languages[language];
 
     const submissionId = uuidv4();
 
@@ -14,37 +59,65 @@ module.exports.executeCode = async (req, res) => {
 
     fs.mkdirSync(folderPath, { recursive: true });
 
-    fs.writeFileSync(path.join(folderPath, "main.c"), code);
+    fs.writeFileSync(path.join(folderPath, config.filename), code);
 
     fs.writeFileSync(path.join(folderPath, "input.txt"), input || "");
 
     const dockerFolderPath = folderPath.replace(/\\/g, "/");
 
+    // docker command
     const dockerCommand = `docker run --rm \
 -v "${dockerFolderPath}:/app" \
 --memory=128m \
 --cpus=1 \
 --network none \
-gcc:13 \
-bash -c "gcc /app/main.c -o /app/main && /app/main < /app/input.txt"`;
+${config.image} \
+bash -c "${config.command}"`;
 
+    const startTime = process.hrtime.bigint();
+
+    // execute the docker command
     exec(dockerCommand, { timeout: 5000 }, (error, stdout, stderr) => {
-      console.log("STDOUT:", stdout);
-      console.log("STDERR:", stderr);
-      console.log("ERROR:", error);
+      const endTime = process.hrtime.bigint();
+      const executionTimeMs = Number(endTime - startTime) / 1e6;
 
-      if (error) {
-        return res.json({
-          success: false,
-          error: error.message,
-          stderr,
+      const memoryMatch = stderr.match(
+        /Maximum resident set size \(kbytes\):\s+(\d+)/,
+      );
+
+      const memoryKB = memoryMatch ? parseInt(memoryMatch[1]) : 0;
+
+      try {
+        console.log("STDOUT:", stdout);
+        console.log("STDERR:", stderr);
+        console.log("ERROR:", error);
+
+        if (error) {
+          return res.json({
+            success: false,
+            error: error.message,
+            stderr,
+          });
+        }
+
+        res.json({
+          success: true,
+          output: stdout,
+          runtime: `${executionTimeMs.toFixed(2)} ms`,
+          memory: `${memoryKB} KB`,
         });
+      } finally {
+        try {
+          if (fs.existsSync(folderPath)) {
+            fs.rmSync(folderPath, {
+              recursive: true,
+              force: true,
+            });
+          }
+        } catch (err) {
+          console.error("Cleanup failed:", err.message);
+        }
       }
-
-      res.json({
-        success: true,
-        output: stdout,
-      });
     });
   } catch (err) {
     console.error("Execution Engine Error:", err);
