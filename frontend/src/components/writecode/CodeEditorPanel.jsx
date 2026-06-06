@@ -4,7 +4,38 @@ import { RotateCcw, Maximize2 } from "lucide-react";
 import ExecutionTerminal from "./ExecutionTerminal";
 import axios from "axios";
 
-export default function CodeEditorPanel() {
+const normalizeOutput = (value) => String(value ?? "").trim();
+
+const serializeInput = (value) => {
+  // Return a string suitable for piping into stdin.
+  if (value == null) return "";
+
+  // If it's already a string, return as-is (trim trailing whitespace).
+  if (typeof value === "string") return value.trim();
+
+  // If it's a primitive (number, boolean), stringify it.
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
+
+  // If it's an array, flatten each element recursively and join with newlines
+  if (Array.isArray(value)) {
+    return value.flatMap((v) => {
+      const s = serializeInput(v);
+      return s === "" ? [] : s.split(/\r?\n/);
+    }).join("\n");
+  }
+
+  // If it's an object, serialize values in insertion order separated by newlines.
+  if (typeof value === "object") {
+    return Object.keys(value)
+      .map((k) => serializeInput(value[k]))
+      .filter((s) => s !== "")
+      .join("\n");
+  }
+
+  return String(value);
+};
+
+export default function CodeEditorPanel({ problem }) {
   const languageOptions = [
     {
       label: "Python 3",
@@ -63,8 +94,12 @@ export default function CodeEditorPanel() {
     },
   ];
 
-  // Inputs
-  const input = "5";
+  const [executionResult, setExecutionResult] = useState({
+    verdict: null,
+    message: "Run your code to compare outputs against every testcase.",
+    runs: [],
+  });
+  const [isRunning, setIsRunning] = useState(false);
 
   const [code, setCode] = useState(languageOptions[0].codeLines);
 
@@ -73,21 +108,62 @@ export default function CodeEditorPanel() {
 
   // Function to handle code execution
   const handleCodeExecution = async () => {
-    console.log("Executed code:", code)
+    if (!problem?.testCases?.length) {
+      return;
+    }
+
+    setIsRunning(true);
 
     try {
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/execute`,
-        {
-          code,
-          input,
-          language: selectedLanguage,
-        },
-      );
+      const runs = [];
 
-      console.log("Execution response:", data);
+      for (const testCase of problem.testCases) {
+        const serializedInput = serializeInput(testCase.input);
+
+        const { data } = await axios.post(
+          `${import.meta.env.VITE_BACKEND_URL}/api/execute`,
+          {
+            code,
+            input: serializedInput,
+            language: selectedLanguage,
+          },
+        );
+
+        const actualOutput = normalizeOutput(data?.output ?? data?.stderr ?? data?.error);
+        const expectedOutput = normalizeOutput(testCase.expectedOutput);
+        const passed = Boolean(data?.success) && actualOutput === expectedOutput;
+
+        runs.push({
+          id: testCase.id,
+          input: testCase.input,
+          expectedOutput,
+          actualOutput,
+          sentInput: serializedInput,
+          passed,
+          runtime: data?.runtime ?? null,
+          memory: data?.memory ?? null,
+        });
+      }
+
+      const isAccepted = runs.length > 0 && runs.every((result) => result.passed);
+
+      setExecutionResult({
+        verdict: isAccepted ? "accepted" : "wrong-answer",
+        message: isAccepted
+          ? "Accepted: every testcase produced the expected output."
+          : "Wrong answer: at least one testcase did not match the expected output.",
+        runs,
+      });
     } catch (error) {
-      console.error("Error during code execution:", error);
+      setExecutionResult({
+        verdict: "wrong-answer",
+        message: error?.response?.data?.error
+          ? `Wrong answer: ${error.response.data.error}`
+          : `Wrong answer: ${error.message}`,
+        runs: [],
+      });
+    } finally {
+      setIsRunning(false);
     }
   };
 
@@ -111,19 +187,30 @@ export default function CodeEditorPanel() {
         {/* buttons */}
         <div className="flex items-center gap-2">
           <button
+            type="button"
             className="px-3 py-1 text-xs font-semibold rounded-md bg-emerald-600/90 hover:bg-emerald-500 text-white transition-colors"
             onClick={handleCodeExecution}
+            disabled={isRunning}
           >
-            Run
+            {isRunning ? "Running..." : "Run"}
           </button>
 
-          <button className="px-3 py-1 text-xs font-semibold rounded-md bg-blue-600/90 hover:bg-blue-500 text-white transition-colors">
+          <button
+            type="button"
+            className="px-3 py-1 text-xs font-semibold rounded-md bg-blue-600/90 hover:bg-blue-500 text-white transition-colors"
+          >
             Submit
           </button>
-          <button className="p-1.5 text-gray-400 hover:text-white rounded hover:bg-gray-800/80 transition-colors">
+          <button
+            type="button"
+            className="p-1.5 text-gray-400 hover:text-white rounded hover:bg-gray-800/80 transition-colors"
+          >
             <RotateCcw className="w-3.5 h-3.5" />
           </button>
-          <button className="p-1.5 text-gray-400 hover:text-white rounded hover:bg-gray-800/80 transition-colors">
+          <button
+            type="button"
+            className="p-1.5 text-gray-400 hover:text-white rounded hover:bg-gray-800/80 transition-colors"
+          >
             <Maximize2 className="w-3.5 h-3.5" />
           </button>
         </div>
@@ -151,6 +238,8 @@ export default function CodeEditorPanel() {
       <ExecutionTerminal
         isOpen={isTerminalOpen}
         onToggle={() => setIsTerminalOpen((current) => !current)}
+        problem={problem}
+        output={executionResult}
       />
     </div>
   );

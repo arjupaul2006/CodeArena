@@ -1,29 +1,39 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { ChevronUp, Terminal, CheckCircle, Play } from "lucide-react";
 
-export default function ExecutionTerminal({ isOpen, onToggle }) {
+export default function ExecutionTerminal({
+  isOpen,
+  onToggle,
+  problem,
+  output,
+}) {
   const [activeTab, setActiveTab] = useState("testcase");
 
-  const testCases = useMemo(
-    () => [
-      {
-        id: 1,
-        input: "nums = [2, 7, 11, 15], target = 9",
-        output: "[0, 1]",
-      },
-      {
-        id: 2,
-        input: "nums = [3, 2, 4], target = 6",
-        output: "[1, 2]",
-      },
-      {
-        id: 3,
-        input: "nums = [3, 3], target = 6",
-        output: "[0, 1]",
-      },
-    ],
-    [],
-  );
+  const testCases = problem.testCases;
+  const runs = output?.runs ?? [];
+  const verdict = output?.verdict;
+
+  const formatValue = (value) => {
+    if (Array.isArray(value)) {
+      return `[${value.map((item) => formatValue(item)).join(", ")}]`;
+    }
+
+    if (value !== null && typeof value === "object") {
+      return `{ ${Object.entries(value)
+        .map(([key, nestedValue]) => `${key}: ${formatValue(nestedValue)}`)
+        .join(", ")} }`;
+    }
+
+    return String(value);
+  };
+
+  const formatInput = (input) => {
+    return Object.entries(input)
+      .map(([key, value]) => `${key} = ${formatValue(value)}`)
+      .join(", ");
+  };
+
+  const resultById = new Map(runs.map((result) => [result.id, result]));
 
   return (
     <div
@@ -31,6 +41,7 @@ export default function ExecutionTerminal({ isOpen, onToggle }) {
         isOpen ? "translate-y-0" : "translate-y-[calc(100%-3.25rem)]"
       }`}
     >
+      {/* Slider Button */}
       <button
         type="button"
         onClick={onToggle}
@@ -47,11 +58,28 @@ export default function ExecutionTerminal({ isOpen, onToggle }) {
 
       <div className="max-h-[38vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
         <div className="px-4 pt-3 pb-2 border-b border-gray-800/60 bg-[#101624]">
-          <div className="flex items-center gap-2 text-[11px] font-semibold text-gray-400 mb-3">
-            <span className="inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            Runtime: 12ms
+          <div className="flex items-center justify-between gap-3 text-[11px] font-semibold text-gray-400 mb-3">
+            <span className="flex items-center gap-2">
+              <span
+                className={`inline-flex h-1.5 w-1.5 rounded-full ${
+                  verdict === "accepted"
+                    ? "bg-emerald-400"
+                    : verdict === "wrong-answer"
+                      ? "bg-red-400"
+                      : "bg-gray-500"
+                }`}
+              />
+              {output?.message ?? "Run your code to see test results."}
+            </span>
+            {runs.length > 0 ? (
+              <span className="text-gray-500">
+                {runs.filter((result) => result.passed).length}/{runs.length}{" "}
+                passed
+              </span>
+            ) : null}
           </div>
 
+          {/* Testcase and Result Tabs  */}
           <div className="flex items-center gap-2 text-xs font-bold">
             <button
               type="button"
@@ -80,11 +108,22 @@ export default function ExecutionTerminal({ isOpen, onToggle }) {
 
         {activeTab === "testcase" ? (
           <div className="p-4 space-y-4">
-            <div className="flex items-center gap-2 text-xs font-bold text-emerald-400">
-              <CheckCircle className="w-4 h-4 fill-emerald-500/10" />
-              <span>Accepted</span>
-            </div>
 
+            {/* Accepted or not */}
+            {verdict ? (
+              <div
+                className={`flex items-center gap-2 text-xs font-bold ${
+                  verdict === "accepted" ? "text-emerald-400" : "text-red-400"
+                }`}
+              >
+                <CheckCircle className="w-4 h-4 fill-emerald-500/10" />
+                <span>
+                  {verdict === "accepted" ? "Accepted" : "Wrong Answer"}
+                </span>
+              </div>
+            ) : null}
+
+            {/* TestCase Boxes */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {testCases.map((caseData) => (
                 <div
@@ -95,36 +134,107 @@ export default function ExecutionTerminal({ isOpen, onToggle }) {
                     <span className="text-gray-300 font-bold block">
                       Case {caseData.id}
                     </span>
-                    <span className="text-[10px] uppercase tracking-wider text-gray-500">
-                      Auto
-                    </span>
                   </div>
                   <div className="space-y-1.5 text-[11px]">
                     <div>
                       <span className="text-gray-500">Input:</span>{" "}
                       <span className="text-gray-200 font-semibold">
-                        {caseData.input}
+                        {formatInput(caseData.input)}
                       </span>
                     </div>
                     <div>
                       <span className="text-gray-500">Output:</span>{" "}
                       <span className="text-emerald-400 font-semibold">
-                        {caseData.output}
+                        {caseData.expectedOutput}
                       </span>
                     </div>
+                    {resultById.has(caseData.id) ? (
+                      <div>
+                        <div>
+                          <span className="text-gray-500">Actual:</span>{" "}
+                          <span
+                            className={`font-semibold ${
+                              resultById.get(caseData.id).passed
+                                ? "text-emerald-400"
+                                : "text-red-400"
+                            }`}
+                          >
+                            {resultById.get(caseData.id).actualOutput}
+                          </span>
+                        </div>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               ))}
             </div>
           </div>
         ) : (
+          // Results Tab
           <div className="p-4 space-y-3">
             <div className="text-xs text-gray-400 font-medium">
-              Results will appear here after running the code.
+              {output?.message ??
+                "Results will appear here after running the code."}
             </div>
-            <div className="p-3 rounded-xl border border-dashed border-gray-700 bg-[#131929]/30 text-xs text-gray-500">
-              No output yet.
-            </div>
+            {runs.length > 0 ? (
+              <div className="space-y-2 text-xs">
+                {runs.map((result) => (
+                  <div
+                    key={result.id}
+                    className="p-3 rounded-xl border border-gray-800 bg-[#131929]/30"
+                  >
+                    <div className="flex items-center justify-between gap-3 mb-2">
+                      <span className="font-bold text-gray-200">
+                        Case {result.id}
+                      </span>
+                      <span
+                        className={`text-[10px] uppercase tracking-wider font-semibold ${
+                          result.passed ? "text-emerald-400" : "text-red-400"
+                        }`}
+                      >
+                        {result.passed ? "Accepted" : "Wrong Answer"}
+                      </span>
+                    </div>
+                    <div className="space-y-1 text-gray-400">
+                      <div>
+                        Expected:{" "}
+                        <span className="text-gray-200">
+                          {result.expectedOutput}
+                        </span>
+                      </div>
+                      <div>
+                        Actual:{" "}
+                        <span
+                          className={
+                            result.passed ? "text-emerald-400" : "text-red-400"
+                          }
+                        >
+                          {result.actualOutput}
+                        </span>
+                      </div>
+                      {result.runtime ? (
+                        <div>
+                          Runtime:{" "}
+                          <span className="text-gray-200">
+                            {result.runtime}
+                          </span>
+                        </div>
+                      ) : null}
+                      {result.memory ? (
+                        <div>
+                          Memory:{" "}
+                          <span className="text-gray-200">{result.memory}</span>
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-3 rounded-xl border border-dashed border-gray-700 bg-[#131929]/30 text-xs text-gray-500">
+                No output yet.
+              </div>
+            )}
           </div>
         )}
       </div>
