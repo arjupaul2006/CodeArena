@@ -6,7 +6,7 @@ import axios from "axios";
 
 const normalizeOutput = (value) => String(value ?? "").trim();
 
-export default function CodeEditorPanel({ problem }) {
+export default function CodeEditorPanel({ demoproblem, problem, testCases }) {
   const languageOptions = [
     {
       label: "Python 3",
@@ -83,7 +83,7 @@ export default function CodeEditorPanel({ problem }) {
   const handleCodeExecution = async () => {
     // New test case structure:
     // problem.test_cases
-    if (!problem?.test_cases?.length) {
+    if (!testCases?.length) {
       setExecutionResult({
         verdict: "wrong-answer",
         message: "No test cases found for this problem.",
@@ -99,8 +99,8 @@ export default function CodeEditorPanel({ problem }) {
       const runs = [];
 
       // Execute code against every test case
-      for (let index = 0; index < problem.test_cases.length; index++) {
-        const testCase = problem.test_cases[index];
+      for (let index = 0; index < testCases.length; index++) {
+        const testCase = testCases[index];
 
         // Input is already a string
         const serializedInput = testCase.input ?? "";
@@ -291,7 +291,9 @@ export default function CodeEditorPanel({ problem }) {
         onToggle={() =>
           setIsTerminalOpen((current) => !current)
         }
+        demoproblem={demoproblem}
         problem={problem}
+        testCases={testCases}
         output={executionResult}
       />
     </div>

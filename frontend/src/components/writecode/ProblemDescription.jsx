@@ -1,7 +1,12 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { ThumbsUp, ThumbsDown, Star } from "lucide-react";
 
-export default function ProblemDescription({ problem }) {
+export default function ProblemDescription({ demoproblem, problem }) {
+
+  if (!problem) {
+    return <div className="text-white">Loading...</div>;
+  }
+
   const formatValue = (value) => {
     if (Array.isArray(value)) {
       return `[${value.map((item) => formatValue(item)).join(", ")}]`;
@@ -22,22 +27,32 @@ export default function ProblemDescription({ problem }) {
       .join(", ");
   };
 
+  const difficultyColor = {
+    Easy: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+    Medium: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
+    Hard: "bg-red-500/10 text-red-400 border-red-500/20",
+  };
+
+  // useEffect(() => {
+  //   console.log("Problem data in ProblemDescription:", problem);
+  // }, [problem]);
+
   return (
     <div className="p-5 lg:p-7 space-y-5 overflow-y-auto">
       {/* Title Header */}
       <div className="space-y-2">
         <div className="flex flex-wrap items-center gap-2">
           <h1 className="text-2xl lg:text-3xl font-extrabold text-white tracking-tight">
-            {problem.title}
+            {problem?.title}
           </h1>
-          <span className="text-[10px] uppercase font-extrabold tracking-wider bg-rose-500/10 text-rose-400 px-2 py-0.5 rounded border border-rose-500/20">
-            {problem.difficulty}
+          <span className={`text-[10px] uppercase font-extrabold tracking-wider bg-rose-500/10  px-2 py-0.5 rounded border border-rose-500/20 ${difficultyColor[problem?.difficulty]}`}>
+            {problem?.difficulty}
           </span>
         </div>
         {/* Tags */}
         <div className="flex flex-wrap gap-2">
-          {problem.tags &&
-            problem.tags.map((t, i) => (
+          {problem?.tags &&
+            problem?.tags.map((t, i) => (
               <span
                 key={i}
                 className="text-[11px] text-gray-300 bg-gray-800/30 px-2 py-0.5 rounded border border-gray-700"
@@ -63,7 +78,7 @@ export default function ProblemDescription({ problem }) {
 
       {/* Markdown / Body Prompt Text */}
       <div className="text-lg text-gray-300 leading-relaxed max-w-2xl font-medium whitespace-pre-line">
-        {problem.description}
+        {problem?.description}
       </div>
 
       {/* Examples then Constraints */}
@@ -72,7 +87,7 @@ export default function ProblemDescription({ problem }) {
         <div>
           <h3 className="text-sm font-semibold text-gray-200 mb-2">Examples</h3>
           <div className="space-y-3">
-            {problem.examples.map((ex, idx) => (
+            {problem?.examples.map((ex, idx) => (
               <div
                 key={idx}
                 className="bg-[#0b1220] border border-gray-800/60 p-3 rounded-lg"
@@ -84,7 +99,7 @@ export default function ProblemDescription({ problem }) {
                       Input
                     </div>
                     <pre className="text-xs font-mono text-gray-200 bg-gray-900/30 p-2 rounded overflow-auto">
-                      {formatInput(ex.input)}
+                      {ex.input}
                     </pre>
                   </div>
 
@@ -94,7 +109,7 @@ export default function ProblemDescription({ problem }) {
                       Output
                     </div>
                     <div className="text-sm font-medium text-emerald-300 font-mono bg-gray-900/20 px-2 py-1.5 rounded border border-gray-800/50 inline-flex">
-                      {formatValue(ex.output)}
+                      {ex.output}
                     </div>
                   </div>
 
@@ -121,7 +136,7 @@ export default function ProblemDescription({ problem }) {
             Constraints
           </h3>
           <ul className="space-y-2">
-            {problem.constraints.map((c, i) => (
+            {problem?.constraints.map((c, i) => (
               <li
                 key={i}
                 className="text-xs text-gray-300 bg-gray-800/30 px-3 py-2 rounded border border-gray-700"

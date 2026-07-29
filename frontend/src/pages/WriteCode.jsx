@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect,useState } from "react";
 import WorkspaceHeader from "../components/writecode/WorkspaceHeader";
 import ProblemDescription from "../components/writecode/ProblemDescription";
 import CodeEditorPanel from "../components/writecode/CodeEditorPanel";
 import TopNav from "../components/problems/TopNav";
+import { useSearchParams } from "react-router-dom";
 
 export default function WriteCode() {
   // const problem = {
@@ -72,7 +73,7 @@ export default function WriteCode() {
   //   ],
   // };
 
-  const problem = {
+  const demoproblem = {
     title: "Two Sum",
     difficulty: "Easy",
     description:
@@ -135,6 +136,34 @@ export default function WriteCode() {
       },
     ],
   };
+
+  const [problem, setProblem] = useState(null);
+  const [testCases, setTestCases] = useState([]);
+
+  const searchParams = useSearchParams()[0];
+
+  useEffect(() => {
+    try {
+      const problemId = searchParams.get("id");
+
+      const fetchProblemData = async () => {
+        const response = await fetch(`http://localhost:4000/api/problems/${problemId}`);
+        const data = await response.json();
+        const problemData = data.problem;
+        setProblem(problemData);
+        setTestCases(data.testCases);
+        console.log("Fetched problem data:", problemData);
+        console.log("Fetched test cases:", data.testCases);
+      };
+
+
+      fetchProblemData();
+    }
+    catch (error) {
+      console.error("Error fetching problem data:", error);
+    }
+  }, []);
+
   return (
     <div className="flex flex-col h-screen bg-[#0b0f19] text-gray-300 font-sans antialiased overflow-hidden">
       {/* Top Application Header */}
@@ -144,12 +173,12 @@ export default function WriteCode() {
       <div className="flex-1 grid grid-cols-1 xl:grid-cols-2 min-h-0 overflow-hidden">
         {/* Left Panel */}
         <div className="h-full overflow-y-auto border-r border-gray-800/80 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
-          <ProblemDescription problem={problem} />
+          <ProblemDescription demoproblem={demoproblem} problem={problem} />
         </div>
 
         {/* Right Panel */}
         <div className="relative h-full overflow-hidden bg-[#0f1422]">
-          <CodeEditorPanel problem={problem} />
+          <CodeEditorPanel demoproblem={demoproblem} problem={problem} testCases={testCases} />
         </div>
       </div>
     </div>

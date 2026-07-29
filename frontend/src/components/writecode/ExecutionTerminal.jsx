@@ -4,12 +4,14 @@ import { ChevronUp, Terminal, CheckCircle, Play } from "lucide-react";
 export default function ExecutionTerminal({
   isOpen,
   onToggle,
+  demoproblem,
   problem,
+  testCases,
   output,
 }) {
   const [activeTab, setActiveTab] = useState("testcase");
 
-  const testCases = problem?.test_cases ?? [];
+  // const testCases = testCases ||  [];
   const runs = output?.runs ?? [];
   console.log("ExecutionTerminal - testCases:", runs);
   const verdict = output?.verdict;
