@@ -6,6 +6,7 @@ const cors = require('cors')
 const cookieParser = require('cookie-parser')
 
 const codeExecutionRoute = require('./routes/codeExecutionRoute')
+const problemsRoute = require('./routes/problemRoute')
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use('/api', codeExecutionRoute)
+app.use('/api', problemsRoute)
 
 
 app.use('/', (req, res, next) => { 

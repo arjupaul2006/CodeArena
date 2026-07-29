@@ -6,35 +6,6 @@ import axios from "axios";
 
 const normalizeOutput = (value) => String(value ?? "").trim();
 
-const serializeInput = (value) => {
-  // Return a string suitable for piping into stdin.
-  if (value == null) return "";
-
-  // If it's already a string, return as-is (trim trailing whitespace).
-  if (typeof value === "string") return value.trim();
-
-  // If it's a primitive (number, boolean), stringify it.
-  if (typeof value === "number" || typeof value === "boolean") return String(value);
-
-  // If it's an array, flatten each element recursively and join with newlines
-  if (Array.isArray(value)) {
-    return value.flatMap((v) => {
-      const s = serializeInput(v);
-      return s === "" ? [] : s.split(/\r?\n/);
-    }).join("\n");
-  }
-
-  // If it's an object, serialize values in insertion order separated by newlines.
-  if (typeof value === "object") {
-    return Object.keys(value)
-      .map((k) => serializeInput(value[k]))
-      .filter((s) => s !== "")
-      .join("\n");
-  }
-
-  return String(value);
-};
-
 export default function CodeEditorPanel({ problem }) {
   const languageOptions = [
     {
@@ -99,16 +70,26 @@ export default function CodeEditorPanel({ problem }) {
     message: "Run your code to compare outputs against every testcase.",
     runs: [],
   });
+
   const [isRunning, setIsRunning] = useState(false);
 
   const [code, setCode] = useState(languageOptions[0].codeLines);
 
   const [selectedLanguage, setSelectedLanguage] = useState("python");
+
   const [isTerminalOpen, setIsTerminalOpen] = useState(true);
 
-  // Function to handle code execution
+  // Handle code execution
   const handleCodeExecution = async () => {
-    if (!problem?.testCases?.length) {
+    // New test case structure:
+    // problem.test_cases
+    if (!problem?.test_cases?.length) {
+      setExecutionResult({
+        verdict: "wrong-answer",
+        message: "No test cases found for this problem.",
+        runs: [],
+      });
+
       return;
     }
 
@@ -117,8 +98,12 @@ export default function CodeEditorPanel({ problem }) {
     try {
       const runs = [];
 
-      for (const testCase of problem.testCases) {
-        const serializedInput = serializeInput(testCase.input);
+      // Execute code against every test case
+      for (let index = 0; index < problem.test_cases.length; index++) {
+        const testCase = problem.test_cases[index];
+
+        // Input is already a string
+        const serializedInput = testCase.input ?? "";
 
         const { data } = await axios.post(
           `${import.meta.env.VITE_BACKEND_URL}/api/execute`,
@@ -126,40 +111,89 @@ export default function CodeEditorPanel({ problem }) {
             code,
             input: serializedInput,
             language: selectedLanguage,
-          },
+          }
         );
 
-        const actualOutput = normalizeOutput(data?.output ?? data?.stderr ?? data?.error);
+        // Get actual output from backend
+        const actualOutput = normalizeOutput(
+          data?.output ?? data?.stderr ?? data?.error
+        );
+
+        // Check if there was a compilation/runtime/language error
+        const isErrorFound = Boolean(data?.error || data?.stderr);
+
+        // Expected output from database
         const expectedOutput = normalizeOutput(testCase.expectedOutput);
-        const passed = Boolean(data?.success) && actualOutput === expectedOutput;
+
+        // Test case passes only if:
+        // 1. Backend execution was successful
+        // 2. Actual output matches expected output
+        const passed =
+          Boolean(data?.success) &&
+          !isErrorFound &&
+          actualOutput === expectedOutput;
 
         runs.push({
-          id: testCase.id,
+          // Use index because your test case doesn't have an id
+          id: index + 1,
+
+          // Test case input
           input: testCase.input,
+
+          // Expected output
           expectedOutput,
+
+          // Actual output
           actualOutput,
+
+          // Original input sent to backend
           sentInput: serializedInput,
+
+          // Whether this testcase is a sample testcase
+          isSample: Boolean(testCase.isSample),
+
+          // Whether testcase passed
           passed,
+
+          // Whether execution produced an error
+          isErrorFound,
+
+          // Runtime information from backend
           runtime: data?.runtime ?? null,
+
+          // Memory information from backend
           memory: data?.memory ?? null,
+
+          // Optional error information
+          error: data?.error ?? null,
+
+          // Optional stderr
+          stderr: data?.stderr ?? null,
         });
       }
 
-      const isAccepted = runs.length > 0 && runs.every((result) => result.passed);
+      // Check if ALL test cases passed
+      const isAccepted =
+        runs.length > 0 &&
+        runs.every((result) => result.passed);
 
       setExecutionResult({
         verdict: isAccepted ? "accepted" : "wrong-answer",
+
         message: isAccepted
           ? "Accepted: every testcase produced the expected output."
           : "Wrong answer: at least one testcase did not match the expected output.",
+
         runs,
       });
     } catch (error) {
       setExecutionResult({
         verdict: "wrong-answer",
+
         message: error?.response?.data?.error
-          ? `Wrong answer: ${error.response.data.error}`
-          : `Wrong answer: ${error.message}`,
+          ? `Execution Error: ${error.response.data.error}`
+          : `Execution Error: ${error.message}`,
+
         runs: [],
       });
     } finally {
@@ -171,6 +205,7 @@ export default function CodeEditorPanel({ problem }) {
     <div className="relative flex flex-col h-full min-h-0 overflow-hidden">
       {/* Editor Controls Bar */}
       <div className="h-11 border-b border-gray-800/80 bg-[#131929]/60 px-4 flex items-center justify-between shrink-0">
+        
         {/* Select Language */}
         <select
           className="bg-gray-800/80 hover:bg-gray-800 text-xs font-bold px-2.5 py-1 rounded-md text-blue-400 border border-gray-700/60 flex items-center gap-1 transition-colors focus:outline-none focus:ring-0 focus:ring-offset-gray-800"
@@ -184,29 +219,43 @@ export default function CodeEditorPanel({ problem }) {
           ))}
         </select>
 
-        {/* buttons */}
+        {/* Buttons */}
         <div className="flex items-center gap-2">
+          
+          {/* Run Button */}
           <button
             type="button"
-            className="px-3 py-1 text-xs font-semibold rounded-md bg-emerald-600/90 hover:bg-emerald-500 text-white transition-colors"
+            className="px-3 py-1 text-xs font-semibold rounded-md bg-emerald-600/90 hover:bg-emerald-500 text-white transition-colors disabled:opacity-50"
             onClick={handleCodeExecution}
             disabled={isRunning}
           >
             {isRunning ? "Running..." : "Run"}
           </button>
 
+          {/* Submit Button */}
           <button
             type="button"
             className="px-3 py-1 text-xs font-semibold rounded-md bg-blue-600/90 hover:bg-blue-500 text-white transition-colors"
           >
             Submit
           </button>
+
+          {/* Reset Button */}
           <button
             type="button"
             className="p-1.5 text-gray-400 hover:text-white rounded hover:bg-gray-800/80 transition-colors"
+            onClick={() => {
+              const selectedOption = languageOptions.find(
+                (option) => option.value === selectedLanguage
+              );
+
+              setCode(selectedOption?.codeLines ?? "");
+            }}
           >
             <RotateCcw className="w-3.5 h-3.5" />
           </button>
+
+          {/* Maximize Button */}
           <button
             type="button"
             className="p-1.5 text-gray-400 hover:text-white rounded hover:bg-gray-800/80 transition-colors"
@@ -224,20 +273,24 @@ export default function CodeEditorPanel({ problem }) {
           value={code}
           theme="vs-dark"
           options={{
-            minimap: { enabled: false },
+            minimap: {
+              enabled: false,
+            },
             scrollBeyondLastLine: false,
             fontSize: 14,
             fontFamily: "Fira Code, monospace",
             automaticLayout: true,
           }}
-          onChange={(value) => setCode(value)}
+          onChange={(value) => setCode(value ?? "")}
         />
       </div>
 
-      {/* Terminal Sheet Execution Trays Container */}
+      {/* Terminal */}
       <ExecutionTerminal
         isOpen={isTerminalOpen}
-        onToggle={() => setIsTerminalOpen((current) => !current)}
+        onToggle={() =>
+          setIsTerminalOpen((current) => !current)
+        }
         problem={problem}
         output={executionResult}
       />

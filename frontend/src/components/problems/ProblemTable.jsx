@@ -1,83 +1,319 @@
-import React from 'react';
-import { CheckCircle2, Circle, SlidersHorizontal, Shuffle, ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { 
+  CheckCircle2, 
+  Circle, 
+  Shuffle, 
+  ChevronLeft, 
+  ChevronRight,
+  Search,
+  ArrowRight,
+  Code2
+} from 'lucide-react';
 
-const problems = [
-  { id: 1, title: 'Two Sum', status: 'solved', difficulty: 'Easy', diffColor: 'text-emerald-400 bg-emerald-500/10', accept: '49.2%', tags: ['Array', 'Hash Table'] },
-  { id: 2, title: 'Add Two Numbers', status: 'unsolved', difficulty: 'Medium', diffColor: 'text-amber-400 bg-amber-500/10', accept: '39.8%', tags: ['Linked List', 'Math'] },
-  { id: 4, title: 'Median of Two Sorted Arrays', status: 'solved', difficulty: 'Hard', diffColor: 'text-rose-400 bg-rose-500/10', accept: '35.1%', tags: ['Binary Search', 'Divid & Conquer'] },
-  { id: 15, title: '3Sum', status: 'unsolved', difficulty: 'Medium', diffColor: 'text-amber-400 bg-amber-500/10', accept: '31.4%', tags: ['Two Pointers', 'Sorting'] },
-  { id: 21, title: 'Merge Two Sorted Lists', status: 'unsolved', difficulty: 'Easy', diffColor: 'text-emerald-400 bg-emerald-500/10', accept: '61.5%', tags: ['Recursion'] },
-  { id: 33, title: 'Search in Rotated Sorted Array', status: 'solved', difficulty: 'Medium', diffColor: 'text-amber-400 bg-amber-500/10', accept: '38.4%', tags: ['Binary Search'] },
-];
 
 export default function ProblemTable() {
+  const navigate = useNavigate();
+  const [problems, setProblems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedDifficulty, setSelectedDifficulty] = useState('All');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
+
+  // Fetch problems from backend API on component mount
+  useEffect(() => {
+    const fetchProblems = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch('http://localhost:4000/api/problems');
+        if (!response.ok) throw new Error('Failed to fetch');
+        const data = await response.json();
+        
+        if (data.problems && data.problems.length > 0) {
+          setProblems(data.problems);
+        }
+      } catch (error) {
+        console.warn('Backend unavailable, using fallback problem set:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProblems();
+  }, []);
+
+  // Filter problems based on search and dropdown selections
+  const filteredProblems = problems.filter((prob) => {
+    const matchesSearch = 
+      prob.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (prob.tags && prob.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))) ||
+      (prob.problemNo && prob.problemNo.toString().includes(searchQuery)) ||
+      (prob.id && prob.id.toString().includes(searchQuery));
+
+    const matchesDiff = 
+      selectedDifficulty === 'All' || 
+      (prob.difficulty && prob.difficulty.toLowerCase() === selectedDifficulty.toLowerCase());
+
+    return matchesSearch && matchesDiff;
+  });
+
+  // Pagination calculation
+  const totalPages = Math.max(1, Math.ceil(filteredProblems.length / itemsPerPage));
+  const displayedProblems = filteredProblems.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handlePickRandom = () => {
+    if (problems.length === 0) return;
+    const randomIndex = Math.floor(Math.random() * problems.length);
+    const randomProb = problems[randomIndex];
+    navigate(`/write-code?id=${randomProb._id || randomProb.slug || randomProb.problemNo || randomProb.id}`);
+  };
+
+  const getDifficultyBadge = (difficulty) => {
+    const diff = (difficulty || '').toLowerCase();
+    switch (diff) {
+      case 'easy':
+        return (
+          <span className="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.15)]">
+            Easy
+          </span>
+        );
+      case 'medium':
+        return (
+          <span className="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30 shadow-[0_0_10px_rgba(245,158,11,0.15)]">
+            Medium
+          </span>
+        );
+      case 'hard':
+        return (
+          <span className="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full bg-rose-500/15 text-rose-400 border border-rose-500/30 shadow-[0_0_10px_rgba(244,63,94,0.15)]">
+            Hard
+          </span>
+        );
+      default:
+        return (
+          <span className="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full bg-gray-800 text-gray-300 border border-gray-700">
+            {difficulty || 'Unknown'}
+          </span>
+        );
+    }
+  };
+
   return (
-    <div className="bg-[#0f1422] rounded-xl border border-gray-800 overflow-hidden shadow-xl">
-      {/* Table Toolbar */}
-      <div className="p-4 border-b border-gray-800 flex flex-wrap gap-3 justify-between items-center bg-[#131929]">
-        <span className="text-xs text-gray-400 font-medium">Showing 1 to 50 of 2,410 problems</span>
-        <div className="flex gap-2 w-full sm:w-auto">
-          <button className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 bg-gray-800 hover:bg-gray-700 text-xs text-gray-200 px-3 py-1.5 rounded-md transition-colors"><SlidersHorizontal className="h-3.5 w-3.5"/> Filters</button>
-          <button className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 bg-gray-800 hover:bg-gray-700 text-xs text-gray-200 px-3 py-1.5 rounded-md transition-colors"><Shuffle className="h-3.5 w-3.5"/> Pick Random</button>
+    <div className="bg-[#0f1422]/90 backdrop-blur-md rounded-2xl border border-slate-800/80 overflow-hidden shadow-2xl shadow-black/50">
+      {/* Table Header Controls / Toolbar */}
+      <div className="p-4 sm:p-5 border-b border-slate-800/80 bg-slate-900/60 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        
+        {/* Search Input */}
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <input
+            type="text"
+            placeholder="Search by title, tag, or #..."
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="w-full bg-slate-950/70 text-slate-200 placeholder-slate-500 text-xs sm:text-sm pl-10 pr-4 py-2 rounded-xl border border-slate-800 focus:outline-none focus:border-blue-500/60 focus:ring-2 focus:ring-blue-500/20 transition-all"
+          />
+        </div>
+
+        {/* Filters and Actions */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* Difficulty Filter */}
+          <div className="flex items-center bg-slate-950/70 p-1 rounded-xl border border-slate-800 text-xs">
+            {['All', 'Easy', 'Medium', 'Hard'].map((diff) => (
+              <button
+                key={diff}
+                onClick={() => {
+                  setSelectedDifficulty(diff);
+                  setCurrentPage(1);
+                }}
+                className={`px-3 py-1.5 rounded-lg font-medium transition-all duration-150 ${
+                  selectedDifficulty === diff
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                }`}
+              >
+                {diff}
+              </button>
+            ))}
+          </div>
+
+          {/* Random Pick Button */}
+          <button
+            onClick={handlePickRandom}
+            className="flex items-center gap-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-lg shadow-blue-600/25 transition-all duration-200 active:scale-95"
+          >
+            <Shuffle className="h-3.5 w-3.5" />
+            <span>Random</span>
+          </button>
         </div>
       </div>
 
-      {/* Table Container for horizontal scrolling on tiny viewports */}
+      {/* Info Bar */}
+      <div className="px-5 py-2.5 bg-slate-950/40 border-b border-slate-800/60 flex items-center justify-between text-xs text-slate-400">
+        <span className="font-medium">
+          Showing <span className="text-slate-200 font-semibold">{filteredProblems.length}</span> problems
+        </span>
+        {searchQuery && (
+          <button
+            onClick={() => setSearchQuery('')}
+            className="text-blue-400 hover:text-blue-300 text-xs font-medium transition-colors"
+          >
+            Clear Search
+          </button>
+        )}
+      </div>
+
+      {/* Table Container */}
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-gray-800 text-[11px] uppercase tracking-wider text-gray-500 bg-[#0f1422]">
-              <th className="py-3 px-4 w-12 text-center">Status</th>
-              <th className="py-3 px-4">Title</th>
-              <th className="py-3 px-4 w-28">Difficulty</th>
-              <th className="py-3 px-4 w-24">Acceptance</th>
-              <th className="py-3 px-4 hidden lg:table-cell max-w-[200px]">Tags</th>
+            <tr className="border-b border-slate-800/80 text-[11px] uppercase tracking-wider text-slate-400 bg-slate-950/70">
+              <th className="py-3.5 px-4 w-12 text-center font-semibold">Status</th>
+              <th className="py-3.5 px-4 font-semibold">Title</th>
+              <th className="py-3.5 px-4 w-32 font-semibold">Difficulty</th>
+              <th className="py-3.5 px-4 hidden lg:table-cell font-semibold">Tags</th>
+              <th className="py-3.5 px-4 w-16 text-center font-semibold">Action</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-800 text-sm">
-            {problems.map((prob) => (
-              <tr key={prob.id} className="hover:bg-gray-800/30 transition-colors group cursor-pointer">
-                <td className="py-3.5 px-4 text-center">
-                  {prob.status === 'solved' ? (
-                    <CheckCircle2 className="h-4 w-4 text-emerald-500 inline" />
-                  ) : (
-                    <Circle className="h-4 w-4 text-gray-600 inline group-hover:text-gray-400 transition-colors" />
-                  )}
-                </td>
-                <td className="py-3.5 px-4 font-medium text-gray-200 group-hover:text-blue-400 transition-colors">
-                  <span className="text-gray-500 mr-1">{prob.id}.</span> {prob.title}
-                </td>
-                <td className="py-3.5 px-4">
-                  <span className={`px-2 py-0.5 text-xs rounded font-medium ${prob.diffColor}`}>
-                    {prob.difficulty}
-                  </span>
-                </td>
-                <td className="py-3.5 px-4 text-gray-400 font-mono">{prob.accept}</td>
-                <td className="py-3.5 px-4 hidden lg:table-cell">
-                  <div className="flex flex-wrap gap-1.5">
-                    {prob.tags.map((tag, i) => (
-                      <span key={i} className="bg-gray-800/60 text-gray-400 text-[11px] px-2 py-0.5 rounded border border-gray-800">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
+          <tbody className="divide-y divide-slate-800/60 text-sm">
+            {loading ? (
+              // Loading Skeleton
+              [...Array(5)].map((_, i) => (
+                <tr key={i} className="animate-pulse">
+                  <td className="py-4 px-4 text-center"><div className="h-4 w-4 bg-slate-800 rounded-full mx-auto" /></td>
+                  <td className="py-4 px-4"><div className="h-4 w-48 bg-slate-800 rounded" /></td>
+                  <td className="py-4 px-4"><div className="h-5 w-16 bg-slate-800 rounded-full" /></td>
+                  <td className="py-4 px-4 hidden lg:table-cell"><div className="h-4 w-32 bg-slate-800 rounded" /></td>
+                  <td className="py-4 px-4 text-center"><div className="h-4 w-6 bg-slate-800 rounded mx-auto" /></td>
+                </tr>
+              ))
+            ) : displayedProblems.length === 0 ? (
+              // Empty State
+              <tr>
+                <td colSpan="5" className="py-12 text-center text-slate-400">
+                  <Code2 className="h-10 w-10 mx-auto text-slate-600 mb-3" />
+                  <p className="font-semibold text-slate-300">No problems found</p>
+                  <p className="text-xs text-slate-500 mt-1">Try tweaking your search filter or parameters</p>
                 </td>
               </tr>
-            ))}
+            ) : (
+              displayedProblems.map((prob, index) => {
+                const probId = prob.problemNo || prob.id || (currentPage - 1) * itemsPerPage + index + 1;
+
+                return (
+                  <tr
+                    key={prob._id || index}
+                    onClick={() => navigate(`/write-code?id=${prob._id || prob.slug || probId}`)}
+                    className="hover:bg-slate-800/40 transition-all duration-150 group cursor-pointer border-l-2 border-l-transparent hover:border-l-blue-500"
+                  >
+                    {/* Status Icon */}
+                    <td className="py-3.5 px-4 text-center">
+                      {prob.status === 'solved' ? (
+                        <CheckCircle2 className="h-4 w-4 text-emerald-400 inline drop-shadow-[0_0_8px_rgba(52,211,153,0.4)]" />
+                      ) : (
+                        <Circle className="h-4 w-4 text-slate-600 inline group-hover:text-slate-400 transition-colors" />
+                      )}
+                    </td>
+
+                    {/* Title */}
+                    <td className="py-3.5 px-4 font-medium text-slate-200 group-hover:text-blue-400 transition-colors">
+                      <span className="text-slate-500 font-mono text-xs mr-2">#{probId}</span>
+                      <span className="font-semibold">{prob.title}</span>
+                    </td>
+
+                    {/* Difficulty Badge */}
+                    <td className="py-3.5 px-4">
+                      {getDifficultyBadge(prob.difficulty)}
+                    </td>
+
+                    {/* Tags */}
+                    <td className="py-3.5 px-4 hidden lg:table-cell">
+                      <div className="flex flex-wrap gap-1.5">
+                        {prob.tags && prob.tags.map((tag, i) => (
+                          <span
+                            key={i}
+                            className="bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 text-[11px] font-medium px-2.5 py-0.5 rounded-full border border-slate-700/50 transition-colors"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </td>
+
+                    {/* Action Arrow */}
+                    <td className="py-3.5 px-4 text-center">
+                      <div className="flex justify-center items-center text-slate-500 group-hover:text-blue-400 group-hover:translate-x-1 transition-all">
+                        <ArrowRight className="h-4 w-4" />
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
           </tbody>
         </table>
       </div>
 
       {/* Pagination Footer */}
-      <div className="p-4 border-t border-gray-800 flex justify-center sm:justify-end items-center bg-[#131929]">
-        <div className="flex items-center gap-1">
-          <button className="p-1 rounded bg-gray-800 text-gray-400 hover:text-white disabled:opacity-40" disabled><ChevronLeft className="h-4 w-4"/></button>
-          <button className="w-7 h-7 rounded text-xs font-semibold bg-blue-600 text-white">1</button>
-          <button className="w-7 h-7 rounded text-xs font-semibold text-gray-400 hover:bg-gray-800 hover:text-white">2</button>
-          <button className="w-7 h-7 rounded text-xs font-semibold text-gray-400 hover:bg-gray-800 hover:text-white">3</button>
-          <span className="text-gray-600 px-1 text-xs">...</span>
-          <button className="w-7 h-7 rounded text-xs font-semibold text-gray-400 hover:bg-gray-800 hover:text-white">49</button>
-          <button className="p-1 rounded bg-gray-800 text-gray-400 hover:text-white"><ChevronRight className="h-4 w-4"/></button>
+      <div className="p-4 sm:px-6 border-t border-slate-800/80 bg-slate-900/60 flex flex-col sm:flex-row gap-3 justify-between items-center text-xs text-slate-400">
+        <div>
+          Page <span className="text-slate-200 font-semibold">{currentPage}</span> of{' '}
+          <span className="text-slate-200 font-semibold">{totalPages}</span>
+        </div>
+
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+            disabled={currentPage === 1}
+            className="p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 disabled:opacity-40 disabled:hover:bg-slate-800/80 transition-colors"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+
+          {/* Page numbers */}
+          {[...Array(totalPages)].map((_, idx) => {
+            const pageNum = idx + 1;
+            if (
+              totalPages > 7 &&
+              pageNum !== 1 &&
+              pageNum !== totalPages &&
+              Math.abs(pageNum - currentPage) > 1
+            ) {
+              if (Math.abs(pageNum - currentPage) === 2) {
+                return <span key={pageNum} className="px-1 text-slate-600">...</span>;
+              }
+              return null;
+            }
+
+            return (
+              <button
+                key={pageNum}
+                onClick={() => setCurrentPage(pageNum)}
+                className={`w-7 h-7 rounded-lg text-xs font-semibold transition-all ${
+                  currentPage === pageNum
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                    : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                }`}
+              >
+                {pageNum}
+              </button>
+            );
+          })}
+
+          <button
+            onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+            disabled={currentPage === totalPages}
+            className="p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 disabled:opacity-40 disabled:hover:bg-slate-800/80 transition-colors"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
         </div>
       </div>
     </div>

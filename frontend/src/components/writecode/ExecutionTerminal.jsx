@@ -9,31 +9,24 @@ export default function ExecutionTerminal({
 }) {
   const [activeTab, setActiveTab] = useState("testcase");
 
-  const testCases = problem.testCases;
+  const testCases = problem?.test_cases ?? [];
   const runs = output?.runs ?? [];
+  console.log("ExecutionTerminal - testCases:", runs);
   const verdict = output?.verdict;
 
-  const formatValue = (value) => {
-    if (Array.isArray(value)) {
-      return `[${value.map((item) => formatValue(item)).join(", ")}]`;
-    }
-
-    if (value !== null && typeof value === "object") {
-      return `{ ${Object.entries(value)
-        .map(([key, nestedValue]) => `${key}: ${formatValue(nestedValue)}`)
-        .join(", ")} }`;
-    }
-
-    return String(value);
-  };
-
-  const formatInput = (input) => {
-    return Object.entries(input)
-      .map(([key, value]) => `${key} = ${formatValue(value)}`)
-      .join(", ");
-  };
-
+  // separate the runs by their id for easy access
   const resultById = new Map(runs.map((result) => [result.id, result]));
+
+  const failingRuns = runs.filter((result) => !result.passed);
+  const sharedErrorMessage =
+    failingRuns.length > 0 &&
+    new Set(failingRuns.map((result) => result.actualOutput).filter(Boolean))
+      .size === 1
+      ? failingRuns[0]?.actualOutput
+      : null;
+  const languageErrorMessage = failingRuns.find((result) => result.isErrorFound)
+    ? "Language Error"
+    : null;
 
   return (
     <div
@@ -103,12 +96,23 @@ export default function ExecutionTerminal({
             >
               Result
             </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("error")}
+              className={`h-9 px-3 rounded-t-md border-b-2 transition-colors ${
+                activeTab === "error"
+                  ? "text-white border-blue-500 bg-[#131929]/80"
+                  : "text-gray-400 border-transparent hover:text-white hover:bg-[#131929]/50"
+              }`}
+            >
+              Error
+            </button>
           </div>
         </div>
 
-        {activeTab === "testcase" ? (
+        {/* TestCase Tab Content */}
+        {activeTab === "testcase" && (
           <div className="p-4 space-y-4">
-
             {/* Accepted or not */}
             {verdict ? (
               <div
@@ -117,6 +121,7 @@ export default function ExecutionTerminal({
                 }`}
               >
                 <CheckCircle className="w-4 h-4 fill-emerald-500/10" />
+
                 <span>
                   {verdict === "accepted" ? "Accepted" : "Wrong Answer"}
                 </span>
@@ -125,52 +130,70 @@ export default function ExecutionTerminal({
 
             {/* TestCase Boxes */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {testCases.map((caseData) => (
-                <div
-                  key={caseData.id}
-                  className="p-3 bg-[#131929]/55 border border-gray-800/70 rounded-xl space-y-2 font-mono text-xs"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-300 font-bold block">
-                      Case {caseData.id}
-                    </span>
-                  </div>
-                  <div className="space-y-1.5 text-[11px]">
-                    <div>
-                      <span className="text-gray-500">Input:</span>{" "}
-                      <span className="text-gray-200 font-semibold">
-                        {formatInput(caseData.input)}
+              {testCases.map((caseData, index) => {
+                const caseId = index + 1;
+                const result = resultById.get(caseId);
+
+                return (
+                  <div
+                    key={caseId}
+                    className="p-3 bg-[#131929]/55 border border-gray-800/70 rounded-xl space-y-2 font-mono text-xs"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-300 font-bold block">
+                        Case {caseId}
                       </span>
+
+                      {caseData.isSample && (
+                        <span className="text-[10px] text-blue-400">
+                          Sample
+                        </span>
+                      )}
                     </div>
-                    <div>
-                      <span className="text-gray-500">Output:</span>{" "}
-                      <span className="text-emerald-400 font-semibold">
-                        {caseData.expectedOutput}
-                      </span>
-                    </div>
-                    {resultById.has(caseData.id) ? (
+
+                    <div className="space-y-1.5 text-[11px]">
+                      {/* Input */}
                       <div>
+                        <span className="text-gray-500">Input:</span>
+
+                        <pre className="mt-1 text-gray-200 font-semibold whitespace-pre-wrap bg-[#0f1422] p-2 rounded-md">
+                          {caseData.input}
+                        </pre>
+                      </div>
+
+                      {/* Expected Output */}
+                      <div>
+                        <span className="text-gray-500">Output:</span>{" "}
+                        <span className="text-emerald-400 font-semibold">
+                          {caseData.expectedOutput}
+                        </span>
+                      </div>
+
+                      {/* Actual Output */}
+                      {result ? (
                         <div>
                           <span className="text-gray-500">Actual:</span>{" "}
                           <span
                             className={`font-semibold ${
-                              resultById.get(caseData.id).passed
+                              result.passed
                                 ? "text-emerald-400"
                                 : "text-red-400"
                             }`}
                           >
-                            {resultById.get(caseData.id).actualOutput}
+                            {result.actualOutput || "No output"}
                           </span>
                         </div>
-                      </div>
-                    ) : null}
+                      ) : null}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
-        ) : (
-          // Results Tab
+        )}
+
+        {/* Result Tab Content */}
+        {activeTab === "result" && (
           <div className="p-4 space-y-3">
             <div className="text-xs text-gray-400 font-medium">
               {output?.message ??
@@ -233,6 +256,24 @@ export default function ExecutionTerminal({
             ) : (
               <div className="p-3 rounded-xl border border-dashed border-gray-700 bg-[#131929]/30 text-xs text-gray-500">
                 No output yet.
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Error Tab Content */}
+        {activeTab === "error" && (
+          <div className="p-4 space-y-3">
+            {verdict === "wrong-answer" ? (
+              <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-300">
+                {sharedErrorMessage ??
+                  languageErrorMessage ??
+                  output?.message ??
+                  "Wrong answer: one or more testcases failed."}
+              </div>
+            ) : (
+              <div className="text-xs text-gray-500 font-medium">
+                No error message available.
               </div>
             )}
           </div>

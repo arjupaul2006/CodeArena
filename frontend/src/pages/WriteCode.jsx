@@ -90,7 +90,7 @@ export default function WriteCode() {
       {
         input: {
           n: 5,
-          nums: [1,2,3,4,5],
+          nums: [1, 2, 3, 4, 5],
         },
         output: 5,
         explanation: "Because nums[0] + nums[1] == 9, we return [0, 1].",
@@ -107,38 +107,31 @@ export default function WriteCode() {
 
     tags: ["Array", "Hash Table"],
 
-    testCases: [
+    test_cases: [
       {
-        id: 1,
-        input: {
-          n: 4,
-          nums: [10,20,30,25],
-        },
-        expectedOutput: 30,
+        input: "4\n2 7 11 15\n9",
+        expectedOutput: "0 1",
+        isSample: true,
       },
       {
-        id: 2,
-        input: {
-          n: 4,
-          nums: [1000,2000,3000,4000],
-        },
-        expectedOutput: 4000,
+        input: "3\n3 2 4\n6",
+        expectedOutput: "1 2",
+        isSample: true,
       },
       {
-        id: 3,
-        input: {
-          n: 5,
-          nums: [0.5, 1.5, 2.5, 3.5],
-        },
-        expectedOutput: 3.5,
+        input: "2\n3 3\n6",
+        expectedOutput: "0 1",
+        isSample: false,
       },
       {
-        id: 4,
-        input: {
-          n: 1,
-          nums: [0],
-        },
-        expectedOutput: 0,
+        input: "5\n1 5 3 7 9\n10",
+        expectedOutput: "1 3",
+        isSample: false,
+      },
+      {
+        input: "6\n10 -2 8 4 6 12\n10",
+        expectedOutput: "1 2",
+        isSample: false,
       },
     ],
   };
