@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from "react";
+import React, { useEffect, useState } from "react";
 import WorkspaceHeader from "../components/writecode/WorkspaceHeader";
 import ProblemDescription from "../components/writecode/ProblemDescription";
 import CodeEditorPanel from "../components/writecode/CodeEditorPanel";
@@ -165,19 +165,19 @@ export default function WriteCode() {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen bg-[#0b0f19] text-gray-300 font-sans antialiased overflow-hidden">
+    <div className="flex flex-col h-screen bg-[#12080a] text-slate-300 font-sans antialiased overflow-hidden">
       {/* Top Application Header */}
       <TopNav />
 
       {/* Main Split Panels */}
       <div className="flex-1 grid grid-cols-1 xl:grid-cols-2 min-h-0 overflow-hidden">
         {/* Left Panel */}
-        <div className="h-full overflow-y-auto border-r border-gray-800/80 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
+        <div className="h-full overflow-y-auto border-r border-rose-950/80">
           <ProblemDescription demoproblem={demoproblem} problem={problem} />
         </div>
 
         {/* Right Panel */}
-        <div className="relative h-full overflow-hidden bg-[#0f1422]">
+        <div className="relative h-full overflow-hidden bg-[#1c0d12]">
           <CodeEditorPanel demoproblem={demoproblem} problem={problem} testCases={testCases} />
         </div>
       </div>

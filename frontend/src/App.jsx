@@ -9,6 +9,9 @@ import Problems from "./pages/Problems";
 import Dashboard from "./pages/Dashboard";
 import Submissions from "./pages/Submissions";
 import WriteCode from "./pages/WriteCode";
+import Signin from "./authentication/Signin";
+import Login from "./authentication/Login";
+import UserProtect from "./authentication/UserProtect";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -16,13 +19,22 @@ function App() {
   return (
     <>
       <div>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/problems" element={<Problems />} />
-            <Route path="/submissions" element={<Submissions />} />
-            <Route path="/write-code" element={<WriteCode />} />
-          </Routes>
+        <Routes>
+          <Route path="/signin" element={<Signin />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Home />} />
+          <Route
+            path="/dashboard"
+            element={
+              <UserProtect>
+                <Dashboard />
+              </UserProtect>
+            }
+          />
+          <Route path="/problems" element={<Problems />} />
+          <Route path="/submissions" element={<Submissions />} />
+          <Route path="/write-code" element={<WriteCode />} />
+        </Routes>
       </div>
     </>
   );

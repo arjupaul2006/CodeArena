@@ -8,7 +8,7 @@ import ProgressCard from "../components/problems/ProgressCard";
 
 const Problems = () => {
   return (
-    <div className="flex min-h-screen bg-[#0b0f19] text-gray-300 font-sans antialiased">
+    <div className="flex min-h-screen bg-[#12080a] text-slate-300 font-sans antialiased">
       {/* Sidebar - Hidden on mobile, visible on desktop */}
       <Sidebar />
 

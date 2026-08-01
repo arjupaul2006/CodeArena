@@ -204,11 +204,11 @@ export default function CodeEditorPanel({ demoproblem, problem, testCases }) {
   return (
     <div className="relative flex flex-col h-full min-h-0 overflow-hidden">
       {/* Editor Controls Bar */}
-      <div className="h-11 border-b border-gray-800/80 bg-[#131929]/60 px-4 flex items-center justify-between shrink-0">
-        
+      <div className="h-11 border-b border-rose-950/80 bg-[#12080a] px-4 flex items-center justify-between shrink-0">
+
         {/* Select Language */}
         <select
-          className="bg-gray-800/80 hover:bg-gray-800 text-xs font-bold px-2.5 py-1 rounded-md text-blue-400 border border-gray-700/60 flex items-center gap-1 transition-colors focus:outline-none focus:ring-0 focus:ring-offset-gray-800"
+          className="bg-[#1c0d12] hover:bg-rose-950/60 text-xs font-bold px-3 py-1 rounded-xl text-rose-400 border border-rose-950 flex items-center gap-1 transition-colors focus:outline-none focus:border-rose-500 cursor-pointer"
           value={selectedLanguage}
           onChange={(e) => setSelectedLanguage(e.target.value)}
         >
@@ -221,11 +221,11 @@ export default function CodeEditorPanel({ demoproblem, problem, testCases }) {
 
         {/* Buttons */}
         <div className="flex items-center gap-2">
-          
+
           {/* Run Button */}
           <button
             type="button"
-            className="px-3 py-1 text-xs font-semibold rounded-md bg-emerald-600/90 hover:bg-emerald-500 text-white transition-colors disabled:opacity-50"
+            className="px-3.5 py-1 text-xs font-bold rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-colors disabled:opacity-50 cursor-pointer shadow-sm shadow-emerald-950"
             onClick={handleCodeExecution}
             disabled={isRunning}
           >
@@ -235,7 +235,7 @@ export default function CodeEditorPanel({ demoproblem, problem, testCases }) {
           {/* Submit Button */}
           <button
             type="button"
-            className="px-3 py-1 text-xs font-semibold rounded-md bg-blue-600/90 hover:bg-blue-500 text-white transition-colors"
+            className="px-3.5 py-1 text-xs font-bold rounded-xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white transition-colors cursor-pointer shadow-sm shadow-rose-950"
           >
             Submit
           </button>

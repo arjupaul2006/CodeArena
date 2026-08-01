@@ -3,19 +3,19 @@ import { Search, Bell, Settings } from 'lucide-react';
 
 export default function TopNav() {
   return (
-    <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-gray-800 bg-[#0b0f19]/80 backdrop-blur-md px-4 lg:px-6">
+    <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-rose-950/60 bg-[#12080a]/85 backdrop-blur-xl px-4 lg:px-6">
       {/* Left: Search & Desktop Links */}
       <div className="flex flex-1 items-center gap-6 max-w-xl">
         <div className="relative w-full max-w-xs hidden sm:block">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
+          <Search className="absolute left-3.5 top-2.5 h-4 w-4 text-slate-500" />
           <input
             type="text"
             placeholder="Search problems..."
-            className="w-full rounded-md bg-[#111827] pl-9 pr-4 py-1.5 text-sm text-gray-200 border border-transparent focus:border-blue-500 focus:outline-none transition-all"
+            className="w-full rounded-xl bg-[#1c0d12] pl-10 pr-4 py-1.5 text-sm text-slate-200 border border-rose-950/80 focus:border-rose-500 focus:ring-1 focus:ring-rose-500 focus:outline-none transition-all placeholder-slate-500"
           />
         </div>
-        <nav className="hidden md:flex items-center gap-5 text-sm font-medium text-gray-400">
-          <a href="#" className="text-blue-400 border-b-2 border-blue-400 pb-5 pt-5 px-1">Problems</a>
+        <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-400">
+          <a href="#" className="text-rose-400 border-b-2 border-rose-400 pb-5 pt-5 px-1 font-semibold">Problems</a>
           <a href="#" className="hover:text-white transition-colors">Contests</a>
           <a href="#" className="hover:text-white transition-colors">Leaderboard</a>
           <a href="#" className="hover:text-white transition-colors">Discuss</a>
@@ -23,21 +23,21 @@ export default function TopNav() {
       </div>
 
       {/* Right: Actions & Profile */}
-      <div className="flex items-center gap-4">
-        <button className="hidden sm:inline-flex bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-semibold px-3 py-1.5 rounded-md transition-all shadow-md shadow-blue-900/20">
+      <div className="flex items-center gap-3.5">
+        <button className="hidden sm:inline-flex bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-bold text-xs px-3.5 py-1.5 rounded-xl transition-all shadow-md shadow-rose-950/40 cursor-pointer">
           Upgrade Pro
         </button>
-        <button className="p-1.5 text-gray-400 hover:text-white rounded-md hover:bg-gray-800 relative">
-          <Bell className="h-5 w-5" />
-          <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+        <button className="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-rose-950/40 relative transition-colors cursor-pointer">
+          <Bell className="h-4 w-4" />
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full animate-pulse"></span>
         </button>
-        <button className="p-1.5 text-gray-400 hover:text-white rounded-md hover:bg-gray-800">
-          <Settings className="h-5 w-5" />
+        <button className="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-rose-950/40 transition-colors cursor-pointer">
+          <Settings className="h-4 w-4" />
         </button>
         <img
           src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80"
           alt="Avatar"
-          className="h-8 w-8 rounded-full border border-gray-700 object-cover"
+          className="h-8 w-8 rounded-full border border-rose-500/30 object-cover ring-2 ring-rose-500/10"
         />
       </div>
     </header>

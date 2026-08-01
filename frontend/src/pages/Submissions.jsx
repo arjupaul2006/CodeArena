@@ -8,7 +8,7 @@ import SubmissionHistoryTable from '../components/submissions/SubmissionHistoryT
 
 export default function Submissions() {
   return (
-    <div className="flex min-h-screen bg-[#0b0f19] text-gray-300 font-sans antialiased">
+    <div className="flex min-h-screen bg-[#12080a] text-slate-300 font-sans antialiased">
       {/* Sidebar - Persistent layout component */}
       <Sidebar />
 
@@ -18,7 +18,7 @@ export default function Submissions() {
 
         {/* Content Body Grid layout */}
         <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-[1400px] w-full mx-auto space-y-6">
-          
+
           {/* Top Row Grid: Profile Insight and Detailed Stats Rings */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
             <div className="lg:col-span-5 xl:col-span-4 h-full">
@@ -34,7 +34,7 @@ export default function Submissions() {
 
           {/* Bottom Row Grid: Complete Data Logs Audit Stream */}
           <SubmissionHistoryTable />
-          
+
         </main>
       </div>
     </div>

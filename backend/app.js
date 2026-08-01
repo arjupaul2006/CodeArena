@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser')
 
 const codeExecutionRoute = require('./routes/codeExecutionRoute')
 const problemsRoute = require('./routes/problemRoute')
+const userSigninRoute = require('./routes/userSigninRoute')
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(cookieParser());
 
 app.use('/api', codeExecutionRoute)
 app.use('/api', problemsRoute)
+app.use('/api', userSigninRoute)
 
 
 app.use('/', (req, res, next) => { 

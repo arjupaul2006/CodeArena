@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { ThumbsUp, ThumbsDown, Star } from "lucide-react";
 
 export default function ProblemDescription({ demoproblem, problem }) {
@@ -55,7 +55,7 @@ export default function ProblemDescription({ demoproblem, problem }) {
             problem?.tags.map((t, i) => (
               <span
                 key={i}
-                className="text-[11px] text-gray-300 bg-gray-800/30 px-2 py-0.5 rounded border border-gray-700"
+                className="text-[11px] text-slate-300 bg-[#12080a] px-2.5 py-0.5 rounded-lg border border-rose-950"
               >
                 {t}
               </span>
@@ -63,21 +63,21 @@ export default function ProblemDescription({ demoproblem, problem }) {
         </div>
 
         {/* Interaction Stats */}
-        <div className="flex items-center gap-4 text-xs font-semibold text-gray-500">
-          <button className="flex items-center gap-1 hover:text-gray-300 transition-colors">
+        <div className="flex items-center gap-4 text-xs font-semibold text-slate-500">
+          <button className="flex items-center gap-1 hover:text-slate-300 transition-colors">
             <ThumbsUp className="w-3.5 h-3.5" /> 14.2k
           </button>
-          <button className="flex items-center gap-1 hover:text-gray-300 transition-colors">
+          <button className="flex items-center gap-1 hover:text-slate-300 transition-colors">
             <ThumbsDown className="w-3.5 h-3.5" /> 205
           </button>
-          <button className="flex items-center gap-1 hover:text-gray-300 transition-colors">
+          <button className="flex items-center gap-1 hover:text-slate-300 transition-colors">
             <Star className="w-3.5 h-3.5" /> Favorite
           </button>
         </div>
       </div>
 
       {/* Markdown / Body Prompt Text */}
-      <div className="text-lg text-gray-300 leading-relaxed max-w-2xl font-medium whitespace-pre-line">
+      <div className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl font-medium whitespace-pre-line">
         {problem?.description}
       </div>
 
@@ -85,12 +85,12 @@ export default function ProblemDescription({ demoproblem, problem }) {
       <div className="space-y-6">
         {/* Examples Box */}
         <div>
-          <h3 className="text-sm font-semibold text-gray-200 mb-2">Examples</h3>
+          <h3 className="text-sm font-semibold text-slate-200 mb-2">Examples</h3>
           <div className="space-y-3">
             {problem?.examples.map((ex, idx) => (
               <div
                 key={idx}
-                className="bg-[#0b1220] border border-gray-800/60 p-3 rounded-lg"
+                className="bg-[#12080a] border border-rose-950/80 p-4 rounded-xl space-y-3"
               >
                 <div className="space-y-3">
                   {/* Input */}
