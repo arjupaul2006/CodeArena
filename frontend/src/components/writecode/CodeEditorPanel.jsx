@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Editor from "@monaco-editor/react";
 import { RotateCcw, Maximize2 } from "lucide-react";
 import ExecutionTerminal from "./ExecutionTerminal";
@@ -28,7 +28,7 @@ export default function CodeEditorPanel({ demoproblem, problem, testCases }) {
       label: "C++",
       value: "cpp",
       codeLines:
-        '// Write your code here\n#include <iostream>\nint main() {\n    std::cout << "Hello, World!" << std::endl;\n    return 0;\n}',
+        '// Write your code here\n#include <iostream>\nusing namespace std;\nint main() {\n    cout << "Hello, World!" << endl;\n    return 0;\n}',
     },
     {
       label: "Go",
@@ -65,6 +65,18 @@ export default function CodeEditorPanel({ demoproblem, problem, testCases }) {
     },
   ];
 
+  const getStarterCodeForLanguage = (language) => {
+    const starterCode = problem?.starterCode?.[language];
+    if (typeof starterCode === "string" && starterCode.trim()) {
+      return starterCode;
+    }
+
+    const fallbackOption = languageOptions.find(
+      (option) => option.value === language,
+    );
+    return fallbackOption?.codeLines ?? "";
+  };
+
   const [executionResult, setExecutionResult] = useState({
     verdict: null,
     message: "Run your code to compare outputs against every testcase.",
@@ -73,11 +85,15 @@ export default function CodeEditorPanel({ demoproblem, problem, testCases }) {
 
   const [isRunning, setIsRunning] = useState(false);
 
-  const [code, setCode] = useState(languageOptions[0].codeLines);
+  const [code, setCode] = useState(() => getStarterCodeForLanguage("python"));
 
   const [selectedLanguage, setSelectedLanguage] = useState("python");
 
   const [isTerminalOpen, setIsTerminalOpen] = useState(true);
+
+  useEffect(() => {
+    setCode(getStarterCodeForLanguage(selectedLanguage));
+  }, [problem, selectedLanguage]);
 
   // Handle code execution
   const handleCodeExecution = async () => {
@@ -111,12 +127,13 @@ export default function CodeEditorPanel({ demoproblem, problem, testCases }) {
             code,
             input: serializedInput,
             language: selectedLanguage,
-          }
+            problem: problem ?? null,
+          },
         );
 
         // Get actual output from backend
         const actualOutput = normalizeOutput(
-          data?.output ?? data?.stderr ?? data?.error
+          data?.output ?? data?.stderr ?? data?.error,
         );
 
         // Check if there was a compilation/runtime/language error
@@ -174,8 +191,7 @@ export default function CodeEditorPanel({ demoproblem, problem, testCases }) {
 
       // Check if ALL test cases passed
       const isAccepted =
-        runs.length > 0 &&
-        runs.every((result) => result.passed);
+        runs.length > 0 && runs.every((result) => result.passed);
 
       setExecutionResult({
         verdict: isAccepted ? "accepted" : "wrong-answer",
@@ -205,12 +221,15 @@ export default function CodeEditorPanel({ demoproblem, problem, testCases }) {
     <div className="relative flex flex-col h-full min-h-0 overflow-hidden">
       {/* Editor Controls Bar */}
       <div className="h-11 border-b border-rose-950/80 bg-[#12080a] px-4 flex items-center justify-between shrink-0">
-
         {/* Select Language */}
         <select
           className="bg-[#1c0d12] hover:bg-rose-950/60 text-xs font-bold px-3 py-1 rounded-xl text-rose-400 border border-rose-950 flex items-center gap-1 transition-colors focus:outline-none focus:border-rose-500 cursor-pointer"
           value={selectedLanguage}
-          onChange={(e) => setSelectedLanguage(e.target.value)}
+          onChange={(e) => {
+            const nextLanguage = e.target.value;
+            setSelectedLanguage(nextLanguage);
+            setCode(getStarterCodeForLanguage(nextLanguage));
+          }}
         >
           {languageOptions.map((option) => (
             <option key={option.value} value={option.value}>
@@ -221,7 +240,6 @@ export default function CodeEditorPanel({ demoproblem, problem, testCases }) {
 
         {/* Buttons */}
         <div className="flex items-center gap-2">
-
           {/* Run Button */}
           <button
             type="button"
@@ -246,10 +264,10 @@ export default function CodeEditorPanel({ demoproblem, problem, testCases }) {
             className="p-1.5 text-gray-400 hover:text-white rounded hover:bg-gray-800/80 transition-colors"
             onClick={() => {
               const selectedOption = languageOptions.find(
-                (option) => option.value === selectedLanguage
+                (option) => option.value === selectedLanguage,
               );
 
-              setCode(selectedOption?.codeLines ?? "");
+              setCode(getStarterCodeForLanguage(selectedLanguage));
             }}
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -288,9 +306,7 @@ export default function CodeEditorPanel({ demoproblem, problem, testCases }) {
       {/* Terminal */}
       <ExecutionTerminal
         isOpen={isTerminalOpen}
-        onToggle={() =>
-          setIsTerminalOpen((current) => !current)
-        }
+        onToggle={() => setIsTerminalOpen((current) => !current)}
         demoproblem={demoproblem}
         problem={problem}
         testCases={testCases}

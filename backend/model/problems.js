@@ -1,7 +1,84 @@
 const mongoose = require("mongoose");
 
+// Parameter Schema
+const parameterSchema = new mongoose.Schema(
+  {
+    type: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+  },
+  { _id: false }
+);
+
+// Function Signature Schema
+const functionSignatureSchema = new mongoose.Schema(
+  {
+    className: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    functionName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    returnType: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    parameters: {
+      type: [parameterSchema],
+      default: [],
+    },
+  },
+  { _id: false }
+);
+
+// Example Schema (Displayed to users)
+const exampleSchema = new mongoose.Schema(
+  {
+    input: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    output: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    explanation: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+  },
+  { _id: false }
+);
+
 const problemSchema = new mongoose.Schema(
   {
+    problemNo: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+
     title: {
       type: String,
       required: true,
@@ -37,24 +114,19 @@ const problemSchema = new mongoose.Schema(
       default: [],
     },
 
-    examples: [
-      {
-        input: {
-          type: String,
-          required: true,
-        },
+    // Display examples
+    examples: {
+      type: [exampleSchema],
+      default: [],
+    },
 
-        output: {
-          type: String,
-          required: true,
-        },
+    // Used by the judge
+    functionSignature: {
+      type: functionSignatureSchema,
+      required: true,
+    },
 
-        explanation: {
-          type: String,
-        },
-      },
-    ],
-
+    // Language templates shown in Monaco editor
     starterCode: {
       type: Map,
       of: String,
@@ -63,18 +135,12 @@ const problemSchema = new mongoose.Schema(
 
     timeLimit: {
       type: Number,
-      default: 2000,
+      default: 2000, // milliseconds
     },
 
     memoryLimit: {
       type: Number,
-      default: 128,
-    },
-
-    problemNo: {
-      type: String,
-      required: true,
-      unique: true,
+      default: 128, // MB
     },
   },
   {
@@ -83,6 +149,4 @@ const problemSchema = new mongoose.Schema(
   }
 );
 
-const Problem = mongoose.model("Problem", problemSchema);
-
-module.exports = Problem;
+module.exports = mongoose.model("Problem", problemSchema);

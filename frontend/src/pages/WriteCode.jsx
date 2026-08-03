@@ -142,13 +142,22 @@ export default function WriteCode() {
 
   const searchParams = useSearchParams()[0];
 
+  // fetch problem with its id
   useEffect(() => {
     try {
       const problemId = searchParams.get("id");
 
       const fetchProblemData = async () => {
-        const response = await fetch(`http://localhost:4000/api/problems/${problemId}`);
+        const response = await fetch(
+          `http://localhost:4000/api/problems/${problemId}`,
+        );
         const data = await response.json();
+
+        if (!response.ok) {
+          console.error(data);
+          return;
+        }
+
         const problemData = data.problem;
         setProblem(problemData);
         setTestCases(data.testCases);
@@ -156,10 +165,8 @@ export default function WriteCode() {
         console.log("Fetched test cases:", data.testCases);
       };
 
-
       fetchProblemData();
-    }
-    catch (error) {
+    } catch (error) {
       console.error("Error fetching problem data:", error);
     }
   }, []);
@@ -178,7 +185,11 @@ export default function WriteCode() {
 
         {/* Right Panel */}
         <div className="relative h-full overflow-hidden bg-[#1c0d12]">
-          <CodeEditorPanel demoproblem={demoproblem} problem={problem} testCases={testCases} />
+          <CodeEditorPanel
+            demoproblem={demoproblem}
+            problem={problem}
+            testCases={testCases}
+          />
         </div>
       </div>
     </div>
