@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require("uuid");
 const { exec } = require("child_process");
 const wrapperCpp = require("../wrappers/CppWrapper");
 const wrapperJS = require("../wrappers/JSWrapper");
-const wrapperPython = require("../wrappers/PyWrapper.js");
+const wrapperPython = require("../wrappers/PyWrapper");
 const wrapperJava = require("../wrappers/JavaWrapper");
 
 const languages = {
