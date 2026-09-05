@@ -8,7 +8,7 @@ import SubmissionHistoryTable from '../components/submissions/SubmissionHistoryT
 
 export default function Submissions() {
   return (
-    <div className="flex min-h-screen bg-[#12080a] text-slate-300 font-sans antialiased">
+    <div className="flex min-h-screen bg-[#e8f3e8] text-[#244333] font-sans antialiased">
       {/* Sidebar - Persistent layout component */}
       <Sidebar />
 

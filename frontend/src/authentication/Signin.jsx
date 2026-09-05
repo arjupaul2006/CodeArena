@@ -88,24 +88,24 @@ const Signin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#12080a] text-slate-300 font-sans antialiased flex flex-col justify-between relative overflow-hidden">
+    <div className="min-h-screen bg-[#e8f3e8] text-[#183226] font-sans antialiased flex flex-col justify-between relative overflow-hidden">
       {/* Dynamic Background Glow Effects */}
-      <div className="absolute top-0 left-1/3 w-96 h-96 bg-rose-600/15 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-0 right-1/3 w-96 h-96 bg-amber-600/15 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute top-0 left-1/3 w-96 h-96 bg-[#3f7d55]/15 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-0 right-1/3 w-96 h-96 bg-[#8eae94]/25 rounded-full blur-[140px] pointer-events-none" />
 
       {/* Top Navbar Header */}
       <header className="w-full max-w-7xl mx-auto px-6 py-6 flex items-center justify-between z-10">
         <Link to="/" className="flex items-center gap-3 group">
-          <div className="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 group-hover:bg-rose-500 group-hover:text-white transition-all shadow-md">
+          <div className="p-2.5 rounded-xl bg-[#c5dfc9] border border-[#a6cbaa] text-[#2f6b45] group-hover:bg-[#3f7d55] group-hover:text-white transition-all shadow-sm">
             <Code2 className="h-6 w-6" />
           </div>
-          <span className="text-xl font-black tracking-tight text-white">
-            Code<span className="text-rose-500">Arena</span>
+          <span className="text-xl font-black tracking-tight text-[#183226]">
+            Code<span className="text-[#3f7d55]">Arena</span>
           </span>
         </Link>
         <Link
           to="/"
-          className="text-xs font-semibold text-slate-400 hover:text-white transition-colors flex items-center gap-1 bg-[#1c0d12] border border-rose-950/80 px-3.5 py-1.5 rounded-xl"
+          className="text-xs font-semibold text-[#547060] hover:text-[#183226] transition-colors flex items-center gap-1 bg-[#f4faf1] border border-[#b7d2bb] px-3.5 py-1.5 rounded-xl shadow-xs"
         >
           Back to Home
         </Link>
@@ -113,21 +113,21 @@ const Signin = () => {
 
       {/* Main Signin Container */}
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 z-10 my-6">
-        <div className="w-full max-w-md bg-[#1c0d12]/90 rounded-3xl border border-rose-950/80 shadow-2xl overflow-hidden backdrop-blur-xl shadow-rose-950/20">
+        <div className="w-full max-w-md bg-[#f4faf1]/95 rounded-3xl border border-[#b7d2bb] shadow-2xl overflow-hidden backdrop-blur-xl shadow-[#9ab99f]/30">
           {/* Signin Form Section */}
           <div className="p-6 sm:p-8 flex flex-col justify-center">
             <div className="mb-6">
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                Sign In to Code<span className="text-rose-500">Arena</span>
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#183226] tracking-tight">
+                Sign In to Code<span className="text-[#3f7d55]">Arena</span>
               </h1>
-              <p className="text-xs sm:text-sm text-slate-400 mt-1">
+              <p className="text-xs sm:text-sm text-[#547060] mt-1">
                 Enter your username to access your workspace and challenges.
               </p>
             </div>
 
             {/* Error Banner */}
             {error && (
-              <div className="mb-5 p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs flex items-start gap-2.5 animate-fadeIn">
+              <div className="mb-5 p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-700 text-xs flex items-start gap-2.5 animate-fadeIn">
                 <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
                 <span>{error}</span>
               </div>
@@ -135,7 +135,7 @@ const Signin = () => {
 
             {/* Success Banner */}
             {success && (
-              <div className="mb-5 p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs flex items-center gap-2.5 animate-fadeIn">
+              <div className="mb-5 p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-800 text-xs flex items-center gap-2.5 animate-fadeIn">
                 <CheckCircle2 className="h-4 w-4 shrink-0" />
                 <span>
                   Authentication successful! Redirecting to Dashboard...
@@ -148,12 +148,12 @@ const Signin = () => {
               <div>
                 <label
                   htmlFor="username"
-                  className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5"
+                  className="block text-xs font-semibold uppercase tracking-wider text-[#547060] mb-1.5"
                 >
-                  Username <span className="text-rose-500">*</span>
+                  Username <span className="text-[#3f7d55]">*</span>
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#668170]">
                     <User className="h-4 w-4" />
                   </div>
                   <input
@@ -163,7 +163,7 @@ const Signin = () => {
                     required
                     onChange={handleChange}
                     placeholder="e.g. dev_coder99"
-                    className="w-full pl-10 pr-4 py-2.5 bg-[#12080a] border border-rose-950/80 rounded-xl text-sm text-white placeholder-slate-600 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 transition-all"
+                    className="w-full pl-10 pr-4 py-2.5 bg-[#ffffff] border border-[#b7d2bb] rounded-xl text-sm text-[#183226] placeholder-[#8eae94] focus:outline-none focus:border-[#3f7d55] focus:ring-1 focus:ring-[#3f7d55] transition-all"
                   />
                 </div>
               </div>
@@ -172,12 +172,12 @@ const Signin = () => {
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5"
+                  className="block text-xs font-semibold uppercase tracking-wider text-[#547060] mb-1.5"
                 >
-                  Email Address <span className="text-rose-500">*</span>
+                  Email Address <span className="text-[#3f7d55]">*</span>
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#668170]">
                     <Mail className="h-4 w-4" />
                   </div>
                   <input
@@ -187,7 +187,7 @@ const Signin = () => {
                     required
                     onChange={handleChange}
                     placeholder="alex@codearena.io"
-                    className="w-full pl-10 pr-4 py-2.5 bg-[#12080a] border border-rose-950/80 rounded-xl text-sm text-white placeholder-slate-600 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 transition-all"
+                    className="w-full pl-10 pr-4 py-2.5 bg-[#ffffff] border border-[#b7d2bb] rounded-xl text-sm text-[#183226] placeholder-[#8eae94] focus:outline-none focus:border-[#3f7d55] focus:ring-1 focus:ring-[#3f7d55] transition-all"
                   />
                 </div>
               </div>
@@ -197,9 +197,9 @@ const Signin = () => {
                 <div className="flex items-center justify-between mb-1.5">
                   <label
                     htmlFor="password"
-                    className="block text-xs font-semibold uppercase tracking-wider text-slate-400"
+                    className="block text-xs font-semibold uppercase tracking-wider text-[#547060]"
                   >
-                    Password <span className="text-rose-500">*</span>
+                    Password <span className="text-[#3f7d55]">*</span>
                   </label>
                   <a
                     href="#forgot"
@@ -207,13 +207,13 @@ const Signin = () => {
                       e.preventDefault();
                       alert("Password reset feature coming soon!");
                     }}
-                    className="text-xs text-rose-400 hover:text-rose-300 font-medium transition-colors"
+                    className="text-xs text-[#2f6b45] hover:text-[#183226] font-medium transition-colors"
                   >
                     Forgot password?
                   </a>
                 </div>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#668170]">
                     <Lock className="h-4 w-4" />
                   </div>
                   <input
@@ -223,12 +223,12 @@ const Signin = () => {
                     required
                     onChange={handleChange}
                     placeholder="••••••••••••"
-                    className="w-full pl-10 pr-10 py-2.5 bg-[#12080a] border border-rose-950/80 rounded-xl text-sm text-white placeholder-slate-600 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 transition-all"
+                    className="w-full pl-10 pr-10 py-2.5 bg-[#ffffff] border border-[#b7d2bb] rounded-xl text-sm text-[#183226] placeholder-[#8eae94] focus:outline-none focus:border-[#3f7d55] focus:ring-1 focus:ring-[#3f7d55] transition-all"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-300 transition-colors cursor-pointer"
+                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#668170] hover:text-[#183226] transition-colors cursor-pointer"
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4" />
@@ -246,9 +246,9 @@ const Signin = () => {
                     type="checkbox"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
-                    className="w-4 h-4 rounded bg-[#12080a] border-rose-950 text-rose-500 focus:ring-rose-500 focus:ring-offset-slate-900"
+                    className="w-4 h-4 rounded bg-[#ffffff] border-[#b7d2bb] text-[#3f7d55] focus:ring-[#3f7d55]"
                   />
-                  <span className="text-xs text-slate-400">
+                  <span className="text-xs text-[#547060]">
                     Remember my username
                   </span>
                 </label>
@@ -258,7 +258,7 @@ const Signin = () => {
               <button
                 type="submit"
                 disabled={isLoading || success}
-                className="w-full mt-2 py-3 px-4 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-bold rounded-xl shadow-lg shadow-rose-950/40 flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-sm"
+                className="w-full mt-2 py-3 px-4 bg-[#3f7d55] hover:bg-[#326844] text-white font-bold rounded-xl shadow-lg shadow-[#8eae94]/40 flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-sm"
               >
                 {isLoading ? (
                   <>
@@ -296,10 +296,10 @@ const Signin = () => {
             {/* Divider */}
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-800" />
+                <div className="w-full border-t border-[#b7d2bb]" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-[#0f1422] px-3 text-gray-500 font-medium">
+                <span className="bg-[#f4faf1] px-3 text-[#668170] font-medium">
                   Or continue with
                 </span>
               </div>
@@ -310,7 +310,7 @@ const Signin = () => {
               <button
                 type="button"
                 onClick={() => alert("GitHub sign-in coming soon!")}
-                className="flex items-center justify-center gap-2 py-2.5 px-4 bg-[#0b0f19] hover:bg-gray-800/80 border border-gray-800 rounded-xl text-xs font-semibold text-gray-300 transition-all cursor-pointer"
+                className="flex items-center justify-center gap-2 py-2.5 px-4 bg-[#ffffff] hover:bg-[#e8f3e8] border border-[#b7d2bb] rounded-xl text-xs font-semibold text-[#244333] transition-all cursor-pointer shadow-xs"
               >
                 <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24">
                   <path
@@ -325,7 +325,7 @@ const Signin = () => {
               <button
                 type="button"
                 onClick={() => alert("Google sign-in coming soon!")}
-                className="flex items-center justify-center gap-2 py-2.5 px-4 bg-[#0b0f19] hover:bg-gray-800/80 border border-gray-800 rounded-xl text-xs font-semibold text-gray-300 transition-all cursor-pointer"
+                className="flex items-center justify-center gap-2 py-2.5 px-4 bg-[#ffffff] hover:bg-[#e8f3e8] border border-[#b7d2bb] rounded-xl text-xs font-semibold text-[#244333] transition-all cursor-pointer shadow-xs"
               >
                 <svg className="h-4 w-4" viewBox="0 0 24 24">
                   <path
@@ -350,7 +350,7 @@ const Signin = () => {
             </div>
 
             {/* Footer Registration Callout */}
-            <p className="mt-8 text-center text-xs text-gray-400">
+            <p className="mt-8 text-center text-xs text-[#547060]">
               Don't have an account yet?{" "}
               <a
                 href="#signup"
@@ -360,7 +360,7 @@ const Signin = () => {
                     "Registration functionality available via username sign in!",
                   );
                 }}
-                className="text-blue-400 font-semibold hover:text-blue-300 transition-colors"
+                className="text-[#2f6b45] font-semibold hover:text-[#183226] transition-colors"
               >
                 Create an account
               </a>
@@ -370,7 +370,7 @@ const Signin = () => {
       </main>
 
       {/* Footer */}
-      <footer className="py-4 text-center text-xs text-gray-600 z-10">
+      <footer className="py-4 text-center text-xs text-[#668170] z-10">
         CodeArena Platform • Enterprise Grade Competitive Coding Environment
       </footer>
     </div>

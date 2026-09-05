@@ -172,19 +172,19 @@ export default function WriteCode() {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen bg-[#12080a] text-slate-300 font-sans antialiased overflow-hidden">
+    <div className="flex flex-col h-screen bg-[#e8f3e8] text-[#244333] font-sans antialiased overflow-hidden">
       {/* Top Application Header */}
       <TopNav />
 
       {/* Main Split Panels */}
       <div className="flex-1 grid grid-cols-1 xl:grid-cols-2 min-h-0 overflow-hidden">
         {/* Left Panel */}
-        <div className="h-full overflow-y-auto border-r border-rose-950/80">
+        <div className="h-full overflow-hidden border-r border-[#b7d2bb]">
           <ProblemDescription demoproblem={demoproblem} problem={problem} />
         </div>
 
         {/* Right Panel */}
-        <div className="relative h-full overflow-hidden bg-[#1c0d12]">
+        <div className="relative h-full overflow-hidden bg-[#dcecdf]">
           <CodeEditorPanel
             demoproblem={demoproblem}
             problem={problem}

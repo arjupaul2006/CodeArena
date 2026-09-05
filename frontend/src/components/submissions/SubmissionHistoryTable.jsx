@@ -10,7 +10,7 @@ const mockSubmissions = [
     runtime: "4 ms",
     memory: "11.2 MB",
     date: "May 22, 2026",
-    color: "text-emerald-400",
+    color: "text-emerald-700",
   },
   {
     verdict: "Accepted",
@@ -19,7 +19,7 @@ const mockSubmissions = [
     runtime: "48 ms",
     memory: "14.1 MB",
     date: "May 20, 2026",
-    color: "text-emerald-400",
+    color: "text-emerald-700",
   },
   {
     verdict: "Wrong Answer",
@@ -28,27 +28,27 @@ const mockSubmissions = [
     runtime: "N/A",
     memory: "N/A",
     date: "May 18, 2026",
-    color: "text-rose-400",
+    color: "text-rose-700",
   },
 ];
 
 export default function SubmissionHistoryTable() {
   return (
-    <div className="bg-[#1c0d12]/90 rounded-2xl border border-rose-950/80 shadow-lg overflow-hidden">
+    <div className="bg-[#f4faf1] rounded-2xl border border-[#b7d2bb] shadow-lg overflow-hidden">
       {/* Filtering toolbar block headers */}
-      <div className="p-4 sm:px-6 border-b border-rose-950/80 bg-[#12080a] flex flex-col sm:flex-row gap-3 justify-between sm:items-center">
-        <h3 className="text-base font-bold text-white tracking-tight">
+      <div className="p-4 sm:px-6 border-b border-[#b7d2bb] bg-[#eef7eb] flex flex-col sm:flex-row gap-3 justify-between sm:items-center">
+        <h3 className="text-base font-bold text-[#183226] tracking-tight">
           Submission History
         </h3>
 
         <div className="flex items-center gap-2 self-end sm:self-auto">
           {/* Dropdown 1 */}
-          <button className="bg-[#12080a] hover:bg-rose-950/40 text-xs font-semibold px-3.5 py-1.5 rounded-xl border border-rose-950 text-slate-300 flex items-center gap-1.5 transition-colors cursor-pointer">
-            All Verdicts <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
+          <button className="bg-[#ffffff] hover:bg-[#dcecdf] text-xs font-semibold px-3.5 py-1.5 rounded-xl border border-[#b7d2bb] text-[#244333] flex items-center gap-1.5 transition-colors cursor-pointer">
+            All Verdicts <ChevronDown className="w-3.5 h-3.5 text-[#668170]" />
           </button>
           {/* Dropdown 2 */}
-          <button className="bg-[#12080a] hover:bg-rose-950/40 text-xs font-semibold px-3.5 py-1.5 rounded-xl border border-rose-950 text-slate-300 flex items-center gap-1.5 transition-colors cursor-pointer">
-            All Languages <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
+          <button className="bg-[#ffffff] hover:bg-[#dcecdf] text-xs font-semibold px-3.5 py-1.5 rounded-xl border border-[#b7d2bb] text-[#244333] flex items-center gap-1.5 transition-colors cursor-pointer">
+            All Languages <ChevronDown className="w-3.5 h-3.5 text-[#668170]" />
           </button>
         </div>
       </div>
@@ -57,7 +57,7 @@ export default function SubmissionHistoryTable() {
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-rose-950 text-[11px] uppercase tracking-wider text-slate-400 font-bold bg-[#12080a]">
+            <tr className="border-b border-[#b7d2bb] text-[11px] uppercase tracking-wider text-[#547060] font-bold bg-[#e8f3e8]">
               <th className="py-3.5 px-6">Verdict</th>
               <th className="py-3.5 px-6">Problem</th>
               <th className="py-3.5 px-6">Language</th>
@@ -66,29 +66,29 @@ export default function SubmissionHistoryTable() {
               <th className="py-3.5 px-6">Date</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-rose-950/60 text-sm font-medium text-slate-300">
+          <tbody className="divide-y divide-[#b7d2bb] text-sm font-medium text-[#244333]">
             {mockSubmissions.length > 0 ? (
               mockSubmissions.map((row, idx) => (
                 <tr
                   key={idx}
-                  className="hover:bg-rose-950/30 transition-colors cursor-pointer"
+                  className="hover:bg-[#eef7eb] transition-colors cursor-pointer"
                 >
                   <td className={`py-4 px-6 font-bold font-mono ${row.color}`}>
                     {row.verdict}
                   </td>
-                  <td className="py-4 px-6 text-white font-semibold hover:text-rose-400 transition-colors">
+                  <td className="py-4 px-6 text-[#183226] font-semibold hover:text-[#2f6b45] transition-colors">
                     {row.problem}
                   </td>
-                  <td className="py-4 px-6 text-slate-400 font-mono text-xs">
+                  <td className="py-4 px-6 text-[#547060] font-mono text-xs">
                     {row.language}
                   </td>
-                  <td className="py-4 px-6 text-slate-400 font-mono text-xs">
+                  <td className="py-4 px-6 text-[#547060] font-mono text-xs">
                     {row.runtime}
                   </td>
-                  <td className="py-4 px-6 text-slate-400 font-mono text-xs">
+                  <td className="py-4 px-6 text-[#547060] font-mono text-xs">
                     {row.memory}
                   </td>
-                  <td className="py-4 px-6 text-slate-500 text-xs">
+                  <td className="py-4 px-6 text-[#668170] text-xs">
                     {row.date}
                   </td>
                 </tr>
@@ -98,7 +98,7 @@ export default function SubmissionHistoryTable() {
               <tr>
                 <td
                   colSpan="6"
-                  className="py-12 text-center text-sm text-slate-500 font-medium"
+                  className="py-12 text-center text-sm text-[#547060] font-medium"
                 >
                   No submissions logged matching current search filters.
                 </td>

@@ -32,7 +32,7 @@ export default function ExecutionTerminal({
 
   return (
     <div
-      className={`absolute inset-x-0 bottom-0 z-20 border-t border-gray-800/80 bg-[#0f1422] shadow-[0_-20px_40px_rgba(0,0,0,0.35)] transition-transform duration-300 ease-out ${
+      className={`absolute inset-x-0 bottom-0 z-20 border-t border-[#b7d2bb] bg-[#f4faf1] shadow-[0_-20px_40px_rgba(49,92,61,0.15)] transition-transform duration-300 ease-out ${
         isOpen ? "translate-y-0" : "translate-y-[calc(100%-3.25rem)]"
       }`}
     >
@@ -40,7 +40,7 @@ export default function ExecutionTerminal({
       <button
         type="button"
         onClick={onToggle}
-        className="h-12 w-full px-4 border-b border-gray-800/60 bg-[#131929]/85 flex items-center justify-between text-xs font-bold text-gray-200 hover:text-white transition-colors"
+        className="h-12 w-full px-4 border-b border-[#b7d2bb] bg-[#e8f3e8] flex items-center justify-between text-xs font-bold text-[#244333] hover:text-[#183226] transition-colors"
       >
         <span className="flex items-center gap-2">
           <Terminal className="w-3.5 h-3.5" />
@@ -51,23 +51,23 @@ export default function ExecutionTerminal({
         />
       </button>
 
-      <div className="max-h-[38vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
-        <div className="px-4 pt-3 pb-2 border-b border-gray-800/60 bg-[#101624]">
-          <div className="flex items-center justify-between gap-3 text-[11px] font-semibold text-gray-400 mb-3">
+      <div className="max-h-[38vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[#a6cbaa] scrollbar-track-transparent">
+        <div className="px-4 pt-3 pb-2 border-b border-[#b7d2bb] bg-[#eef7eb]">
+          <div className="flex items-center justify-between gap-3 text-[11px] font-semibold text-[#547060] mb-3">
             <span className="flex items-center gap-2">
               <span
                 className={`inline-flex h-1.5 w-1.5 rounded-full ${
                   verdict === "accepted"
-                    ? "bg-emerald-400"
+                    ? "bg-emerald-600"
                     : verdict === "wrong-answer"
-                      ? "bg-red-400"
-                      : "bg-gray-500"
+                      ? "bg-rose-600"
+                      : "bg-[#668170]"
                 }`}
               />
               {output?.message ?? "Run your code to see test results."}
             </span>
             {runs.length > 0 ? (
-              <span className="text-gray-500">
+              <span className="text-[#668170]">
                 {runs.filter((result) => result.passed).length}/{runs.length}{" "}
                 passed
               </span>
@@ -79,10 +79,10 @@ export default function ExecutionTerminal({
             <button
               type="button"
               onClick={() => setActiveTab("testcase")}
-              className={`h-9 px-3 rounded-t-md border-b-2 transition-colors ${
+              className={`h-9 px-3.5 rounded-t-lg border-b-2 transition-colors cursor-pointer ${
                 activeTab === "testcase"
-                  ? "text-white border-blue-500 bg-[#131929]/80"
-                  : "text-gray-400 border-transparent hover:text-white hover:bg-[#131929]/50"
+                  ? "text-[#183226] border-[#3f7d55] bg-[#ffffff] font-bold shadow-xs"
+                  : "text-[#547060] border-transparent hover:text-[#183226] hover:bg-[#dcecdf]"
               }`}
             >
               Testcase
@@ -90,10 +90,10 @@ export default function ExecutionTerminal({
             <button
               type="button"
               onClick={() => setActiveTab("result")}
-              className={`h-9 px-3 rounded-t-md border-b-2 transition-colors ${
+              className={`h-9 px-3.5 rounded-t-lg border-b-2 transition-colors cursor-pointer ${
                 activeTab === "result"
-                  ? "text-white border-blue-500 bg-[#131929]/80"
-                  : "text-gray-400 border-transparent hover:text-white hover:bg-[#131929]/50"
+                  ? "text-[#183226] border-[#3f7d55] bg-[#ffffff] font-bold shadow-xs"
+                  : "text-[#547060] border-transparent hover:text-[#183226] hover:bg-[#dcecdf]"
               }`}
             >
               Result
@@ -101,10 +101,10 @@ export default function ExecutionTerminal({
             <button
               type="button"
               onClick={() => setActiveTab("error")}
-              className={`h-9 px-3 rounded-t-md border-b-2 transition-colors ${
+              className={`h-9 px-3.5 rounded-t-lg border-b-2 transition-colors cursor-pointer ${
                 activeTab === "error"
-                  ? "text-white border-blue-500 bg-[#131929]/80"
-                  : "text-gray-400 border-transparent hover:text-white hover:bg-[#131929]/50"
+                  ? "text-[#183226] border-[#3f7d55] bg-[#ffffff] font-bold shadow-xs"
+                  : "text-[#547060] border-transparent hover:text-[#183226] hover:bg-[#dcecdf]"
               }`}
             >
               Error
@@ -119,10 +119,10 @@ export default function ExecutionTerminal({
             {verdict ? (
               <div
                 className={`flex items-center gap-2 text-xs font-bold ${
-                  verdict === "accepted" ? "text-emerald-400" : "text-red-400"
+                  verdict === "accepted" ? "text-emerald-700" : "text-rose-700"
                 }`}
               >
-                <CheckCircle className="w-4 h-4 fill-emerald-500/10" />
+                <CheckCircle className="w-4 h-4 fill-emerald-500/20" />
 
                 <span>
                   {verdict === "accepted" ? "Accepted" : "Wrong Answer"}
@@ -139,15 +139,15 @@ export default function ExecutionTerminal({
                 return (
                   <div
                     key={caseId}
-                    className="p-3 bg-[#131929]/55 border border-gray-800/70 rounded-xl space-y-2 font-mono text-xs"
+                    className="p-3 bg-[#ffffff] border border-[#b7d2bb] rounded-xl space-y-2 font-mono text-xs shadow-xs"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-300 font-bold block">
+                      <span className="text-[#183226] font-bold block">
                         Case {caseId}
                       </span>
 
                       {caseData.isSample && (
-                        <span className="text-[10px] text-blue-400">
+                        <span className="text-[10px] text-[#3f7d55] font-semibold bg-[#e8f3e8] px-2 py-0.5 rounded border border-[#b7d2bb]">
                           Sample
                         </span>
                       )}
@@ -156,17 +156,17 @@ export default function ExecutionTerminal({
                     <div className="space-y-1.5 text-[11px]">
                       {/* Input */}
                       <div>
-                        <span className="text-gray-500">Input:</span>
+                        <span className="text-[#668170]">Input:</span>
 
-                        <pre className="mt-1 text-gray-200 font-semibold whitespace-pre-wrap bg-[#0f1422] p-2 rounded-md">
+                        <pre className="mt-1 text-[#183226] font-semibold whitespace-pre-wrap bg-[#e8f3e8] border border-[#b7d2bb] p-2 rounded-md">
                           {caseData.input}
                         </pre>
                       </div>
 
                       {/* Expected Output */}
                       <div>
-                        <span className="text-gray-500">Output:</span>{" "}
-                        <span className="text-emerald-400 font-semibold">
+                        <span className="text-[#668170]">Output:</span>{" "}
+                        <span className="text-emerald-800 font-semibold">
                           {caseData.expectedOutput}
                         </span>
                       </div>
@@ -174,12 +174,12 @@ export default function ExecutionTerminal({
                       {/* Actual Output */}
                       {result ? (
                         <div>
-                          <span className="text-gray-500">Actual:</span>{" "}
+                          <span className="text-[#668170]">Actual:</span>{" "}
                           <span
                             className={`font-semibold ${
                               result.passed
-                                ? "text-emerald-400"
-                                : "text-red-400"
+                                ? "text-emerald-800"
+                                : "text-rose-700"
                             }`}
                           >
                             {result.actualOutput || "No output"}
@@ -197,7 +197,7 @@ export default function ExecutionTerminal({
         {/* Result Tab Content */}
         {activeTab === "result" && (
           <div className="p-4 space-y-3">
-            <div className="text-xs text-gray-400 font-medium">
+            <div className="text-xs text-[#547060] font-medium">
               {output?.message ??
                 "Results will appear here after running the code."}
             </div>
@@ -206,24 +206,24 @@ export default function ExecutionTerminal({
                 {runs.map((result) => (
                   <div
                     key={result.id}
-                    className="p-3 rounded-xl border border-gray-800 bg-[#131929]/30"
+                    className="p-3 rounded-xl border border-[#b7d2bb] bg-[#ffffff] shadow-xs"
                   >
                     <div className="flex items-center justify-between gap-3 mb-2">
-                      <span className="font-bold text-gray-200">
+                      <span className="font-bold text-[#183226]">
                         Case {result.id}
                       </span>
                       <span
-                        className={`text-[10px] uppercase tracking-wider font-semibold ${
-                          result.passed ? "text-emerald-400" : "text-red-400"
+                        className={`text-[10px] uppercase tracking-wider font-bold ${
+                          result.passed ? "text-emerald-800" : "text-rose-700"
                         }`}
                       >
                         {result.passed ? "Accepted" : "Wrong Answer"}
                       </span>
                     </div>
-                    <div className="space-y-1 text-gray-400">
+                    <div className="space-y-1 text-[#547060]">
                       <div>
                         Expected:{" "}
-                        <span className="text-gray-200">
+                        <span className="text-[#183226]">
                           {result.expectedOutput}
                         </span>
                       </div>
@@ -231,7 +231,7 @@ export default function ExecutionTerminal({
                         Actual:{" "}
                         <span
                           className={
-                            result.passed ? "text-emerald-400" : "text-red-400"
+                            result.passed ? "text-emerald-800" : "text-rose-700"
                           }
                         >
                           {result.actualOutput}
@@ -240,7 +240,7 @@ export default function ExecutionTerminal({
                       {result.runtime ? (
                         <div>
                           Runtime:{" "}
-                          <span className="text-gray-200">
+                          <span className="text-[#183226]">
                             {result.runtime}
                           </span>
                         </div>
@@ -248,7 +248,7 @@ export default function ExecutionTerminal({
                       {result.memory ? (
                         <div>
                           Memory:{" "}
-                          <span className="text-gray-200">{result.memory}</span>
+                          <span className="text-[#183226]">{result.memory}</span>
                         </div>
                       ) : null}
                     </div>
@@ -256,7 +256,7 @@ export default function ExecutionTerminal({
                 ))}
               </div>
             ) : (
-              <div className="p-3 rounded-xl border border-dashed border-gray-700 bg-[#131929]/30 text-xs text-gray-500">
+              <div className="p-3 rounded-xl border border-dashed border-[#b7d2bb] bg-[#ffffff] text-xs text-[#668170]">
                 No output yet.
               </div>
             )}
@@ -267,14 +267,14 @@ export default function ExecutionTerminal({
         {activeTab === "error" && (
           <div className="p-4 space-y-3">
             {verdict === "wrong-answer" ? (
-              <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-300">
+              <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-3.5 py-2.5 text-xs text-rose-800 font-medium">
                 {sharedErrorMessage ??
                   languageErrorMessage ??
                   output?.message ??
                   "Wrong answer: one or more testcases failed."}
               </div>
             ) : (
-              <div className="text-xs text-gray-500 font-medium">
+              <div className="text-xs text-[#668170] font-medium">
                 No error message available.
               </div>
             )}

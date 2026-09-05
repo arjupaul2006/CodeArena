@@ -65,18 +65,6 @@ export default function CodeEditorPanel({ demoproblem, problem, testCases }) {
     },
   ];
 
-  const getStarterCodeForLanguage = (language) => {
-    const starterCode = problem?.starterCode?.[language];
-    if (typeof starterCode === "string" && starterCode.trim()) {
-      return starterCode;
-    }
-
-    const fallbackOption = languageOptions.find(
-      (option) => option.value === language,
-    );
-    return fallbackOption?.codeLines ?? "";
-  };
-
   const [executionResult, setExecutionResult] = useState({
     verdict: null,
     message: "Run your code to compare outputs against every testcase.",
@@ -85,20 +73,19 @@ export default function CodeEditorPanel({ demoproblem, problem, testCases }) {
 
   const [isRunning, setIsRunning] = useState(false);
 
-  const [code, setCode] = useState(() => getStarterCodeForLanguage("python"));
+  const [code, setCode] = useState('');
 
   const [selectedLanguage, setSelectedLanguage] = useState("python");
 
   const [isTerminalOpen, setIsTerminalOpen] = useState(true);
 
   useEffect(() => {
-    setCode(getStarterCodeForLanguage(selectedLanguage));
+    setCode(languageOptions.find((option) => option.value === selectedLanguage)?.codeLines ?? "");
   }, [problem, selectedLanguage]);
 
   // Handle code execution
   const handleCodeExecution = async () => {
-    // New test case structure:
-    // problem.test_cases
+    // if there are no test cases, we cannot run the code
     if (!testCases?.length) {
       setExecutionResult({
         verdict: "wrong-answer",
@@ -220,15 +207,15 @@ export default function CodeEditorPanel({ demoproblem, problem, testCases }) {
   return (
     <div className="relative flex flex-col h-full min-h-0 overflow-hidden">
       {/* Editor Controls Bar */}
-      <div className="h-11 border-b border-rose-950/80 bg-[#12080a] px-4 flex items-center justify-between shrink-0">
+      <div className="h-11 border-b border-[#b7d2bb] bg-[#eef7eb] px-4 flex items-center justify-between shrink-0">
         {/* Select Language */}
         <select
-          className="bg-[#1c0d12] hover:bg-rose-950/60 text-xs font-bold px-3 py-1 rounded-xl text-rose-400 border border-rose-950 flex items-center gap-1 transition-colors focus:outline-none focus:border-rose-500 cursor-pointer"
+          className="bg-[#ffffff] hover:bg-[#e8f3e8] text-xs font-bold px-3 py-1 rounded-xl text-[#183226] border border-[#b7d2bb] flex items-center gap-1 transition-colors focus:outline-none focus:border-[#3f7d55] cursor-pointer"
           value={selectedLanguage}
           onChange={(e) => {
             const nextLanguage = e.target.value;
             setSelectedLanguage(nextLanguage);
-            setCode(getStarterCodeForLanguage(nextLanguage));
+            setCode(languageOptions.find((option) => option.value === nextLanguage)?.codeLines ?? "");
           }}
         >
           {languageOptions.map((option) => (
@@ -243,7 +230,7 @@ export default function CodeEditorPanel({ demoproblem, problem, testCases }) {
           {/* Run Button */}
           <button
             type="button"
-            className="px-3.5 py-1 text-xs font-bold rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-colors disabled:opacity-50 cursor-pointer shadow-sm shadow-emerald-950"
+            className="px-3.5 py-1 text-xs font-bold rounded-xl bg-[#3f7d55] hover:bg-[#326844] text-white transition-colors disabled:opacity-50 cursor-pointer shadow-sm shadow-[#8eae94]/40"
             onClick={handleCodeExecution}
             disabled={isRunning}
           >
@@ -253,7 +240,7 @@ export default function CodeEditorPanel({ demoproblem, problem, testCases }) {
           {/* Submit Button */}
           <button
             type="button"
-            className="px-3.5 py-1 text-xs font-bold rounded-xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white transition-colors cursor-pointer shadow-sm shadow-rose-950"
+            className="px-3.5 py-1 text-xs font-bold rounded-xl bg-[#2f6b45] hover:bg-[#244333] text-white transition-colors cursor-pointer shadow-sm shadow-[#8eae94]/40"
           >
             Submit
           </button>
@@ -261,13 +248,9 @@ export default function CodeEditorPanel({ demoproblem, problem, testCases }) {
           {/* Reset Button */}
           <button
             type="button"
-            className="p-1.5 text-gray-400 hover:text-white rounded hover:bg-gray-800/80 transition-colors"
+            className="p-1.5 text-[#547060] hover:text-[#183226] rounded hover:bg-[#dcecdf] transition-colors cursor-pointer"
             onClick={() => {
-              const selectedOption = languageOptions.find(
-                (option) => option.value === selectedLanguage,
-              );
-
-              setCode(getStarterCodeForLanguage(selectedLanguage));
+              setCode(languageOptions.find((option) => option.value === selectedLanguage)?.codeLines ?? "");
             }}
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -276,7 +259,7 @@ export default function CodeEditorPanel({ demoproblem, problem, testCases }) {
           {/* Maximize Button */}
           <button
             type="button"
-            className="p-1.5 text-gray-400 hover:text-white rounded hover:bg-gray-800/80 transition-colors"
+            className="p-1.5 text-[#547060] hover:text-[#183226] rounded hover:bg-[#dcecdf] transition-colors cursor-pointer"
           >
             <Maximize2 className="w-3.5 h-3.5" />
           </button>
@@ -289,7 +272,7 @@ export default function CodeEditorPanel({ demoproblem, problem, testCases }) {
           height="90%"
           language={selectedLanguage}
           value={code}
-          theme="vs-dark"
+          theme="vs"
           options={{
             minimap: {
               enabled: false,

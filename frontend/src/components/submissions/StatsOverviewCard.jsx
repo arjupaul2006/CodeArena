@@ -2,7 +2,7 @@ import React from "react";
 
 export default function StatsOverviewCard() {
   return (
-    <div className="bg-[#1c0d12]/90 rounded-2xl border border-rose-950/80 p-6 flex flex-col md:flex-row items-center justify-around gap-8 h-full shadow-lg">
+    <div className="bg-[#f4faf1] rounded-2xl border border-[#b7d2bb] p-6 flex flex-col md:flex-row items-center justify-around gap-8 h-full shadow-lg">
       {/* Circular Chart Gauge Visual */}
       <div className="flex flex-col items-center justify-center text-center space-y-2 shrink-0">
         <div className="relative w-36 h-36 flex items-center justify-center">
@@ -15,7 +15,7 @@ export default function StatsOverviewCard() {
               cx="50"
               cy="50"
               r="40"
-              stroke="#2b141a"
+              stroke="#d5e7d7"
               strokeWidth="8"
               fill="transparent"
             />
@@ -23,7 +23,7 @@ export default function StatsOverviewCard() {
               cx="50"
               cy="50"
               r="40"
-              stroke="#f43f5e"
+              stroke="#3f7d55"
               strokeWidth="8"
               fill="transparent"
               strokeDasharray="251.2"
@@ -32,15 +32,15 @@ export default function StatsOverviewCard() {
             />
           </svg>
           <div className="flex flex-col items-center justify-center">
-            <span className="text-3xl font-black text-white font-mono tracking-tight">
+            <span className="text-3xl font-black text-[#183226] font-mono tracking-tight">
               542
             </span>
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+            <span className="text-[10px] font-bold text-[#668170] uppercase tracking-widest">
               Solved
             </span>
           </div>
         </div>
-        <span className="text-xs font-semibold text-slate-400">
+        <span className="text-xs font-semibold text-[#547060]">
           Top 4.2% of all users
         </span>
       </div>
@@ -52,22 +52,22 @@ export default function StatsOverviewCard() {
             label: "Easy",
             count: "312/400",
             pct: "78%",
-            barColor: "bg-emerald-400",
-            labelColor: "text-emerald-400",
+            barColor: "bg-emerald-600",
+            labelColor: "text-emerald-800",
           },
           {
             label: "Medium",
             count: "198/550",
             pct: "36%",
-            barColor: "bg-amber-400",
-            labelColor: "text-amber-400",
+            barColor: "bg-amber-500",
+            labelColor: "text-amber-800",
           },
           {
             label: "Hard",
             count: "32/200",
             pct: "16%",
             barColor: "bg-rose-500",
-            labelColor: "text-rose-400",
+            labelColor: "text-rose-800",
           },
         ].map((item, idx) => (
           <div key={idx} className="space-y-1.5">
@@ -75,9 +75,9 @@ export default function StatsOverviewCard() {
               <span className={`uppercase tracking-wider ${item.labelColor}`}>
                 {item.label}
               </span>
-              <span className="text-slate-300 font-mono">{item.count}</span>
+              <span className="text-[#183226] font-mono">{item.count}</span>
             </div>
-            <div className="w-full bg-[#12080a] h-2 rounded-full overflow-hidden border border-rose-950/40">
+            <div className="w-full bg-[#e8f3e8] h-2 rounded-full overflow-hidden border border-[#b7d2bb]">
               <div
                 className={`h-full ${item.barColor} rounded-full transition-all duration-500`}
                 style={{ width: item.pct }}

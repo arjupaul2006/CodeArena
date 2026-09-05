@@ -47,29 +47,6 @@ module.exports.executeCode = async (req, res) => {
   try {
     const { code, input, language, problem } = req.body;
 
-    // code after wrapping
-    let finalCode;
-    switch (language) {
-      case "cpp":
-        finalCode = wrapperCpp(code, problem);
-        break;
-      case "javascript":
-        finalCode = wrapperJS(code, problem);
-        break;
-      case "python":
-        finalCode = wrapperPython(code, problem);
-        break;
-      case "java":
-        finalCode = wrapperJava(code, problem);
-        break;
-      default:
-        return res.status(400).json({
-          success: false,
-          error: "Unsupported language",
-        });
-    }
-
-    console.log("Final code after wrapping:", finalCode);
 
     // if the language is not supported, return an error
     if (!languages[language]) {
@@ -87,7 +64,7 @@ module.exports.executeCode = async (req, res) => {
 
     fs.mkdirSync(folderPath, { recursive: true });
 
-    fs.writeFileSync(path.join(folderPath, config.filename), finalCode);
+    fs.writeFileSync(path.join(folderPath, config.filename), code);
 
     fs.writeFileSync(path.join(folderPath, "input.txt"), input || "");
 

@@ -77,25 +77,25 @@ export default function ProblemTable() {
     switch (diff) {
       case 'easy':
         return (
-          <span className="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.15)]">
+          <span className="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-500/15 text-emerald-800 border border-emerald-500/30">
             Easy
           </span>
         );
       case 'medium':
         return (
-          <span className="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30 shadow-[0_0_10px_rgba(245,158,11,0.15)]">
+          <span className="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-500/15 text-amber-800 border border-amber-500/30">
             Medium
           </span>
         );
       case 'hard':
         return (
-          <span className="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full bg-rose-500/15 text-rose-400 border border-rose-500/30 shadow-[0_0_10px_rgba(244,63,94,0.15)]">
+          <span className="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full bg-rose-500/15 text-rose-800 border border-rose-500/30">
             Hard
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full bg-gray-800 text-gray-300 border border-gray-700">
+          <span className="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full bg-[#dcecdf] text-[#244333] border border-[#b7d2bb]">
             {difficulty || 'Unknown'}
           </span>
         );
@@ -103,13 +103,13 @@ export default function ProblemTable() {
   };
 
   return (
-    <div className="bg-[#1c0d12]/90 backdrop-blur-md rounded-2xl border border-rose-950/80 overflow-hidden shadow-2xl shadow-black/50">
+    <div className="bg-[#f4faf1] backdrop-blur-md rounded-2xl border border-[#b7d2bb] overflow-hidden shadow-xl">
       {/* Table Header Controls / Toolbar */}
-      <div className="p-4 sm:p-5 border-b border-rose-950/80 bg-[#12080a] flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div className="p-4 sm:p-5 border-b border-[#b7d2bb] bg-[#eef7eb] flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 
         {/* Search Input */}
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#668170]" />
           <input
             type="text"
             placeholder="Search by title, tag, or #..."
@@ -118,14 +118,14 @@ export default function ProblemTable() {
               setSearchQuery(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full bg-[#12080a] text-slate-200 placeholder-slate-500 text-xs sm:text-sm pl-10 pr-4 py-2 rounded-xl border border-rose-950 focus:outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 transition-all"
+            className="w-full bg-[#ffffff] text-[#183226] placeholder-[#7da188] text-xs sm:text-sm pl-10 pr-4 py-2 rounded-xl border border-[#b7d2bb] focus:outline-none focus:border-[#3f7d55] focus:ring-1 focus:ring-[#3f7d55] transition-all"
           />
         </div>
 
         {/* Filters and Actions */}
         <div className="flex flex-wrap items-center gap-2.5">
           {/* Difficulty Filter */}
-          <div className="flex items-center bg-[#12080a] p-1 rounded-xl border border-rose-950 text-xs">
+          <div className="flex items-center bg-[#ffffff] p-1 rounded-xl border border-[#b7d2bb] text-xs">
             {['All', 'Easy', 'Medium', 'Hard'].map((diff) => (
               <button
                 key={diff}
@@ -134,8 +134,8 @@ export default function ProblemTable() {
                   setCurrentPage(1);
                 }}
                 className={`px-3 py-1.5 rounded-lg font-medium transition-all duration-150 cursor-pointer ${selectedDifficulty === diff
-                    ? 'bg-rose-600 text-white font-bold shadow-md shadow-rose-950/40'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-rose-950/40'
+                    ? 'bg-[#3f7d55] text-white font-bold shadow-md shadow-[#8eae94]/40'
+                    : 'text-[#547060] hover:text-[#183226] hover:bg-[#e8f3e8]'
                   }`}
               >
                 {diff}
@@ -146,7 +146,7 @@ export default function ProblemTable() {
           {/* Random Pick Button */}
           <button
             onClick={handlePickRandom}
-            className="flex items-center gap-1.5 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-lg shadow-rose-950/30 transition-all duration-200 active:scale-95 cursor-pointer"
+            className="flex items-center gap-1.5 bg-[#3f7d55] hover:bg-[#326844] text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md shadow-[#8eae94]/30 transition-all duration-200 active:scale-95 cursor-pointer"
           >
             <Shuffle className="h-3.5 w-3.5" />
             <span>Random</span>
@@ -155,14 +155,14 @@ export default function ProblemTable() {
       </div>
 
       {/* Info Bar */}
-      <div className="px-5 py-2.5 bg-[#12080a]/60 border-b border-rose-950/60 flex items-center justify-between text-xs text-slate-400">
+      <div className="px-5 py-2.5 bg-[#e8f3e8] border-b border-[#b7d2bb] flex items-center justify-between text-xs text-[#547060]">
         <span className="font-medium">
-          Showing <span className="text-slate-200 font-semibold">{filteredProblems.length}</span> problems
+          Showing <span className="text-[#183226] font-semibold">{filteredProblems.length}</span> problems
         </span>
         {searchQuery && (
           <button
             onClick={() => setSearchQuery('')}
-            className="text-rose-400 hover:text-rose-300 text-xs font-semibold transition-colors cursor-pointer"
+            className="text-[#2f6b45] hover:text-[#183226] text-xs font-semibold transition-colors cursor-pointer"
           >
             Clear Search
           </button>
@@ -173,30 +173,30 @@ export default function ProblemTable() {
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-rose-950/80 text-[11px] uppercase tracking-wider text-slate-400 bg-[#12080a]">
-              <th className="py-3.5 px-4 w-12 text-center font-semibold">Status</th>
-              <th className="py-3.5 px-4 font-semibold">Title</th>
-              <th className="py-3.5 px-4 w-32 font-semibold">Difficulty</th>
-              <th className="py-3.5 px-4 hidden lg:table-cell font-semibold">Tags</th>
-              <th className="py-3.5 px-4 w-16 text-center font-semibold">Action</th>
+            <tr className="border-b border-[#b7d2bb] text-[11px] uppercase tracking-wider text-[#547060] bg-[#e8f3e8]">
+              <th className="py-3.5 px-4 w-12 text-center font-bold">Status</th>
+              <th className="py-3.5 px-4 font-bold">Title</th>
+              <th className="py-3.5 px-4 w-32 font-bold">Difficulty</th>
+              <th className="py-3.5 px-4 hidden lg:table-cell font-bold">Tags</th>
+              <th className="py-3.5 px-4 w-16 text-center font-bold">Action</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-rose-950/60 text-sm">
+          <tbody className="divide-y divide-[#b7d2bb] text-sm">
             {loading ? (
               // Loading Skeleton
               [...Array(5)].map((_, i) => (
                 <tr key={i} className="animate-pulse">
-                  <td className="py-4 px-4 text-center"><div className="h-4 w-4 bg-rose-950/40 rounded-full mx-auto" /></td>
-                  <td className="py-4 px-4"><div className="h-4 w-48 bg-rose-950/40 rounded" /></td>
-                  <td className="py-4 px-4"><div className="h-5 w-16 bg-rose-950/40 rounded-full" /></td>
-                  <td className="py-4 px-4 hidden lg:table-cell"><div className="h-4 w-32 bg-rose-950/40 rounded" /></td>
-                  <td className="py-4 px-4 text-center"><div className="h-4 w-6 bg-rose-950/40 rounded mx-auto" /></td>
+                  <td className="py-4 px-4 text-center"><div className="h-4 w-4 bg-[#c5dfc9] rounded-full mx-auto" /></td>
+                  <td className="py-4 px-4"><div className="h-4 w-48 bg-[#c5dfc9] rounded" /></td>
+                  <td className="py-4 px-4"><div className="h-5 w-16 bg-[#c5dfc9] rounded-full" /></td>
+                  <td className="py-4 px-4 hidden lg:table-cell"><div className="h-4 w-32 bg-[#c5dfc9] rounded" /></td>
+                  <td className="py-4 px-4 text-center"><div className="h-4 w-6 bg-[#c5dfc9] rounded mx-auto" /></td>
                 </tr>
               ))
             ) : displayedProblems.length === 0 ? (
               // Empty State
               <tr>
-                <td colSpan="5" className="py-12 text-center text-slate-400">
+                <td colSpan="5" className="py-12 text-center text-[#547060]">
                   No problems found matching your criteria.
                 </td>
               </tr>
@@ -208,20 +208,20 @@ export default function ProblemTable() {
                   <tr
                     key={prob._id || index}
                     onClick={() => navigate(`/write-code?id=${prob._id || prob.slug || probId}`)}
-                    className="hover:bg-rose-950/30 transition-all duration-150 group cursor-pointer border-l-2 border-l-transparent hover:border-l-rose-500"
+                    className="hover:bg-[#eef7eb] transition-all duration-150 group cursor-pointer border-l-2 border-l-transparent hover:border-l-[#3f7d55]"
                   >
                     {/* Status Icon */}
                     <td className="py-3.5 px-4 text-center">
                       {prob.status === 'solved' ? (
-                        <CheckCircle2 className="h-4 w-4 text-emerald-400 inline drop-shadow-[0_0_8px_rgba(52,211,153,0.4)]" />
+                        <CheckCircle2 className="h-4 w-4 text-emerald-600 inline" />
                       ) : (
-                        <Circle className="h-4 w-4 text-slate-600 inline group-hover:text-slate-400 transition-colors" />
+                        <Circle className="h-4 w-4 text-[#8eae94] inline group-hover:text-[#3f7d55] transition-colors" />
                       )}
                     </td>
 
                     {/* Title */}
-                    <td className="py-3.5 px-4 font-medium text-slate-200 group-hover:text-rose-400 transition-colors">
-                      <span className="text-slate-500 font-mono text-xs mr-2">#{probId}</span>
+                    <td className="py-3.5 px-4 font-medium text-[#183226] group-hover:text-[#2f6b45] transition-colors">
+                      <span className="text-[#668170] font-mono text-xs mr-2">#{probId}</span>
                       <span className="font-semibold">{prob.title}</span>
                     </td>
 
@@ -236,7 +236,7 @@ export default function ProblemTable() {
                         {prob.tags && prob.tags.map((tag, i) => (
                           <span
                             key={i}
-                            className="bg-[#12080a] hover:bg-rose-950/40 text-slate-300 text-[11px] font-medium px-2.5 py-0.5 rounded-full border border-rose-950 transition-colors"
+                            className="bg-[#e8f3e8] hover:bg-[#dcecdf] text-[#2f6b45] text-[11px] font-semibold px-2.5 py-0.5 rounded-full border border-[#b7d2bb] transition-colors"
                           >
                             {tag}
                           </span>
@@ -246,7 +246,7 @@ export default function ProblemTable() {
 
                     {/* Action Arrow */}
                     <td className="py-3.5 px-4 text-center">
-                      <div className="flex justify-center items-center text-slate-500 group-hover:text-rose-400 group-hover:translate-x-1 transition-all">
+                      <div className="flex justify-center items-center text-[#668170] group-hover:text-[#3f7d55] group-hover:translate-x-1 transition-all">
                         <ArrowRight className="h-4 w-4" />
                       </div>
                     </td>
@@ -259,17 +259,17 @@ export default function ProblemTable() {
       </div>
 
       {/* Pagination Footer */}
-      <div className="p-4 sm:px-6 border-t border-rose-950/80 bg-[#12080a] flex flex-col sm:flex-row gap-3 justify-between items-center text-xs text-slate-400">
+      <div className="p-4 sm:px-6 border-t border-[#b7d2bb] bg-[#eef7eb] flex flex-col sm:flex-row gap-3 justify-between items-center text-xs text-[#547060]">
         <div>
-          Page <span className="text-slate-200 font-semibold">{currentPage}</span> of{' '}
-          <span className="text-slate-200 font-semibold">{totalPages}</span>
+          Page <span className="text-[#183226] font-semibold">{currentPage}</span> of{' '}
+          <span className="text-[#183226] font-semibold">{totalPages}</span>
         </div>
 
         <div className="flex items-center gap-1.5">
           <button
             onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
             disabled={currentPage === 1}
-            className="p-1.5 rounded-lg bg-[#12080a] hover:bg-rose-950/50 text-slate-300 disabled:opacity-40 disabled:hover:bg-[#12080a] transition-colors cursor-pointer border border-rose-950"
+            className="p-1.5 rounded-lg bg-[#ffffff] hover:bg-[#dcecdf] text-[#244333] disabled:opacity-40 disabled:hover:bg-[#ffffff] transition-colors cursor-pointer border border-[#b7d2bb]"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
@@ -284,7 +284,7 @@ export default function ProblemTable() {
               Math.abs(pageNum - currentPage) > 1
             ) {
               if (Math.abs(pageNum - currentPage) === 2) {
-                return <span key={pageNum} className="px-1 text-slate-600">...</span>;
+                return <span key={pageNum} className="px-1 text-[#668170]">...</span>;
               }
               return null;
             }
@@ -294,8 +294,8 @@ export default function ProblemTable() {
                 key={pageNum}
                 onClick={() => setCurrentPage(pageNum)}
                 className={`w-7 h-7 rounded-lg text-xs font-semibold transition-all cursor-pointer ${currentPage === pageNum
-                    ? 'bg-rose-600 text-white font-bold shadow-md shadow-rose-950/40'
-                    : 'text-slate-400 hover:bg-rose-950/50 hover:text-slate-200'
+                    ? 'bg-[#3f7d55] text-white font-bold shadow-md shadow-[#8eae94]/40'
+                    : 'text-[#547060] hover:bg-[#dcecdf] hover:text-[#183226]'
                   }`}
               >
                 {pageNum}
@@ -306,7 +306,7 @@ export default function ProblemTable() {
           <button
             onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
             disabled={currentPage === totalPages}
-            className="p-1.5 rounded-lg bg-[#12080a] hover:bg-rose-950/50 text-slate-300 disabled:opacity-40 disabled:hover:bg-[#12080a] transition-colors cursor-pointer border border-rose-950"
+            className="p-1.5 rounded-lg bg-[#ffffff] hover:bg-[#dcecdf] text-[#244333] disabled:opacity-40 disabled:hover:bg-[#ffffff] transition-colors cursor-pointer border border-[#b7d2bb]"
           >
             <ChevronRight className="h-4 w-4" />
           </button>

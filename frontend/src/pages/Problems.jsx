@@ -8,7 +8,7 @@ import ProgressCard from "../components/problems/ProgressCard";
 
 const Problems = () => {
   return (
-    <div className="flex min-h-screen bg-[#12080a] text-slate-300 font-sans antialiased">
+    <div className="flex min-h-screen bg-[#e8f3e8] text-[#244333] font-sans antialiased">
       {/* Sidebar - Hidden on mobile, visible on desktop */}
       <Sidebar />
 
@@ -20,10 +20,10 @@ const Problems = () => {
           {/* Left/Middle: Header & Table (Takes 3 cols on massive screens) */}
           <div className="xl:col-span-3 space-y-6 min-w-0">
             <div>
-              <h1 className="text-2xl lg:text-3xl font-bold text-white tracking-tight">
+              <h1 className="text-2xl lg:text-3xl font-bold text-[#183226] tracking-tight">
                 Problem Set
               </h1>
-              <p className="text-gray-400 text-sm mt-1">
+              <p className="text-[#547060] text-sm mt-1">
                 Sharpen your skills with our curated collection of challenges.
               </p>
             </div>
