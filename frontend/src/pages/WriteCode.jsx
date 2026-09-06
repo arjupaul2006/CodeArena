@@ -139,6 +139,22 @@ export default function WriteCode() {
 
   const [problem, setProblem] = useState(null);
   const [testCases, setTestCases] = useState([]);
+  // const [executionResult, setExecutionResult] = useState({
+  //   verdict: null,
+  //   message: "Run your code to see test results.",
+  //   runs: [],
+  // });
+  const [runExecutionResult, setRunExecutionResult] = useState({
+    verdict: null,
+    message: "Run your code to see test results.",
+    runs: [],
+  });
+
+  const [submitExecutionResult, setSubmitExecutionResult] = useState({
+    verdict: null,
+    message: "Submit your code to see submission results.",
+    runs: [],
+  });
 
   const searchParams = useSearchParams()[0];
 
@@ -146,6 +162,7 @@ export default function WriteCode() {
   useEffect(() => {
     try {
       const problemId = searchParams.get("id");
+      if (!problemId) return;
 
       const fetchProblemData = async () => {
         const response = await fetch(
@@ -160,7 +177,7 @@ export default function WriteCode() {
 
         const problemData = data.problem;
         setProblem(problemData);
-        setTestCases(data.testCases);
+        setTestCases(data.testCases || []);
         console.log("Fetched problem data:", problemData);
         console.log("Fetched test cases:", data.testCases);
       };
@@ -169,7 +186,16 @@ export default function WriteCode() {
     } catch (error) {
       console.error("Error fetching problem data:", error);
     }
-  }, []);
+  }, [searchParams]);
+
+  const effectiveTestCases =
+    testCases && testCases.length > 0
+      ? testCases
+      : problem?.test_cases || problem?.testCases || demoproblem?.test_cases || [];
+
+  const sampleTestCases = effectiveTestCases.filter(
+    (tc) => tc.isSample || tc.is_sample
+  );
 
   return (
     <div className="flex flex-col h-screen bg-[#e8f3e8] text-[#244333] font-sans antialiased overflow-hidden">
@@ -180,7 +206,14 @@ export default function WriteCode() {
       <div className="flex-1 grid grid-cols-1 xl:grid-cols-2 min-h-0 overflow-hidden">
         {/* Left Panel */}
         <div className="h-full overflow-hidden border-r border-[#b7d2bb]">
-          <ProblemDescription demoproblem={demoproblem} problem={problem} />
+          <ProblemDescription
+            demoproblem={demoproblem}
+            problem={problem}
+            testCases={effectiveTestCases}
+            sampleTestCases={sampleTestCases}
+            runExecutionResult={runExecutionResult}
+            submitExecutionResult={submitExecutionResult}
+          />
         </div>
 
         {/* Right Panel */}
@@ -188,7 +221,12 @@ export default function WriteCode() {
           <CodeEditorPanel
             demoproblem={demoproblem}
             problem={problem}
-            testCases={testCases}
+            testCases={effectiveTestCases}
+            sampleTestCases={sampleTestCases}
+            runExecutionResult={runExecutionResult}
+            setRunExecutionResult={setRunExecutionResult}
+            submitExecutionResult={submitExecutionResult}
+            setSubmitExecutionResult={setSubmitExecutionResult}
           />
         </div>
       </div>

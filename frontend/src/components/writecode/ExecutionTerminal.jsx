@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { ChevronUp, Terminal, CheckCircle, Play } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { ChevronUp, Terminal, CheckCircle, XCircle } from "lucide-react";
 
 export default function ExecutionTerminal({
   isOpen,
@@ -11,10 +11,19 @@ export default function ExecutionTerminal({
 }) {
   const [activeTab, setActiveTab] = useState("testcase");
 
-  // const testCases = testCases ||  [];
+  const effectiveTestCases =
+    testCases && testCases.length > 0
+      ? testCases
+      : problem?.test_cases || problem?.testCases || demoproblem?.test_cases || [];
+
   const runs = output?.runs ?? [];
-  console.log("ExecutionTerminal - testCases:", runs);
   const verdict = output?.verdict;
+
+  useEffect(() => {
+    if (output?.runs?.length > 0) {
+      setActiveTab("testcase");
+    }
+  }, [output]);
 
   // separate the runs by their id for easy access
   const resultById = new Map(runs.map((result) => [result.id, result]));
@@ -29,6 +38,14 @@ export default function ExecutionTerminal({
   const languageErrorMessage = failingRuns.find((result) => result.isErrorFound)
     ? "Language Error"
     : null;
+
+  const renderValue = (val) => {
+    if (val === undefined || val === null) return "";
+    if (typeof val === "object") {
+      return JSON.stringify(val, null, 2);
+    }
+    return String(val);
+  };
 
   return (
     <div
@@ -122,7 +139,11 @@ export default function ExecutionTerminal({
                   verdict === "accepted" ? "text-emerald-700" : "text-rose-700"
                 }`}
               >
-                <CheckCircle className="w-4 h-4 fill-emerald-500/20" />
+                {verdict === "accepted" ? (
+                  <CheckCircle className="w-4 h-4 text-emerald-600 fill-emerald-500/20" />
+                ) : (
+                  <XCircle className="w-4 h-4 text-rose-600 fill-rose-500/20" />
+                )}
 
                 <span>
                   {verdict === "accepted" ? "Accepted" : "Wrong Answer"}
@@ -132,19 +153,39 @@ export default function ExecutionTerminal({
 
             {/* TestCase Boxes */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {testCases.map((caseData, index) => {
+              {effectiveTestCases.map((caseData, index) => {
                 const caseId = index + 1;
                 const result = resultById.get(caseId);
+                const expectedOutput = caseData.expectedOutput ?? caseData.output;
 
                 return (
                   <div
                     key={caseId}
-                    className="p-3 bg-[#ffffff] border border-[#b7d2bb] rounded-xl space-y-2 font-mono text-xs shadow-xs"
+                    className={`p-3.5 bg-[#ffffff] border rounded-xl space-y-2.5 font-mono text-xs shadow-xs transition-colors ${
+                      result
+                        ? result.passed
+                          ? "border-emerald-500/40 bg-emerald-500/5"
+                          : "border-rose-500/40 bg-rose-500/5"
+                        : "border-[#b7d2bb]"
+                    }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-[#183226] font-bold block">
-                        Case {caseId}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[#183226] font-bold block">
+                          Case {caseId}
+                        </span>
+                        {result && (
+                          <span
+                            className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded border ${
+                              result.passed
+                                ? "bg-emerald-500/15 text-emerald-800 border-emerald-500/30"
+                                : "bg-rose-500/15 text-rose-800 border-rose-500/30"
+                            }`}
+                          >
+                            {result.passed ? "Passed" : "Failed"}
+                          </span>
+                        )}
+                      </div>
 
                       {caseData.isSample && (
                         <span className="text-[10px] text-[#3f7d55] font-semibold bg-[#e8f3e8] px-2 py-0.5 rounded border border-[#b7d2bb]">
@@ -153,37 +194,36 @@ export default function ExecutionTerminal({
                       )}
                     </div>
 
-                    <div className="space-y-1.5 text-[11px]">
+                    <div className="space-y-2 text-[11px]">
                       {/* Input */}
                       <div>
-                        <span className="text-[#668170]">Input:</span>
-
-                        <pre className="mt-1 text-[#183226] font-semibold whitespace-pre-wrap bg-[#e8f3e8] border border-[#b7d2bb] p-2 rounded-md">
-                          {caseData.input}
+                        <span className="text-[#668170] font-sans font-bold">Input:</span>
+                        <pre className="mt-1 text-[#183226] font-mono font-semibold whitespace-pre-wrap bg-[#e8f3e8] border border-[#b7d2bb] p-2 rounded-md overflow-x-auto max-h-24">
+                          {renderValue(caseData.input)}
                         </pre>
                       </div>
 
                       {/* Expected Output */}
                       <div>
-                        <span className="text-[#668170]">Output:</span>{" "}
-                        <span className="text-emerald-800 font-semibold">
-                          {caseData.expectedOutput}
-                        </span>
+                        <span className="text-[#668170] font-sans font-bold">Expected Output:</span>
+                        <pre className="mt-1 text-emerald-800 font-mono font-semibold whitespace-pre-wrap bg-emerald-500/10 border border-emerald-500/30 p-2 rounded-md overflow-x-auto max-h-24">
+                          {renderValue(expectedOutput)}
+                        </pre>
                       </div>
 
                       {/* Actual Output */}
                       {result ? (
                         <div>
-                          <span className="text-[#668170]">Actual:</span>{" "}
-                          <span
-                            className={`font-semibold ${
+                          <span className="text-[#668170] font-sans font-bold">Actual Output:</span>
+                          <pre
+                            className={`mt-1 font-mono font-semibold whitespace-pre-wrap p-2 rounded-md border overflow-x-auto max-h-24 ${
                               result.passed
-                                ? "text-emerald-800"
-                                : "text-rose-700"
+                                ? "text-emerald-800 bg-emerald-500/10 border-emerald-500/30"
+                                : "text-rose-800 bg-rose-500/10 border-rose-500/30"
                             }`}
                           >
-                            {result.actualOutput || "No output"}
-                          </span>
+                            {renderValue(result.actualOutput || "No output")}
+                          </pre>
                         </div>
                       ) : null}
                     </div>
@@ -224,7 +264,7 @@ export default function ExecutionTerminal({
                       <div>
                         Expected:{" "}
                         <span className="text-[#183226]">
-                          {result.expectedOutput}
+                          {renderValue(result.expectedOutput)}
                         </span>
                       </div>
                       <div>
@@ -234,7 +274,7 @@ export default function ExecutionTerminal({
                             result.passed ? "text-emerald-800" : "text-rose-700"
                           }
                         >
-                          {result.actualOutput}
+                          {renderValue(result.actualOutput)}
                         </span>
                       </div>
                       {result.runtime ? (
