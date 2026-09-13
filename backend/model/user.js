@@ -36,34 +36,32 @@ const userSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Problem",
+        required: true,
       },
     ],
   },
   {
     timestamps: true,
-  }
+  },
 );
 
-
 // this function will be called before saving the user
-userSchema.methods.generateAuthToken = function() {
-    const token = jwt.sign(
-        { _id: this._id },
-        process.env.JWT_SECRET,
-        { expiresIn: '24h' }
-    );
-    return token;
-}
+userSchema.methods.generateAuthToken = function () {
+  const token = jwt.sign({ _id: this._id }, process.env.JWT_SECRET, {
+    expiresIn: "24h",
+  });
+  return token;
+};
 
 userSchema.statics.hashPassword = async function (password) {
-    const salt = await bcrypt.genSalt(10);
-    return await bcrypt.hash(password, salt);
-}
+  const salt = await bcrypt.genSalt(10);
+  return await bcrypt.hash(password, salt);
+};
 
 // compare the password
-userSchema.methods.comparePassword = async function(password) {
-    return await bcrypt.compare(password, this.password);
-}
+userSchema.methods.comparePassword = async function (password) {
+  return await bcrypt.compare(password, this.password);
+};
 
 const User = mongoose.model("User", userSchema);
 

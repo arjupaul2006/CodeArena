@@ -1,12 +1,17 @@
-import React from 'react';
-import Sidebar from '../components/problems/SideBar';
-import TopNav from '../components/problems/TopNav';
-import ProfileCard from '../components/submissions/ProfileCard';
-import StatsOverviewCard from '../components/submissions/StatsOverviewCard';
-import ActivityHeatmap from '../components/submissions/ActivityHeatmap';
-import SubmissionHistoryTable from '../components/submissions/SubmissionHistoryTable';
+import React, { useContext } from "react";
+import Sidebar from "../components/problems/SideBar";
+import TopNav from "../components/problems/TopNav";
+import ProfileCard from "../components/submissions/ProfileCard";
+import StatsOverviewCard from "../components/submissions/StatsOverviewCard";
+import ActivityHeatmap from "../components/submissions/ActivityHeatmap";
+import SubmissionHistoryTable from "../components/submissions/SubmissionHistoryTable";
+import { UserDataContext } from "../context/UserContext";
 
 export default function Submissions() {
+  const { user } = useContext(UserDataContext);
+
+  console.log("User in Submissions Page:", user);
+
   return (
     <div className="flex min-h-screen bg-[#e8f3e8] text-[#244333] font-sans antialiased">
       {/* Sidebar - Persistent layout component */}
@@ -18,14 +23,13 @@ export default function Submissions() {
 
         {/* Content Body Grid layout */}
         <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-[1400px] w-full mx-auto space-y-6">
-
           {/* Top Row Grid: Profile Insight and Detailed Stats Rings */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
             <div className="lg:col-span-5 xl:col-span-4 h-full">
               <ProfileCard />
             </div>
             <div className="lg:col-span-7 xl:col-span-8 h-full">
-              <StatsOverviewCard />
+              <StatsOverviewCard user={user} />
             </div>
           </div>
 
@@ -34,7 +38,6 @@ export default function Submissions() {
 
           {/* Bottom Row Grid: Complete Data Logs Audit Stream */}
           <SubmissionHistoryTable />
-
         </main>
       </div>
     </div>

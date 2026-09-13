@@ -1,7 +1,15 @@
-import React from 'react';
-import { Search, Bell, Settings } from 'lucide-react';
+import React, { useContext, useState, useEffect } from "react";
+import { Search, Bell, Settings, Code2 } from "lucide-react";
+import { UserDataContext } from "../../context/UserContext";
 
 export default function TopNav() {
+  const { user } = useContext(UserDataContext);
+  const [imageError, setImageError] = useState(false);
+
+  useEffect(() => {
+    setImageError(false);
+  }, [user?.profileImage]);
+
   return (
     <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-[#b7d2bb] bg-[#f4faf1]/95 backdrop-blur-xl px-4 lg:px-6">
       {/* Left: Search & Desktop Links */}
@@ -15,10 +23,24 @@ export default function TopNav() {
           />
         </div>
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-[#547060]">
-          <a href="/problems" className="text-[#3f7d55] border-b-2 border-[#3f7d55] pb-5 pt-5 px-1 font-semibold">Problems</a>
-          <a href="/contests" className="hover:text-[#183226] transition-colors">Contests</a>
-          <a href="#" className="hover:text-[#183226] transition-colors">Leaderboard</a>
-          <a href="#" className="hover:text-[#183226] transition-colors">Discuss</a>
+          <a
+            href="/problems"
+            className="text-[#3f7d55] border-b-2 border-[#3f7d55] pb-5 pt-5 px-1 font-semibold"
+          >
+            Problems
+          </a>
+          <a
+            href="/contests"
+            className="hover:text-[#183226] transition-colors"
+          >
+            Contests
+          </a>
+          <a href="#" className="hover:text-[#183226] transition-colors">
+            Leaderboard
+          </a>
+          <a href="#" className="hover:text-[#183226] transition-colors">
+            Discuss
+          </a>
         </nav>
       </div>
 
@@ -34,12 +56,27 @@ export default function TopNav() {
         <button className="p-2 text-[#547060] hover:text-[#183226] rounded-xl hover:bg-[#dcecdf] transition-colors cursor-pointer">
           <Settings className="h-4 w-4" />
         </button>
-        <img
-          src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80"
-          alt="Avatar"
-          className="h-8 w-8 rounded-full border border-[#a6cbaa] object-cover ring-2 ring-[#c5dfc9]"
-        />
+
+        <div className="flex items-center gap-2.5">
+
+          {user?.profileImage && !imageError ? (
+            <img
+              src={user.profileImage}
+              alt={user?.username || "User avatar"}
+              onError={() => setImageError(true)}
+              className="h-8 w-8 rounded-full border border-[#a6cbaa] object-cover ring-2 ring-[#c5dfc9]"
+            />
+          ) : (
+            <div
+              className="h-8 w-8 rounded-full border border-[#a6cbaa] bg-[#3f7d55] text-white flex items-center justify-center font-bold text-xs ring-2 ring-[#c5dfc9] shadow-xs shrink-0 select-none uppercase"
+              title={user?.username || user?.name || "User"}
+            >
+              {(user?.username || user?.name || user?.email || "U").charAt(0).toUpperCase()}
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );
 }
+

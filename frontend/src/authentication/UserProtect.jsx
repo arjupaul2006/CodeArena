@@ -7,20 +7,22 @@ import axios from "axios";
 
 const UserProtect = ({ children }) => {
   const token = localStorage.getItem("token");
-
-  if (!token) {
-    return <Navigate to="/login" />;
-  }
+  const { setUser } = useContext(UserDataContext);
 
   useEffect(() => {
+    if (!token) {
+      return;
+    }
+
     const validateToken = async () => {
       try {
-        await axios.post("http://localhost:4000/api/validate-token", {}, {
+        const response = await axios.post("http://localhost:4000/api/validate-token", {}, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         });
+        setUser(response.data.user);
       } catch (error) {
         console.error("Token validation error:", error);
         localStorage.removeItem("token");
@@ -29,7 +31,11 @@ const UserProtect = ({ children }) => {
     };
 
     validateToken();
-  }, [token]);
+  }, [token, setUser]);
+
+  if (!token) {
+    return <Navigate to="/login" />;
+  }
 
   return <>{children}</>;
 };

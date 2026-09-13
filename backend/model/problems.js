@@ -1,51 +1,5 @@
 const mongoose = require("mongoose");
 
-// Parameter Schema
-const parameterSchema = new mongoose.Schema(
-  {
-    type: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-  },
-  { _id: false }
-);
-
-// Function Signature Schema
-const functionSignatureSchema = new mongoose.Schema(
-  {
-    className: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-
-    functionName: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-
-    returnType: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-
-    parameters: {
-      type: [parameterSchema],
-      default: [],
-    },
-  },
-  { _id: false }
-);
 
 // Example Schema (Displayed to users)
 const exampleSchema = new mongoose.Schema(
@@ -118,19 +72,6 @@ const problemSchema = new mongoose.Schema(
     examples: {
       type: [exampleSchema],
       default: [],
-    },
-
-    // Used by the judge
-    functionSignature: {
-      type: functionSignatureSchema,
-      required: true,
-    },
-
-    // Language templates shown in Monaco editor
-    starterCode: {
-      type: Map,
-      of: String,
-      default: {},
     },
 
     timeLimit: {

@@ -33,6 +33,9 @@ export default function ProblemTable() {
         if (data.problems && data.problems.length > 0) {
           setProblems(data.problems);
         }
+
+        console.log('Fetched problems:', data.problems);
+        console.log('No of problems:', data.problems.length);
       } catch (error) {
         console.warn('Backend unavailable, using fallback problem set:', error);
       } finally {

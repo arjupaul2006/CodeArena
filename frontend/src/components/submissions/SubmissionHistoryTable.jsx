@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ChevronDown } from "lucide-react";
+import { UserDataContext } from "../../context/UserContext";
+import axios from "axios";
 
 // Mock empty historical dataset or rows tracking code execution values
 const mockSubmissions = [
@@ -33,6 +35,37 @@ const mockSubmissions = [
 ];
 
 export default function SubmissionHistoryTable() {
+
+  const [submissionHistory, setSubmissionHistory] = React.useState([]);
+
+  // Fetch submission history from the backend API
+  useEffect(() => {
+    // Fetch submission history from the backend API
+    const fetchSubmissionHistory = async () => {
+      try {
+        const backendUrl = import.meta.env.VITE_BACKEND_URL // Fallback to localhost if not set
+
+        const response = await axios.get(
+          `${backendUrl}/api/submissionHistory`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`, // Assuming you store the token in localStorage
+            },
+          },
+        );
+        const data = await response.data;
+        console.log("Submission history:", data);
+        setSubmissionHistory(data.submissions || []);
+      } catch (error) {
+        console.error("Error fetching submission history:", error);
+      }
+    };
+
+    fetchSubmissionHistory();
+  }, []);
+
   return (
     <div className="bg-[#f4faf1] rounded-2xl border border-[#b7d2bb] shadow-lg overflow-hidden">
       {/* Filtering toolbar block headers */}
@@ -67,29 +100,29 @@ export default function SubmissionHistoryTable() {
             </tr>
           </thead>
           <tbody className="divide-y divide-[#b7d2bb] text-sm font-medium text-[#244333]">
-            {mockSubmissions.length > 0 ? (
-              mockSubmissions.map((row, idx) => (
+            {submissionHistory.length > 0 ? (
+              submissionHistory.map((row, idx) => (
                 <tr
                   key={idx}
                   className="hover:bg-[#eef7eb] transition-colors cursor-pointer"
                 >
-                  <td className={`py-4 px-6 font-bold font-mono ${row.color}`}>
-                    {row.verdict}
+                  <td className={`py-4 px-6 font-bold font-mono text-emerald-700`}>
+                    {row?.status == "accepted" ? "Accepted" : "Wrong Answer"}
                   </td>
                   <td className="py-4 px-6 text-[#183226] font-semibold hover:text-[#2f6b45] transition-colors">
-                    {row.problem}
+                    {row?.problemId?.title}
                   </td>
                   <td className="py-4 px-6 text-[#547060] font-mono text-xs">
                     {row.language}
                   </td>
                   <td className="py-4 px-6 text-[#547060] font-mono text-xs">
-                    {row.runtime}
+                    {row.runtime} ms
                   </td>
                   <td className="py-4 px-6 text-[#547060] font-mono text-xs">
-                    {row.memory}
+                    {row.memory} KB
                   </td>
                   <td className="py-4 px-6 text-[#668170] text-xs">
-                    {row.date}
+                    {new Date(row.submissionDate).toDateString() } at {new Date(row.submissionDate).toLocaleTimeString()}
                   </td>
                 </tr>
               ))

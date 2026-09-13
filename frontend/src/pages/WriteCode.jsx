@@ -152,6 +152,10 @@ export default function WriteCode() {
 
   const [submitExecutionResult, setSubmitExecutionResult] = useState({
     verdict: null,
+    code: "",
+    language: "",
+    runtime: 0,
+    memory: 0,
     message: "Submit your code to see submission results.",
     runs: [],
   });

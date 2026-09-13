@@ -1,7 +1,15 @@
-import React from 'react';
-import { Bell, Settings, Maximize2 } from 'lucide-react';
+import React, { useContext, useState, useEffect } from 'react';
+import { Bell, Settings, Code2 } from 'lucide-react';
+import { UserDataContext } from '../../context/UserContext';
 
 export default function WorkspaceHeader() {
+  const { user } = useContext(UserDataContext);
+  const [imageError, setImageError] = useState(false);
+
+  useEffect(() => {
+    setImageError(false);
+  }, [user?.profileImage]);
+
   return (
     <header className="h-16 border-b border-[#b7d2bb] bg-[#f4faf1] flex items-center justify-between px-4 lg:px-6 z-40 shrink-0">
       {/* Brand & Tabs */}
@@ -28,11 +36,22 @@ export default function WorkspaceHeader() {
         <button className="p-1.5 text-[#547060] hover:text-[#183226] rounded-md hover:bg-[#dcecdf] transition-colors">
           <Settings className="w-4.5 h-4.5" />
         </button>
-        <img
-          src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80"
-          alt="User Profile"
-          className="h-7 w-7 rounded-full border border-[#b7d2bb] object-cover"
-        />
+
+        {user?.profileImage && !imageError ? (
+          <img
+            src={user.profileImage}
+            alt={user?.username || "User Profile"}
+            onError={() => setImageError(true)}
+            className="h-7 w-7 rounded-full border border-[#b7d2bb] object-cover"
+          />
+        ) : (
+          <div
+            className="h-7 w-7 rounded-full border border-[#a6cbaa] bg-[#3f7d55] text-white flex items-center justify-center font-bold text-xs ring-2 ring-[#c5dfc9] shadow-xs shrink-0 select-none uppercase"
+            title={user?.username || user?.name || "User"}
+          >
+            {(user?.username || user?.name || user?.email || "U").charAt(0).toUpperCase()}
+          </div>
+        )}
       </div>
     </header>
   );

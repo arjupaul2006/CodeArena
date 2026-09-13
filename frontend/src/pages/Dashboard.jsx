@@ -13,44 +13,97 @@ import {
 import Sidebar from "../components/problems/SideBar";
 import TopNav from "../components/problems/TopNav";
 import { UserDataContext } from "../context/UserContext.jsx";
-
-const stat = [
-  {
-    label: "Global Rank",
-    value: "#12,450",
-    sub: "Top 4.2%",
-    icon: Trophy,
-    color: "text-amber-400 bg-amber-500/10 border-amber-500/20",
-  },
-  {
-    label: "Problems Solved",
-    value: "452 / 2,410",
-    sub: "72% Efficiency",
-    icon: Code2,
-    color: "text-blue-400 bg-blue-500/10 border-blue-500/20",
-  },
-  {
-    label: "Current Streak",
-    value: "14 Days",
-    sub: "Max: 32 days",
-    icon: Flame,
-    color: "text-orange-400 bg-orange-500/10 border-orange-500/20",
-  },
-  {
-    label: "Accuracy Rate",
-    value: "76.4%",
-    sub: "+2.1% this week",
-    icon: Target,
-    color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
-  },
-];
+import axios from "axios";
 
 export default function DashboardOverview() {
   const { user, setUser } = useContext(UserDataContext);
+  const [noOfProblems, setNoOfProblems] = React.useState(0);
+  const [problems, setProblems] = React.useState([]);
+  const solvedProblemsCount = user?.solvedProblems?.length || 0;
 
+  // Fetch problems from the backend API and update the state
   useEffect(() => {
-    console.log("User data in dashboard:", user);
-  }, [user]);
+    const fetchProblems = async () => {
+      try {
+        const backendUrl =
+          import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+
+        const response = await fetch(`${backendUrl}/api/problems`);
+        if (!response.ok) throw new Error("Failed to fetch");
+        const data = await response.json();
+
+        if (data.problems) {
+          setProblems(data.problems);
+          setNoOfProblems(data.problems.length);
+        }
+      } catch (error) {
+        console.warn("Backend unavailable, using fallback problem set:", error);
+      }
+    };
+
+    fetchProblems();
+  }, []);
+
+  const [submissionHistory, setSubmissionHistory] = React.useState([]);
+
+  // Fetch submission history from the backend API
+  useEffect(() => {
+    // Fetch submission history from the backend API
+    const fetchSubmissionHistory = async () => {
+      try {
+        const backendUrl = import.meta.env.VITE_BACKEND_URL; // Fallback to localhost if not set
+
+        const response = await axios.get(
+          `${backendUrl}/api/submissionHistory`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`, // Assuming you store the token in localStorage
+            },
+          },
+        );
+        const data = await response.data;
+        console.log("Submission history:", data);
+        setSubmissionHistory(data.submissions || []);
+      } catch (error) {
+        console.error("Error fetching submission history:", error);
+      }
+    };
+
+    fetchSubmissionHistory();
+  }, []);
+
+  const stat = [
+    {
+      label: "Global Rank",
+      value: "#12,450",
+      sub: "Top 4.2%",
+      icon: Trophy,
+      color: "text-amber-400 bg-amber-500/10 border-amber-500/20",
+    },
+    {
+      label: "Problems Solved",
+      value: `${solvedProblemsCount} / ${noOfProblems}`,
+      sub: "72% Efficiency",
+      icon: Code2,
+      color: "text-blue-400 bg-blue-500/10 border-blue-500/20",
+    },
+    {
+      label: "Current Streak",
+      value: "14 Days",
+      sub: "Max: 32 days",
+      icon: Flame,
+      color: "text-orange-400 bg-orange-500/10 border-orange-500/20",
+    },
+    {
+      label: "Accuracy Rate",
+      value: "76.4%",
+      sub: "+2.1% this week",
+      icon: Target,
+      color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
+    },
+  ];
 
   return (
     <div className="flex min-h-screen bg-[#e8f3e8] text-[#244333] font-sans antialiased">
@@ -210,61 +263,38 @@ export default function DashboardOverview() {
                     Recent Activity
                   </h3>
                   <a
-                    href="#"
+                    href="/submissions"
                     className="text-xs font-semibold text-rose-400 hover:underline"
                   >
-                    View logs
+                    View Detailed History <ChevronRight className="h-3.5 w-3.5 inline" />
                   </a>
                 </div>
 
                 <div className="space-y-2.5">
-                  {[
-                    {
-                      title: "Search in Rotated Sorted Array",
-                      outcome: "Accepted",
-                      time: "12 mins ago",
-                      outcomeColor: "text-emerald-400",
-                    },
-                    {
-                      title: "Median of Two Sorted Arrays",
-                      outcome: "Accepted",
-                      time: "2 hours ago",
-                      outcomeColor: "text-emerald-400",
-                    },
-                    {
-                      title: "3Sum",
-                      outcome: "Time Limit Exceeded",
-                      time: "Yesterday",
-                      outcomeColor: "text-rose-400",
-                    },
-                    {
-                      title: "Two Sum",
-                      outcome: "Accepted",
-                      time: "3 days ago",
-                      outcomeColor: "text-emerald-400",
-                    },
-                  ].map((item, idx) => (
-                    <div
-                      key={idx}
-                      className="flex justify-between items-start p-2.5 rounded-xl bg-[#e8f3e8] border border-[#b7d2bb] text-xs"
-                    >
-                      <div className="space-y-0.5">
-                        <span className="font-semibold text-[#385a43] block truncate max-w-[180px]">
-                          {item.title}
-                        </span>
-                        <span className="text-[11px] text-[#668170] flex items-center gap-1">
-                          <Clock className="h-3 w-3" /> {item.time}
-                        </span>
+                  {submissionHistory.length > 0 &&
+                    submissionHistory.map((item, idx) => (
+                      <div
+                        key={idx}
+                        className="flex justify-between items-start p-2.5 rounded-xl bg-[#e8f3e8] border border-[#b7d2bb] text-xs"
+                      >
+                        <div className="space-y-0.5">
+                          <span className="font-semibold text-[#385a43] block truncate max-w-[180px]">
+                            {item.problemId?.title}
+                          </span>
+                          <span className="text-[11px] text-[#668170] flex items-center gap-1">
+                            <Clock className="h-3 w-3" />{" "}
+                            {new Date(item.submissionDate).toDateString() } at {new Date(item.submissionDate).toLocaleTimeString()}
+                          </span>
+                        </div>
+                        <div className="text-right">
+                          <span
+                            className={`font-mono font-semibold block text-green-500`}
+                          >
+                            {item.status === "accepted" ? "Accepted" : "Wrong Answer"}
+                          </span>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <span
-                          className={`font-mono font-semibold block ${item.outcomeColor}`}
-                        >
-                          {item.outcome}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </div>
 

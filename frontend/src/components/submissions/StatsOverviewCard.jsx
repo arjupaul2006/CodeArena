@@ -1,12 +1,106 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-export default function StatsOverviewCard() {
+export default function StatsOverviewCard({ user }) {
+  const [problems, setProblems] = useState([]);
+
+  // Fetch problems from the backend API and update the state
+  useEffect(() => {
+    const fetchProblems = async () => {
+      try {
+        const backendUrl =
+          import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+
+        const response = await fetch(`${backendUrl}/api/problems`);
+        if (!response.ok) throw new Error("Failed to fetch");
+        const data = await response.json();
+
+        if (data.problems) {
+          setProblems(data.problems);
+        }
+      } catch (error) {
+        console.warn("Backend unavailable, using fallback problem set:", error);
+      }
+    };
+
+    fetchProblems();
+  }, []);
+
+  const totalProblemsCount = problems.length;
+  const solvedCount = user?.solvedProblems?.length ?? 0;
+
+  // Calculate SVG stroke offset for ratio solved/total
+  const circumference = 251.2;
+  const solvedRatio =
+    totalProblemsCount > 0
+      ? Math.min(solvedCount / totalProblemsCount, 1)
+      : 0;
+
+  const strokeDashoffset = circumference * (1 - solvedRatio);
+
+  // Set of solved problem IDs
+  const solvedSet = new Set(
+    (user?.solvedProblems || []).map((id) =>
+      typeof id === "object" ? String(id._id || id) : String(id)
+    )
+  );
+
+  // Calculate stats per difficulty if problems are loaded
+  const easyProblems = problems.filter((p) => p.difficulty === "Easy");
+  const mediumProblems = problems.filter((p) => p.difficulty === "Medium");
+  const hardProblems = problems.filter((p) => p.difficulty === "Hard");
+
+  const easySolved = easyProblems.filter((p) => solvedSet.has(String(p._id))).length;
+  const mediumSolved = mediumProblems.filter((p) => solvedSet.has(String(p._id))).length;
+  const hardSolved = hardProblems.filter((p) => solvedSet.has(String(p._id))).length;
+
+  const difficultyStats = [
+    {
+      label: "Easy",
+      count:
+        easyProblems.length > 0
+          ? `${easySolved}/${easyProblems.length}`
+          : "0/0",
+      pct:
+        easyProblems.length > 0
+          ? `${Math.round((easySolved / easyProblems.length) * 100)}%`
+          : "0%",
+      barColor: "bg-emerald-600",
+      labelColor: "text-emerald-800",
+    },
+    {
+      label: "Medium",
+      count:
+        mediumProblems.length > 0
+          ? `${mediumSolved}/${mediumProblems.length}`
+          : "0/0",
+      pct:
+        mediumProblems.length > 0
+          ? `${Math.round((mediumSolved / mediumProblems.length) * 100)}%`
+          : "0%",
+      barColor: "bg-amber-500",
+      labelColor: "text-amber-800",
+    },
+    {
+      label: "Hard",
+      count:
+        hardProblems.length > 0
+          ? `${hardSolved}/${hardProblems.length}`
+          : "0/0",
+      pct:
+        hardProblems.length > 0
+          ? `${Math.round((hardSolved / hardProblems.length) * 100)}%`
+          : "0%",
+      barColor: "bg-rose-500",
+      labelColor: "text-rose-800",
+    },
+  ];
+
   return (
     <div className="bg-[#f4faf1] rounded-2xl border border-[#b7d2bb] p-6 flex flex-col md:flex-row items-center justify-around gap-8 h-full shadow-lg">
       {/* Circular Chart Gauge Visual */}
       <div className="flex flex-col items-center justify-center text-center space-y-2 shrink-0">
         <div className="relative w-36 h-36 flex items-center justify-center">
-          {/* SVG Background Track & Radial Fill Indicator */}
+          {/* SVG Background Track & Dynamic Radial Fill Indicator */}
           <svg
             className="absolute w-full h-full transform -rotate-90"
             viewBox="0 0 100 100"
@@ -27,49 +121,28 @@ export default function StatsOverviewCard() {
               strokeWidth="8"
               fill="transparent"
               strokeDasharray="251.2"
-              strokeDashoffset="110"
+              strokeDashoffset={strokeDashoffset}
               strokeLinecap="round"
+              className="transition-all duration-700 ease-out"
             />
           </svg>
           <div className="flex flex-col items-center justify-center">
             <span className="text-3xl font-black text-[#183226] font-mono tracking-tight">
-              542
+              {solvedCount} /
+              <span className="text-[#668170] font-normal text-sm ml-1">
+                {totalProblemsCount}
+              </span>
             </span>
-            <span className="text-[10px] font-bold text-[#668170] uppercase tracking-widest">
-              Solved
+            <span className="text-xs font-semibold text-[#547060]">
+              Problems Solved
             </span>
           </div>
         </div>
-        <span className="text-xs font-semibold text-[#547060]">
-          Top 4.2% of all users
-        </span>
       </div>
 
       {/* Progress Bars Track Lists */}
       <div className="w-full max-w-md space-y-4">
-        {[
-          {
-            label: "Easy",
-            count: "312/400",
-            pct: "78%",
-            barColor: "bg-emerald-600",
-            labelColor: "text-emerald-800",
-          },
-          {
-            label: "Medium",
-            count: "198/550",
-            pct: "36%",
-            barColor: "bg-amber-500",
-            labelColor: "text-amber-800",
-          },
-          {
-            label: "Hard",
-            count: "32/200",
-            pct: "16%",
-            barColor: "bg-rose-500",
-            labelColor: "text-rose-800",
-          },
-        ].map((item, idx) => (
+        {difficultyStats.map((item, idx) => (
           <div key={idx} className="space-y-1.5">
             <div className="flex justify-between items-baseline text-xs font-bold">
               <span className={`uppercase tracking-wider ${item.labelColor}`}>

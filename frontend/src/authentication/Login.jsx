@@ -15,6 +15,7 @@ import { UserDataContext } from "../context/UserContext.jsx";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { user, setUser } = useContext(UserDataContext);
   const [userData, setUserData] = useState({
     email: "",
     password: "",
@@ -24,8 +25,6 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-
-  const { setUser } = useContext(UserDataContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -48,8 +47,10 @@ const Login = () => {
       const data = response.data;
 
       if (response.status === 200) {
-        setUser(data.user);
         localStorage.setItem("token", data.token);
+        if (data.user) {
+          setUser(data.user);
+        }
         setSuccess(true);
         navigate("/dashboard");
       } else {

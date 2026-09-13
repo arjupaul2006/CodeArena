@@ -32,7 +32,14 @@ function App() {
             }
           />
           <Route path="/problems" element={<Problems />} />
-          <Route path="/submissions" element={<Submissions />} />
+          <Route
+            path="/submissions"
+            element={
+              <UserProtect>
+                <Submissions />
+              </UserProtect>
+            }
+          />
           <Route path="/write-code" element={<WriteCode />} />
         </Routes>
       </div>

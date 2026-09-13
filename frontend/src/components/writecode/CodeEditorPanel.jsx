@@ -114,13 +114,17 @@ export default function CodeEditorPanel({
 
   const [localSubmitExecutionResult, setLocalSubmitExecutionResult] = useState({
     verdict: null,
+    code: "",
+    language: "",
+    runtime: 0,
+    memory: 0,
     message: "Submit your code to see submission results.",
     runs: [],
   });
 
   // state setters
-  const setRunExecutionResult = propsSetRunExecutionResult ?? setLocalRunExecutionResult;
-  const setSubmitExecutionResult = propsSetSubmitExecutionResult ?? setLocalSubmitExecutionResult;
+  var setRunExecutionResult = propsSetRunExecutionResult ?? setLocalRunExecutionResult;
+  var setSubmitExecutionResult = propsSetSubmitExecutionResult ?? setLocalSubmitExecutionResult;
 
   const [isRunning, setIsRunning] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -149,6 +153,8 @@ export default function CodeEditorPanel({
 
   // Handle code execution for Run button (runs sample test cases)
   const handleRunCodeExecution = async () => {
+    setRunExecutionResult = propsSetRunExecutionResult ?? setLocalRunExecutionResult;
+
     const testCasesToRun =
       sampleTestCases.length > 0 ? sampleTestCases : targetTestCases;
 
@@ -262,12 +268,18 @@ export default function CodeEditorPanel({
 
   // Handle code execution for Submit button (runs ALL test cases including sample test cases)
   const handleSubmitCodeExecution = async () => {
+    setSubmitExecutionResult = propsSetSubmitExecutionResult ?? setLocalSubmitExecutionResult;
+
     const testCasesToSubmit = targetTestCases;
 
     // if there are no test cases, we cannot run the code
     if (!testCasesToSubmit?.length) {
       setSubmitExecutionResult({
         verdict: "wrong-answer",
+        code: code,
+        language: selectedLanguage,
+        runtime: 0,
+        memory: 0,
         message: "No test cases found for this problem.",
         runs: [],
         isSubmit: true,
@@ -280,6 +292,8 @@ export default function CodeEditorPanel({
 
     try {
       const runs = [];
+      var maxRuntime = 0;
+      var maxMemory = 0;
 
       // Execute code against ALL test cases (sample + hidden)
       for (let index = 0; index < testCasesToSubmit.length; index++) {
@@ -321,6 +335,17 @@ export default function CodeEditorPanel({
           !isErrorFound &&
           areOutputsEqual(actualOutput, expectedOutput);
 
+        var runtime = parseInt(data?.runtime?.replace(' ms', ''), 10) ?? 0;
+        var memory = parseInt(data?.memory.replace(' KB', ''), 10) ?? 0;
+
+        if (runtime > maxRuntime) {
+          maxRuntime = runtime;
+        }
+
+        if (memory > maxMemory) {
+          maxMemory = memory;
+        }
+
         runs.push({
           id: index + 1,
           input: testCase.input,
@@ -343,7 +368,10 @@ export default function CodeEditorPanel({
 
       setSubmitExecutionResult({
         verdict: isAccepted ? "accepted" : "wrong-answer",
-
+        code: code,
+        language: selectedLanguage,
+        runtime: maxRuntime,
+        memory: maxMemory,
         message: isAccepted
           ? "Submitted successfully: every testcase produced the expected output."
           : "Submission Failed: at least one testcase did not match the expected output.",
@@ -354,7 +382,10 @@ export default function CodeEditorPanel({
     } catch (error) {
       setSubmitExecutionResult({
         verdict: "wrong-answer",
-
+        code: code,
+        language: selectedLanguage,
+        runtime: maxRuntime,
+        memory: maxMemory,
         message: error?.response?.data?.error
           ? `Execution Error: ${error.response.data.error}`
           : `Execution Error: ${error.message}`,

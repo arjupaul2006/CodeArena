@@ -22,7 +22,6 @@ module.exports.getProblemById = async (req, res) => {
   try {
     const problemId = req.params.id;
     const problem = await Problem.findById(problemId);
-    console.log("Fetching problem:", problem.functionSignature.parameters);
 
      // Fetch test cases using problemNo
     const testCaseData = await TestCase.findOne({
