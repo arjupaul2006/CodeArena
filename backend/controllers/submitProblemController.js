@@ -58,12 +58,69 @@ module.exports.addSubmissionHistory = async (req, res) => {
 module.exports.getSubmissionHistory = async (req, res) => {
   try {
     const userId = req.user?._id || req.body.userId;
-    const submissions = await Submission.find({ userId }).populate("problemId").sort({ submissionDate: -1 });
+    const submissions = await Submission.find({ userId })
+      .populate("problemId")
+      .sort({ submissionDate: -1 });
     return res
       .status(200)
-      .json({ message: "Submission history retrieved successfully", submissions });
+      .json({
+        message: "Submission history retrieved successfully",
+        submissions,
+      });
   } catch (error) {
     console.error("Error retrieving submission history:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+module.exports.submissionHistoryByProblemId = async (req, res) => {
+  try {
+    const userId = req.user?._id || req.body.userId;
+    const { problemId } = req.body;
+    const submissions = await Submission.find({ userId, problemId })
+      .populate("problemId")
+      .sort({ submissionDate: -1 });
+      
+    return res
+      .status(200)
+      .json({
+        message: "Submission history retrieved successfully",
+        submissions,
+      });
+  } catch (error) {
+    console.error("Error retrieving submission history:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+module.exports.getTotalSubmissionInEachDay = async (req, res) => {
+  try {
+    const userId = req.user?._id || req.body.userId;
+
+    const submissions = await Submission.aggregate([
+      { $match: { userId: userId } },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%Y-%m-%d", date: "$submissionDate" },
+          },
+          count: { $sum: 1 },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+
+    console.log("Total submissions in each day:", submissions);
+
+    return res
+      .status(200)
+      .json({
+        message: "Total submissions in each day retrieved successfully",
+        submissions,
+      });
+
+  } catch (error) {
+    console.error("Error retrieving total submissions in each day:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };

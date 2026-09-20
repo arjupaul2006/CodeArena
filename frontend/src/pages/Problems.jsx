@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import Sidebar from "../components/problems/SideBar";
 import TopNav from "../components/problems/TopNav";
 import ProblemTable from "../components/problems/ProblemTable";
 import DailyChallenge from "../components/problems/DailyChallenge";
 import CategoriesCard from "../components/problems/CategoriesCard";
 import ProgressCard from "../components/problems/ProgressCard";
+import { UserDataContext } from "../context/UserContext";
 
 const Problems = () => {
+
   return (
     <div className="flex min-h-screen bg-[#e8f3e8] text-[#244333] font-sans antialiased">
       {/* Sidebar - Hidden on mobile, visible on desktop */}

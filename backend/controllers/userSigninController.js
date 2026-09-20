@@ -1,12 +1,12 @@
 const express = require("express");
 const { validationResult } = require("express-validator");
 const User = require("../model/user");
-const {createUser} = require("../services/userServices");
+const { createUser } = require("../services/userServices");
 const jwt = require("jsonwebtoken");
 const userModel = require("../model/user");
 
 module.exports.createNewUser = async (req, res, next) => {
-    // error handling for express-validator is done in middleware
+  // error handling for express-validator is done in middleware
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(401).json({ errors: errors.array() });
@@ -34,7 +34,7 @@ module.exports.createNewUser = async (req, res, next) => {
   const token = user.generateAuthToken();
 
   res.status(201).json({ user, token });
-}
+};
 
 module.exports.userLogin = async (req, res, next) => {
   const errors = validationResult(req);
@@ -77,10 +77,12 @@ module.exports.validateToken = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await userModel.findById(decoded._id);
+    const user = await userModel
+      .findById(decoded._id)
+      .populate("solvedProblems");
 
     res.status(200).json({ user });
   } catch (error) {
     return res.status(401).json({ message: "Invalid token." });
   }
-}
+};

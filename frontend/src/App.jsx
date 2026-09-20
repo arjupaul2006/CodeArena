@@ -31,7 +31,14 @@ function App() {
               </UserProtect>
             }
           />
-          <Route path="/problems" element={<Problems />} />
+          <Route
+            path="/problems"
+            element={
+              <UserProtect>
+                <Problems />
+              </UserProtect>
+            }
+          />
           <Route
             path="/submissions"
             element={

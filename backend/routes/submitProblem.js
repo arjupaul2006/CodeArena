@@ -8,4 +8,8 @@ route.post("/submit-problem", authUser, submitProblemController.submitProblem);
 route.post('/submissionHistory', authUser, submitProblemController.addSubmissionHistory);
 route.get('/submissionHistory', authUser, submitProblemController.getSubmissionHistory);
 
+route.post('/submissionHistoryByProblemId', authUser, submitProblemController.submissionHistoryByProblemId);
+
+route.get('/getSubmissionEachDay', authUser, submitProblemController.getTotalSubmissionInEachDay);
+
 module.exports = route;

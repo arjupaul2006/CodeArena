@@ -23,7 +23,7 @@ module.exports.getProblemById = async (req, res) => {
     const problemId = req.params.id;
     const problem = await Problem.findById(problemId);
 
-     // Fetch test cases using problemNo
+    // Fetch test cases using problemNo
     const testCaseData = await TestCase.findOne({
       problemNo: problem.problemNo,
     });
@@ -36,8 +36,22 @@ module.exports.getProblemById = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-        message: error.message,
+      message: error.message,
     });
   }
-}
+};
 
+module.exports.getRandomProblem = async (req, res) => {
+  try {
+    const randomProblem = await Problem.aggregate([{ $sample: { size: 1 } }]);
+    res.status(200).json({
+      success: true,
+      problem: randomProblem[0],
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

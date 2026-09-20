@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Trophy,
   Terminal,
@@ -14,12 +14,203 @@ import Sidebar from "../components/problems/SideBar";
 import TopNav from "../components/problems/TopNav";
 import { UserDataContext } from "../context/UserContext.jsx";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function DashboardOverview() {
   const { user, setUser } = useContext(UserDataContext);
   const [noOfProblems, setNoOfProblems] = React.useState(0);
-  const [problems, setProblems] = React.useState([]);
+  const [problems, setProblems] = useState([]);
+  const [totalProblemCategories, setTotalProblemCategories] = useState([]);
+  const [solvedProblemCategories, setSolvedProblemCategories] = useState([]);
   const solvedProblemsCount = user?.solvedProblems?.length || 0;
+  const navigate = useNavigate();
+
+  const [cats, setcats] = useState([
+    {
+      name: "Array",
+      level: "Beginner",
+      total: 120,
+      solved: 86,
+      progress: "72%",
+      color: "from-blue-500 to-cyan-500",
+    },
+    {
+      name: "Math",
+      level: "Beginner",
+      total: 120,
+      solved: 86,
+      progress: "72%",
+      color: "from-red-500 to-cyan-500",
+    },
+    {
+      name: "Strings",
+      level: "Beginner",
+      total: 95,
+      solved: 62,
+      progress: "65%",
+      color: "from-emerald-500 to-teal-500",
+    },
+    {
+      name: "Linked List",
+      level: "Beginner",
+      total: 80,
+      solved: 46,
+      progress: "58%",
+      color: "from-violet-500 to-purple-500",
+    },
+    {
+      name: "Stack & Queue",
+      level: "Beginner",
+      total: 70,
+      solved: 45,
+      progress: "64%",
+      color: "from-orange-500 to-amber-500",
+    },
+    {
+      name: "Hash Table",
+      level: "Intermediate",
+      total: 100,
+      solved: 54,
+      progress: "54%",
+      color: "from-pink-500 to-rose-500",
+    },
+    {
+      name: "Binary Search",
+      level: "Intermediate",
+      total: 80,
+      solved: 38,
+      progress: "48%",
+      color: "from-cyan-500 to-blue-500",
+    },
+    {
+      name: "Recursion",
+      level: "Intermediate",
+      total: 100,
+      solved: 45,
+      progress: "45%",
+      color: "from-indigo-500 to-violet-500",
+    },
+    {
+      name: "Sorting",
+      level: "Intermediate",
+      total: 120,
+      solved: 82,
+      progress: "68%",
+      color: "from-lime-500 to-green-500",
+    },
+    {
+      name: "Trees",
+      level: "Intermediate",
+      total: 100,
+      solved: 52,
+      progress: "52%",
+      color: "from-green-500 to-emerald-500",
+    },
+    {
+      name: "Binary Search Tree",
+      level: "Intermediate",
+      total: 100,
+      solved: 42,
+      progress: "42%",
+      color: "from-teal-500 to-cyan-500",
+    },
+    {
+      name: "Heap / Priority Queue",
+      level: "Intermediate",
+      total: 90,
+      solved: 34,
+      progress: "38%",
+      color: "from-amber-500 to-orange-500",
+    },
+    {
+      name: "Graphs",
+      level: "Advanced",
+      total: 100,
+      solved: 35,
+      progress: "35%",
+      color: "from-blue-500 to-indigo-500",
+    },
+    {
+      name: "BFS & DFS",
+      level: "Intermediate",
+      total: 100,
+      solved: 35,
+      progress: "47%",
+      color: "from-purple-500 to-pink-500",
+    },
+    {
+      name: "Greedy Algorithms",
+      level: "Intermediate",
+      total: 100,
+      solved: 35,
+      progress: "41%",
+      color: "from-yellow-500 to-orange-500",
+    },
+    {
+      name: "Backtracking",
+      level: "Advanced",
+      total: 100,
+      solved: 35,
+      progress: "32%",
+      color: "from-red-500 to-pink-500",
+    },
+    {
+      name: "Dynamic Programming",
+      level: "Advanced",
+      total: 100,
+      solved: 35,
+      progress: "28%",
+      color: "from-rose-500 to-red-500",
+    },
+    {
+      name: "Trie",
+      level: "Advanced",
+      total: 100,
+      solved: 35,
+      progress: "25%",
+      color: "from-fuchsia-500 to-purple-500",
+    },
+    {
+      name: "Bit Manipulation",
+      level: "Intermediate",
+      total: 100,
+      solved: 35,
+      progress: "36%",
+      color: "from-slate-500 to-gray-500",
+    },
+    {
+      name: "Disjoint Set Union",
+      level: "Advanced",
+      total: 100,
+      solved: 35,
+      progress: "22%",
+      color: "from-orange-500 to-red-500",
+    },
+    {
+      name: "Topological Sort",
+      level: "Advanced",
+      total: 100,
+      solved: 35,
+      progress: "19%",
+      color: "from-cyan-500 to-teal-500",
+    },
+    {
+      name: "Shortest Path",
+      level: "Advanced",
+      total: 100,
+      solved: 35,
+      progress: "17%",
+      color: "from-indigo-500 to-blue-500",
+    },
+    {
+      name: "Minimum Spanning Tree",
+      level: "Advanced",
+      total: 100,
+      solved: 35,
+      progress: "15%",
+      color: "from-emerald-500 to-green-500",
+    },
+  ]);
 
   // Fetch problems from the backend API and update the state
   useEffect(() => {
@@ -105,6 +296,68 @@ export default function DashboardOverview() {
     },
   ];
 
+  // fetch number of toatl problems in each category
+  useEffect(() => {
+    const fetchProblems = async () => {
+      try {
+        const backendUrl =
+          import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+        const response = await axios.get(`${backendUrl}/api/problems`);
+        const data = await response.data;
+        // console.log("All problems in Dashboard:", data.problems);
+        setProblems(data.problems);
+
+        // number of problems in each category
+        const categoryCounts = data.problems.reduce((acc, problem) => {
+          problem?.tags.forEach((tag) => {
+            acc[tag] = (acc[tag] || 0) + 1;
+          });
+          return acc;
+        }, {});
+
+        console.log("Category counts:", categoryCounts);
+        setTotalProblemCategories(categoryCounts);
+      } catch (error) {
+        console.error("Error fetching problems:", error);
+      }
+    };
+
+    fetchProblems();
+  }, []);
+
+  // fetch number of solved problems in each category
+  useEffect(() => {
+    if (user) {
+      console.log("User solved problems in Dashboard:", user, user.solvedProblems);
+
+      // number of solved problems in each category
+      const solvedCategoryCounts = (user?.solvedProblems || []).reduce(
+        (acc, problem) => {
+          problem?.tags.forEach((tag) => {
+            acc[tag] = (acc[tag] || 0) + 1;
+          });
+          return acc;
+        },
+        {},
+      );
+
+      console.log("Solved category counts:", solvedCategoryCounts);
+      setSolvedProblemCategories(solvedCategoryCounts);
+    }
+  }, [user]);
+
+  // change the progress of each category in cats array
+  useEffect(() => {
+    const updatedCats = cats.map((cat) => {
+      const total = totalProblemCategories[cat.name] || 0;
+      const solved = solvedProblemCategories[cat.name] || 0;
+      const progress =
+        total > 0 ? `${Math.round((solved / total) * 100)}%` : "0%";
+      return { ...cat, total, solved, progress };
+    });
+    setcats(updatedCats);
+  }, [totalProblemCategories, solvedProblemCategories]);
+
   return (
     <div className="flex min-h-screen bg-[#e8f3e8] text-[#244333] font-sans antialiased">
       {/* Shared Persistent Layout Sidebar */}
@@ -129,8 +382,11 @@ export default function DashboardOverview() {
                 brackets.
               </p>
             </div>
-            <button className="bg-[#3f7d55] hover:bg-[#326844] text-white font-bold text-sm px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shrink-0 shadow-lg shadow-[#8eae94]/40 cursor-pointer">
-              Resume Daily Challenge <ChevronRight className="h-4 w-4" />
+            <button
+              className="bg-[#3f7d55] hover:bg-[#326844] text-white font-bold text-sm px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shrink-0 shadow-lg shadow-[#8eae94]/40 cursor-pointer"
+              onClick={() => navigate("/problems")}
+            >
+              Daily Challenge <ChevronRight className="h-4 w-4" />
             </button>
           </div>
 
@@ -166,70 +422,15 @@ export default function DashboardOverview() {
 
           {/* 3. Primary Analytical Section Layout */}
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
-            {/* Left: Activity Matrix Map Visual & Topic Strengths */}
+            {/* Left: Topic Strengths */}
             <div className="xl:col-span-2 space-y-6">
-              {/* Activity Map Module Shell */}
-              <div className="bg-[#f4faf1] rounded-2xl border border-[#b7d2bb] p-4 lg:p-5 shadow-lg">
-                <div className="flex justify-between items-center mb-4">
-                  <div>
-                    <h3 className="text-base font-bold text-[#244333]">
-                      Submission Frequency
-                    </h3>
-                    <p className="text-xs text-[#668170]">
-                      Your commit and check-in behavior over the past months.
-                    </p>
-                  </div>
-                  <select className="bg-[#e8f3e8] border border-[#b7d2bb] text-xs text-[#385a43] rounded-lg px-3 py-1.5 focus:outline-none focus:border-[#3f7d55]">
-                    <option>Last 6 Months</option>
-                    <option>Year 2026</option>
-                  </select>
-                </div>
-
-                {/* Simulated Mock Contribution Matrix Map Component */}
-                <div className="p-6 bg-[#e8f3e8] rounded-xl border border-[#b7d2bb] flex flex-col justify-center items-center text-center">
-                  <Terminal className="h-8 w-8 text-[#7da188] mb-2" />
-                  <span className="text-sm font-semibold text-[#547060]">
-                    Activity Analytics Heatmap Widget Container
-                  </span>
-                  <p className="text-xs text-[#668170] mt-1 max-w-xs">
-                    Integrate your charts package here (e.g., recharts,
-                    react-calendar-heatmap).
-                  </p>
-                </div>
-              </div>
-
               {/* Skill Proficiency Index Breakdown */}
               <div className="bg-[#f4faf1] rounded-2xl border border-[#b7d2bb] p-4 lg:p-5 shadow-lg">
                 <h3 className="text-base font-bold text-[#244333] mb-4">
                   Skill Index & Strengths
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {[
-                    {
-                      name: "Dynamic Programming",
-                      level: "Intermediate",
-                      progress: "54%",
-                      color: "from-rose-500 to-red-500",
-                    },
-                    {
-                      name: "Data Structures",
-                      level: "Advanced",
-                      progress: "88%",
-                      color: "from-amber-500 to-rose-500",
-                    },
-                    {
-                      name: "Algorithms",
-                      level: "Advanced",
-                      progress: "82%",
-                      color: "from-rose-500 to-orange-500",
-                    },
-                    {
-                      name: "System Design",
-                      level: "Beginner",
-                      progress: "20%",
-                      color: "from-[#8b5cf6] to-rose-500",
-                    },
-                  ].map((skill, index) => (
+                  {cats.map((skill, index) => (
                     <div
                       key={index}
                       className="p-3.5 bg-[#e8f3e8] rounded-xl border border-[#b7d2bb] space-y-2"
@@ -266,7 +467,8 @@ export default function DashboardOverview() {
                     href="/submissions"
                     className="text-xs font-semibold text-rose-400 hover:underline"
                   >
-                    View Detailed History <ChevronRight className="h-3.5 w-3.5 inline" />
+                    View Detailed History{" "}
+                    <ChevronRight className="h-3.5 w-3.5 inline" />
                   </a>
                 </div>
 
@@ -283,14 +485,17 @@ export default function DashboardOverview() {
                           </span>
                           <span className="text-[11px] text-[#668170] flex items-center gap-1">
                             <Clock className="h-3 w-3" />{" "}
-                            {new Date(item.submissionDate).toDateString() } at {new Date(item.submissionDate).toLocaleTimeString()}
+                            {new Date(item.submissionDate).toDateString()} at{" "}
+                            {new Date(item.submissionDate).toLocaleTimeString()}
                           </span>
                         </div>
                         <div className="text-right">
                           <span
                             className={`font-mono font-semibold block text-green-500`}
                           >
-                            {item.status === "accepted" ? "Accepted" : "Wrong Answer"}
+                            {item.status === "accepted"
+                              ? "Accepted"
+                              : "Wrong Answer"}
                           </span>
                         </div>
                       </div>

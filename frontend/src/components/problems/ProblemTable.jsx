@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   CheckCircle2,
   Circle,
@@ -8,16 +8,18 @@ import {
   ChevronRight,
   Search,
   ArrowRight,
-  Code2
-} from 'lucide-react';
-
+  Code2,
+} from "lucide-react";
+import axios from "axios";
+import { UserDataContext } from "../../context/UserContext";
 
 export default function ProblemTable() {
+  const { user, setUser } = useContext(UserDataContext);
   const navigate = useNavigate();
   const [problems, setProblems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedDifficulty, setSelectedDifficulty] = useState('All');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedDifficulty, setSelectedDifficulty] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
@@ -26,18 +28,19 @@ export default function ProblemTable() {
     const fetchProblems = async () => {
       setLoading(true);
       try {
-        const response = await fetch('http://localhost:4000/api/problems');
-        if (!response.ok) throw new Error('Failed to fetch');
-        const data = await response.json();
+        const backendUrl =
+          import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+        const response = await axios.get(`${backendUrl}/api/problems`);
+        const data = await response.data;
 
         if (data.problems && data.problems.length > 0) {
           setProblems(data.problems);
         }
 
-        console.log('Fetched problems:', data.problems);
-        console.log('No of problems:', data.problems.length);
+        console.log("Fetched problems:", data.problems);
+        console.log("No of problems:", data.problems.length);
       } catch (error) {
-        console.warn('Backend unavailable, using fallback problem set:', error);
+        console.warn("Backend unavailable, using fallback problem set:", error);
       } finally {
         setLoading(false);
       }
@@ -46,51 +49,62 @@ export default function ProblemTable() {
     fetchProblems();
   }, []);
 
+  const solvedProblems = user?.solvedProblems || [];
+
   // Filter problems based on search and dropdown selections
   const filteredProblems = problems.filter((prob) => {
     const matchesSearch =
       prob.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (prob.tags && prob.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))) ||
+      (prob.tags &&
+        prob.tags.some((tag) =>
+          tag.toLowerCase().includes(searchQuery.toLowerCase()),
+        )) ||
       (prob.problemNo && prob.problemNo.toString().includes(searchQuery)) ||
       (prob.id && prob.id.toString().includes(searchQuery));
 
     const matchesDiff =
-      selectedDifficulty === 'All' ||
-      (prob.difficulty && prob.difficulty.toLowerCase() === selectedDifficulty.toLowerCase());
+      selectedDifficulty === "All" ||
+      (prob.difficulty &&
+        prob.difficulty.toLowerCase() === selectedDifficulty.toLowerCase());
 
     return matchesSearch && matchesDiff;
   });
 
   // Pagination calculation
-  const totalPages = Math.max(1, Math.ceil(filteredProblems.length / itemsPerPage));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredProblems.length / itemsPerPage),
+  );
   const displayedProblems = filteredProblems.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   const handlePickRandom = () => {
     if (problems.length === 0) return;
     const randomIndex = Math.floor(Math.random() * problems.length);
     const randomProb = problems[randomIndex];
-    navigate(`/write-code?id=${randomProb._id || randomProb.slug || randomProb.problemNo || randomProb.id}`);
+    navigate(
+      `/write-code?id=${randomProb._id || randomProb.slug || randomProb.problemNo || randomProb.id}`,
+    );
   };
 
   const getDifficultyBadge = (difficulty) => {
-    const diff = (difficulty || '').toLowerCase();
+    const diff = (difficulty || "").toLowerCase();
     switch (diff) {
-      case 'easy':
+      case "easy":
         return (
           <span className="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-500/15 text-emerald-800 border border-emerald-500/30">
             Easy
           </span>
         );
-      case 'medium':
+      case "medium":
         return (
           <span className="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-500/15 text-amber-800 border border-amber-500/30">
             Medium
           </span>
         );
-      case 'hard':
+      case "hard":
         return (
           <span className="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full bg-rose-500/15 text-rose-800 border border-rose-500/30">
             Hard
@@ -99,7 +113,7 @@ export default function ProblemTable() {
       default:
         return (
           <span className="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full bg-[#dcecdf] text-[#244333] border border-[#b7d2bb]">
-            {difficulty || 'Unknown'}
+            {difficulty || "Unknown"}
           </span>
         );
     }
@@ -109,7 +123,6 @@ export default function ProblemTable() {
     <div className="bg-[#f4faf1] backdrop-blur-md rounded-2xl border border-[#b7d2bb] overflow-hidden shadow-xl">
       {/* Table Header Controls / Toolbar */}
       <div className="p-4 sm:p-5 border-b border-[#b7d2bb] bg-[#eef7eb] flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-
         {/* Search Input */}
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#668170]" />
@@ -129,17 +142,18 @@ export default function ProblemTable() {
         <div className="flex flex-wrap items-center gap-2.5">
           {/* Difficulty Filter */}
           <div className="flex items-center bg-[#ffffff] p-1 rounded-xl border border-[#b7d2bb] text-xs">
-            {['All', 'Easy', 'Medium', 'Hard'].map((diff) => (
+            {["All", "Easy", "Medium", "Hard"].map((diff) => (
               <button
                 key={diff}
                 onClick={() => {
                   setSelectedDifficulty(diff);
                   setCurrentPage(1);
                 }}
-                className={`px-3 py-1.5 rounded-lg font-medium transition-all duration-150 cursor-pointer ${selectedDifficulty === diff
-                    ? 'bg-[#3f7d55] text-white font-bold shadow-md shadow-[#8eae94]/40'
-                    : 'text-[#547060] hover:text-[#183226] hover:bg-[#e8f3e8]'
-                  }`}
+                className={`px-3 py-1.5 rounded-lg font-medium transition-all duration-150 cursor-pointer ${
+                  selectedDifficulty === diff
+                    ? "bg-[#3f7d55] text-white font-bold shadow-md shadow-[#8eae94]/40"
+                    : "text-[#547060] hover:text-[#183226] hover:bg-[#e8f3e8]"
+                }`}
               >
                 {diff}
               </button>
@@ -160,11 +174,15 @@ export default function ProblemTable() {
       {/* Info Bar */}
       <div className="px-5 py-2.5 bg-[#e8f3e8] border-b border-[#b7d2bb] flex items-center justify-between text-xs text-[#547060]">
         <span className="font-medium">
-          Showing <span className="text-[#183226] font-semibold">{filteredProblems.length}</span> problems
+          Showing{" "}
+          <span className="text-[#183226] font-semibold">
+            {filteredProblems.length}
+          </span>{" "}
+          problems
         </span>
         {searchQuery && (
           <button
-            onClick={() => setSearchQuery('')}
+            onClick={() => setSearchQuery("")}
             className="text-[#2f6b45] hover:text-[#183226] text-xs font-semibold transition-colors cursor-pointer"
           >
             Clear Search
@@ -180,7 +198,9 @@ export default function ProblemTable() {
               <th className="py-3.5 px-4 w-12 text-center font-bold">Status</th>
               <th className="py-3.5 px-4 font-bold">Title</th>
               <th className="py-3.5 px-4 w-32 font-bold">Difficulty</th>
-              <th className="py-3.5 px-4 hidden lg:table-cell font-bold">Tags</th>
+              <th className="py-3.5 px-4 hidden lg:table-cell font-bold">
+                Tags
+              </th>
               <th className="py-3.5 px-4 w-16 text-center font-bold">Action</th>
             </tr>
           </thead>
@@ -189,11 +209,21 @@ export default function ProblemTable() {
               // Loading Skeleton
               [...Array(5)].map((_, i) => (
                 <tr key={i} className="animate-pulse">
-                  <td className="py-4 px-4 text-center"><div className="h-4 w-4 bg-[#c5dfc9] rounded-full mx-auto" /></td>
-                  <td className="py-4 px-4"><div className="h-4 w-48 bg-[#c5dfc9] rounded" /></td>
-                  <td className="py-4 px-4"><div className="h-5 w-16 bg-[#c5dfc9] rounded-full" /></td>
-                  <td className="py-4 px-4 hidden lg:table-cell"><div className="h-4 w-32 bg-[#c5dfc9] rounded" /></td>
-                  <td className="py-4 px-4 text-center"><div className="h-4 w-6 bg-[#c5dfc9] rounded mx-auto" /></td>
+                  <td className="py-4 px-4 text-center">
+                    <div className="h-4 w-4 bg-[#c5dfc9] rounded-full mx-auto" />
+                  </td>
+                  <td className="py-4 px-4">
+                    <div className="h-4 w-48 bg-[#c5dfc9] rounded" />
+                  </td>
+                  <td className="py-4 px-4">
+                    <div className="h-5 w-16 bg-[#c5dfc9] rounded-full" />
+                  </td>
+                  <td className="py-4 px-4 hidden lg:table-cell">
+                    <div className="h-4 w-32 bg-[#c5dfc9] rounded" />
+                  </td>
+                  <td className="py-4 px-4 text-center">
+                    <div className="h-4 w-6 bg-[#c5dfc9] rounded mx-auto" />
+                  </td>
                 </tr>
               ))
             ) : displayedProblems.length === 0 ? (
@@ -210,12 +240,16 @@ export default function ProblemTable() {
                 return (
                   <tr
                     key={prob._id || index}
-                    onClick={() => navigate(`/write-code?id=${prob._id || prob.slug || probId}`)}
+                    onClick={() =>
+                      navigate(
+                        `/write-code?id=${prob._id || prob.slug || probId}`,
+                      )
+                    }
                     className="hover:bg-[#eef7eb] transition-all duration-150 group cursor-pointer border-l-2 border-l-transparent hover:border-l-[#3f7d55]"
                   >
                     {/* Status Icon */}
                     <td className="py-3.5 px-4 text-center">
-                      {prob.status === 'solved' ? (
+                      {solvedProblems.some((p) => p._id === prob._id) ? (
                         <CheckCircle2 className="h-4 w-4 text-emerald-600 inline" />
                       ) : (
                         <Circle className="h-4 w-4 text-[#8eae94] inline group-hover:text-[#3f7d55] transition-colors" />
@@ -224,7 +258,9 @@ export default function ProblemTable() {
 
                     {/* Title */}
                     <td className="py-3.5 px-4 font-medium text-[#183226] group-hover:text-[#2f6b45] transition-colors">
-                      <span className="text-[#668170] font-mono text-xs mr-2">#{probId}</span>
+                      <span className="text-[#668170] font-mono text-xs mr-2">
+                        #{probId}
+                      </span>
                       <span className="font-semibold">{prob.title}</span>
                     </td>
 
@@ -236,14 +272,15 @@ export default function ProblemTable() {
                     {/* Tags */}
                     <td className="py-3.5 px-4 hidden lg:table-cell">
                       <div className="flex flex-wrap gap-1.5">
-                        {prob.tags && prob.tags.map((tag, i) => (
-                          <span
-                            key={i}
-                            className="bg-[#e8f3e8] hover:bg-[#dcecdf] text-[#2f6b45] text-[11px] font-semibold px-2.5 py-0.5 rounded-full border border-[#b7d2bb] transition-colors"
-                          >
-                            {tag}
-                          </span>
-                        ))}
+                        {prob.tags &&
+                          prob.tags.map((tag, i) => (
+                            <span
+                              key={i}
+                              className="bg-[#e8f3e8] hover:bg-[#dcecdf] text-[#2f6b45] text-[11px] font-semibold px-2.5 py-0.5 rounded-full border border-[#b7d2bb] transition-colors"
+                            >
+                              {tag}
+                            </span>
+                          ))}
                       </div>
                     </td>
 
@@ -264,7 +301,8 @@ export default function ProblemTable() {
       {/* Pagination Footer */}
       <div className="p-4 sm:px-6 border-t border-[#b7d2bb] bg-[#eef7eb] flex flex-col sm:flex-row gap-3 justify-between items-center text-xs text-[#547060]">
         <div>
-          Page <span className="text-[#183226] font-semibold">{currentPage}</span> of{' '}
+          Page{" "}
+          <span className="text-[#183226] font-semibold">{currentPage}</span> of{" "}
           <span className="text-[#183226] font-semibold">{totalPages}</span>
         </div>
 
@@ -287,7 +325,11 @@ export default function ProblemTable() {
               Math.abs(pageNum - currentPage) > 1
             ) {
               if (Math.abs(pageNum - currentPage) === 2) {
-                return <span key={pageNum} className="px-1 text-[#668170]">...</span>;
+                return (
+                  <span key={pageNum} className="px-1 text-[#668170]">
+                    ...
+                  </span>
+                );
               }
               return null;
             }
@@ -296,10 +338,11 @@ export default function ProblemTable() {
               <button
                 key={pageNum}
                 onClick={() => setCurrentPage(pageNum)}
-                className={`w-7 h-7 rounded-lg text-xs font-semibold transition-all cursor-pointer ${currentPage === pageNum
-                    ? 'bg-[#3f7d55] text-white font-bold shadow-md shadow-[#8eae94]/40'
-                    : 'text-[#547060] hover:bg-[#dcecdf] hover:text-[#183226]'
-                  }`}
+                className={`w-7 h-7 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  currentPage === pageNum
+                    ? "bg-[#3f7d55] text-white font-bold shadow-md shadow-[#8eae94]/40"
+                    : "text-[#547060] hover:bg-[#dcecdf] hover:text-[#183226]"
+                }`}
               >
                 {pageNum}
               </button>
@@ -307,7 +350,9 @@ export default function ProblemTable() {
           })}
 
           <button
-            onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+            }
             disabled={currentPage === totalPages}
             className="p-1.5 rounded-lg bg-[#ffffff] hover:bg-[#dcecdf] text-[#244333] disabled:opacity-40 disabled:hover:bg-[#ffffff] transition-colors cursor-pointer border border-[#b7d2bb]"
           >

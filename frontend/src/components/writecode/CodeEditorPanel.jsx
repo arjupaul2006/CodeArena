@@ -164,14 +164,51 @@ export default function CodeEditorPanel({
       ? propsSampleTestCases
       : targetTestCases.filter((tc) => tc.isSample || tc.is_sample);
 
+
+  // fetch submitted code
   useEffect(() => {
-    setCode(
-      languageOptions.find((option) => option.value === selectedLanguage)
-        ?.codeLines ?? "",
-    );
+    try {
+      const fetchSubmittedCode = async () => {
+        const backendUrl =
+          import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+
+        const response = await axios.post(
+          `${backendUrl}/api/submissionHistoryByProblemId`,
+          {
+            problemId: problem?._id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          },
+        );
+
+        const data = response.data;
+
+        if(data && data.submissions && data.submissions.length > 0) {
+          setCode(data?.submissions[0]?.code || "");
+          setSelectedLanguage(data?.submissions[0]?.language || "python");
+        } 
+        
+        else {
+          setCode(
+            languageOptions.find((option) => option.value === selectedLanguage)
+              ?.codeLines ?? "",
+          );
+          setSelectedLanguage(selectedLanguage);
+        }
+
+        // console.log("Fetched submitted code:", data?.submissions[0]?.code || null);
+      };
+
+      fetchSubmittedCode();
+    } catch (error) {
+      console.error("Error fetching problem data:", error);
+    }
   }, [problem, selectedLanguage]);
 
-  // Handle code execution for Run button (runs sample test cases)
+  // ----- Handle code execution for Run button (runs sample test cases)
   const handleRunCodeExecution = async () => {
     const setRunExecutionResult =
       propsSetRunExecutionResult ?? setLocalRunExecutionResult;
@@ -337,7 +374,7 @@ export default function CodeEditorPanel({
     }
   };
 
-  // Handle code execution for Submit button (runs ALL test cases including sample test cases)
+  // ----- Handle code execution for Submit button (runs ALL test cases including sample test cases)
   const handleSubmitCodeExecution = async () => {
     const setSubmitExecutionResult =
       propsSetSubmitExecutionResult ?? setLocalSubmitExecutionResult;
@@ -496,15 +533,6 @@ export default function CodeEditorPanel({
           stderr: stderr || null,
         });
 
-        // console.log(`Test Case ${index + 1} Result:`, {
-        //   passed,
-        //   expectedOutput,
-        //   actualOutput,
-        //   runtime,
-        //   memory,
-        //   error: executionError,
-        // });
-
         // --------------------------------
         // Stop immediately if execution
         // error occurs
@@ -539,13 +567,6 @@ export default function CodeEditorPanel({
         runs,
         isSubmit: true,
       });
-
-      // console.log("Final Submission Result:", {
-      //   verdict: isAccepted ? "accepted" : "wrong-answer",
-      //   runtime: maxRuntime,
-      //   memory: maxMemory,
-      //   runs,
-      // });
     } catch (error) {
       console.error("Submission execution error:", error);
 

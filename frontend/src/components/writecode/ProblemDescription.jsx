@@ -130,7 +130,7 @@ export default function ProblemDescription({
       const token = localStorage.getItem("token");
 
       if (
-        submitExecutionResult?.verdict === "accepted" &&
+        submitExecutionResult?.verdict !== null &&
         problem?._id &&
         (user?._id || token)
       ) {
