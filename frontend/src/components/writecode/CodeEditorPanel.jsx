@@ -25,7 +25,10 @@ const areOutputsEqual = (actual, expected) => {
   const actualTokens = extractTokens(normActual);
   const expectedTokens = extractTokens(normExpected);
 
-  if (actualTokens.length > 0 && actualTokens.length === expectedTokens.length) {
+  if (
+    actualTokens.length > 0 &&
+    actualTokens.length === expectedTokens.length
+  ) {
     return actualTokens.every((tok, idx) => tok === expectedTokens[idx]);
   }
 
@@ -46,61 +49,72 @@ export default function CodeEditorPanel({
     {
       label: "Python 3",
       value: "python",
+      id: 71,
       codeLines: "# Write your code here\nprint('Hello, World!')",
     },
     {
       label: "JavaScript",
       value: "javascript",
+      id: 63,
       codeLines: "// Write your code here\nconsole.log('Hello, World!');",
     },
     {
       label: "Java",
       value: "java",
+      id: 62,
       codeLines:
-        "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"Hello, World!\");\n    }\n}",
+        'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}',
     },
     {
       label: "C++",
       value: "cpp",
+      id: 54,
       codeLines:
         '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello, World!" << endl;\n    return 0;\n}',
     },
     {
       label: "C",
       value: "c",
+      id: 50,
       codeLines:
         '#include <stdio.h>\n\nint main() {\n    printf("Hello, World!\\n");\n    return 0;\n}',
     },
     {
       label: "Go",
       value: "go",
+      id: 60,
       codeLines:
         '// Write your code here\npackage main\nimport "fmt"\nfunc main() {\n    fmt.Println("Hello, World!")\n}',
     },
     {
       label: "Ruby",
       value: "ruby",
+      id: 72,
       codeLines: "# Write your code here\nputs 'Hello, World!'",
     },
     {
       label: "C#",
       value: "csharp",
+      id: 51,
       codeLines:
         '// Write your code here\nusing System;\nclass Program {\n    static void Main() {\n        Console.WriteLine("Hello, World!");\n    }\n}',
     },
     {
       label: "PHP",
       value: "php",
+      id: 68,
       codeLines: "<?php\necho 'Hello, World!';\n?>",
     },
     {
       label: "Swift",
       value: "swift",
+      id: 83,
       codeLines: '// Write your code here\nprint("Hello, World!")',
     },
     {
       label: "Kotlin",
       value: "kotlin",
+      id: 78,
       codeLines:
         '// Write your code here\nfun main() {\n    println("Hello, World!")\n}',
     },
@@ -123,13 +137,15 @@ export default function CodeEditorPanel({
   });
 
   // state setters
-  var setRunExecutionResult = propsSetRunExecutionResult ?? setLocalRunExecutionResult;
-  var setSubmitExecutionResult = propsSetSubmitExecutionResult ?? setLocalSubmitExecutionResult;
+  var setRunExecutionResult =
+    propsSetRunExecutionResult ?? setLocalRunExecutionResult;
+  var setSubmitExecutionResult =
+    propsSetSubmitExecutionResult ?? setLocalSubmitExecutionResult;
 
   const [isRunning, setIsRunning] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [code, setCode] = useState('');
+  const [code, setCode] = useState("");
 
   const [selectedLanguage, setSelectedLanguage] = useState("python");
 
@@ -137,7 +153,10 @@ export default function CodeEditorPanel({
   const targetTestCases =
     testCases && testCases.length > 0
       ? testCases
-      : problem?.test_cases || problem?.testCases || demoproblem?.test_cases || [];
+      : problem?.test_cases ||
+        problem?.testCases ||
+        demoproblem?.test_cases ||
+        [];
 
   // Array of sample test cases (filtered by isSample / is_sample flag)
   const sampleTestCases =
@@ -146,19 +165,24 @@ export default function CodeEditorPanel({
       : targetTestCases.filter((tc) => tc.isSample || tc.is_sample);
 
   useEffect(() => {
-    setCode(languageOptions.find((option) => option.value === selectedLanguage)?.codeLines ?? "");
+    setCode(
+      languageOptions.find((option) => option.value === selectedLanguage)
+        ?.codeLines ?? "",
+    );
   }, [problem, selectedLanguage]);
-
-
 
   // Handle code execution for Run button (runs sample test cases)
   const handleRunCodeExecution = async () => {
-    setRunExecutionResult = propsSetRunExecutionResult ?? setLocalRunExecutionResult;
+    const setRunExecutionResult =
+      propsSetRunExecutionResult ?? setLocalRunExecutionResult;
 
     const testCasesToRun =
       sampleTestCases.length > 0 ? sampleTestCases : targetTestCases;
 
-    // if there are no test cases, we cannot run the code
+    // --------------------------------
+    // Check test cases
+    // --------------------------------
+
     if (!testCasesToRun?.length) {
       setRunExecutionResult({
         verdict: "wrong-answer",
@@ -170,73 +194,112 @@ export default function CodeEditorPanel({
       return;
     }
 
-
     setIsRunning(true);
 
     try {
       const runs = [];
 
-      // Execute code against specified test cases
+      // --------------------------------
+      // Run each test case
+      // --------------------------------
+
       for (let index = 0; index < testCasesToRun.length; index++) {
         const testCase = testCasesToRun[index];
 
+        // Convert input to string
         const serializedInput =
           typeof testCase.input === "object"
             ? JSON.stringify(testCase.input)
             : String(testCase.input ?? "");
 
-        const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+        const backendUrl =
+          import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
 
-        const { data } = await axios.post(
-          `${backendUrl}/api/execute`,
-          {
-            code,
-            input: serializedInput,
-            language: selectedLanguage,
-            problem: problem ?? null,
-          },
-        );
+        // --------------------------------
+        // Send code to backend
+        // --------------------------------
 
-        console.log("Backend Data:", data)
+        const { data } = await axios.post(`${backendUrl}/api/execute`, {
+          code,
+          input: serializedInput,
+          language: selectedLanguage,
 
-        // Get actual output from backend
-        const actualOutput = normalizeOutput(
-          data?.output ?? data?.stderr ?? data?.error,
-        );
+          languageId:
+            languageOptions.find((option) => option.value === selectedLanguage)
+              ?.id ?? null,
 
-        // Check if there was a compilation/runtime/language error
-        const isErrorFound = Boolean(data?.error || data?.stderr);
+          problem: problem ?? null,
+        });
 
+        console.log("JDoodle Backend Response:", data);
+
+        // --------------------------------
+        // JDoodle result
+        // --------------------------------
+
+        const result = data?.result ?? {};
+
+        // JDoodle output
+        const actualOutput = normalizeOutput(result.output ?? "");
+
+        // JDoodle error
+        const executionError = result.error || data?.error || "";
+
+        const stderr = result.error || "";
+
+        // --------------------------------
         // Expected output
-        const expectedOutput = normalizeOutput(testCase.expectedOutput ?? testCase.output);
+        // --------------------------------
 
-        // Test case passes only if:
-        // 1. Backend execution was successful
-        // 2. Actual output matches expected output
+        const expectedOutput = normalizeOutput(
+          testCase.expectedOutput ?? testCase.output ?? "",
+        );
+
+        // --------------------------------
+        // Check execution error
+        // --------------------------------
+
+        const isErrorFound = Boolean(executionError);
+
+        // --------------------------------
+        // Check output
+        // --------------------------------
+
         const passed =
           Boolean(data?.success) &&
           !isErrorFound &&
           areOutputsEqual(actualOutput, expectedOutput);
 
+        // --------------------------------
+        // Store testcase result
+        // --------------------------------
+
         runs.push({
           id: index + 1,
           input: testCase.input,
+          sentInput: serializedInput,
           expectedOutput,
           actualOutput,
-          sentInput: serializedInput,
           isSample: Boolean(testCase.isSample || testCase.is_sample),
           passed,
           isErrorFound,
-          runtime: data?.runtime ?? null,
-          memory: data?.memory ?? null,
-          error: data?.error ?? null,
-          stderr: data?.stderr ?? null,
+          runtime: result.cpuTime ?? data?.cpuTime ?? null,
+          memory: result.memory ?? data?.memory ?? null,
+          error: executionError || null,
+          stderr: stderr || null,
         });
       }
 
-      // Check if ALL test cases passed
+      // --------------------------------
+      // Check all test cases
+      // --------------------------------
+
       const isAccepted =
         runs.length > 0 && runs.every((result) => result.passed);
+
+      // --------------------------------
+      // Final result
+      // --------------------------------
 
       setRunExecutionResult({
         verdict: isAccepted ? "accepted" : "wrong-answer",
@@ -246,19 +309,27 @@ export default function CodeEditorPanel({
           : "Wrong answer: at least one sample testcase did not match the expected output.",
 
         runs,
+
         isSubmit: false,
       });
 
-      console.log('Executed Result:', runs)
+      console.log("Final Execution Result:", runs);
     } catch (error) {
+      console.error("Code Execution Error:", error);
+
       setRunExecutionResult({
         verdict: "wrong-answer",
 
         message: error?.response?.data?.error
-          ? `Execution Error: ${error.response.data.error}`
-          : `Execution Error: ${error.message}`,
+          ? `Execution Error: ${
+              typeof error.response.data.error === "string"
+                ? error.response.data.error
+                : JSON.stringify(error.response.data.error)
+            }`
+          : `Execution Error: ${error?.message || "Unknown error"}`,
 
         runs: [],
+
         isSubmit: false,
       });
     } finally {
@@ -268,11 +339,15 @@ export default function CodeEditorPanel({
 
   // Handle code execution for Submit button (runs ALL test cases including sample test cases)
   const handleSubmitCodeExecution = async () => {
-    setSubmitExecutionResult = propsSetSubmitExecutionResult ?? setLocalSubmitExecutionResult;
+    const setSubmitExecutionResult =
+      propsSetSubmitExecutionResult ?? setLocalSubmitExecutionResult;
 
     const testCasesToSubmit = targetTestCases;
 
-    // if there are no test cases, we cannot run the code
+    // --------------------------------
+    // Check test cases
+    // --------------------------------
+
     if (!testCasesToSubmit?.length) {
       setSubmitExecutionResult({
         verdict: "wrong-answer",
@@ -292,79 +367,165 @@ export default function CodeEditorPanel({
 
     try {
       const runs = [];
-      var maxRuntime = 0;
-      var maxMemory = 0;
 
-      // Execute code against ALL test cases (sample + hidden)
+      let maxRuntime = 0;
+      let maxMemory = 0;
+
+      const backendUrl =
+        import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+
+      // --------------------------------
+      // Execute ALL test cases
+      // --------------------------------
+
       for (let index = 0; index < testCasesToSubmit.length; index++) {
         const testCase = testCasesToSubmit[index];
+
+        // --------------------------------
+        // Serialize input
+        // --------------------------------
 
         const serializedInput =
           typeof testCase.input === "object"
             ? JSON.stringify(testCase.input)
             : String(testCase.input ?? "");
 
-        const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+        // --------------------------------
+        // Send code to backend
+        // --------------------------------
 
-        const { data } = await axios.post(
-          `${backendUrl}/api/execute`,
-          {
-            code,
-            input: serializedInput,
-            language: selectedLanguage,
-            problem: problem ?? null,
-          },
-        );
+        const { data } = await axios.post(`${backendUrl}/api/execute`, {
+          code,
+          input: serializedInput,
+          language: selectedLanguage,
+          languageId:
+            languageOptions.find((option) => option.value === selectedLanguage)
+              ?.id ?? null,
+          problem: problem ?? null,
+        });
 
-        // Get actual output from backend
-        const actualOutput = normalizeOutput(
-          data?.output ?? data?.stderr ?? data?.error,
-        );
+        console.log(`JDoodle response - Test Case ${index + 1}:`, data);
 
-        // Check if there was a compilation/runtime/language error
-        const isErrorFound = Boolean(data?.error || data?.stderr);
+        // --------------------------------
+        // Get JDoodle result
+        // --------------------------------
 
+        const result = data?.result ?? {};
+
+        // --------------------------------
+        // Actual output
+        // --------------------------------
+
+        const actualOutput = normalizeOutput(result.output ?? "");
+
+        // --------------------------------
+        // Error
+        // --------------------------------
+
+        const executionError = result.error || data?.error || "";
+
+        const stderr = result.error || "";
+
+        const isErrorFound = Boolean(executionError);
+
+        // --------------------------------
         // Expected output
-        const expectedOutput = normalizeOutput(testCase.expectedOutput ?? testCase.output);
+        // --------------------------------
 
-        // Test case passes only if:
-        // 1. Backend execution was successful
-        // 2. Actual output matches expected output
+        const expectedOutput = normalizeOutput(
+          testCase.expectedOutput ?? testCase.output ?? "",
+        );
+
+        // --------------------------------
+        // Check testcase
+        // --------------------------------
+
         const passed =
           Boolean(data?.success) &&
           !isErrorFound &&
           areOutputsEqual(actualOutput, expectedOutput);
 
-        var runtime = parseInt(data?.runtime?.replace(' ms', ''), 10) ?? 0;
-        var memory = parseInt(data?.memory.replace(' KB', ''), 10) ?? 0;
+        // --------------------------------
+        // Runtime
+        // --------------------------------
+
+        const runtimeValue = Number(result.cpuTime ?? 0);
+
+        const runtime = Number.isFinite(runtimeValue) ? runtimeValue : 0;
+
+        // --------------------------------
+        // Memory
+        // --------------------------------
+
+        const memoryValue = Number(result.memory ?? 0);
+
+        const memory = Number.isFinite(memoryValue) ? memoryValue : 0;
+
+        // --------------------------------
+        // Get maximum runtime
+        // --------------------------------
 
         if (runtime > maxRuntime) {
           maxRuntime = runtime;
         }
 
+        // --------------------------------
+        // Get maximum memory
+        // --------------------------------
+
         if (memory > maxMemory) {
           maxMemory = memory;
         }
 
+        // --------------------------------
+        // Store testcase result
+        // --------------------------------
+
         runs.push({
           id: index + 1,
           input: testCase.input,
+          sentInput: serializedInput,
           expectedOutput,
           actualOutput,
-          sentInput: serializedInput,
           isSample: Boolean(testCase.isSample || testCase.is_sample),
           passed,
           isErrorFound,
-          runtime: data?.runtime ?? null,
-          memory: data?.memory ?? null,
-          error: data?.error ?? null,
-          stderr: data?.stderr ?? null,
+          runtime,
+          memory,
+          error: executionError || null,
+          stderr: stderr || null,
         });
+
+        // console.log(`Test Case ${index + 1} Result:`, {
+        //   passed,
+        //   expectedOutput,
+        //   actualOutput,
+        //   runtime,
+        //   memory,
+        //   error: executionError,
+        // });
+
+        // --------------------------------
+        // Stop immediately if execution
+        // error occurs
+        // --------------------------------
+
+        if (isErrorFound) {
+          break;
+        }
       }
 
-      // Check if ALL test cases passed
+      // --------------------------------
+      // Check ALL test cases
+      // --------------------------------
+
       const isAccepted =
-        runs.length > 0 && runs.every((result) => result.passed);
+        runs.length === testCasesToSubmit.length &&
+        runs.every((result) => result.passed);
+
+      // --------------------------------
+      // Final submission result
+      // --------------------------------
 
       setSubmitExecutionResult({
         verdict: isAccepted ? "accepted" : "wrong-answer",
@@ -375,20 +536,32 @@ export default function CodeEditorPanel({
         message: isAccepted
           ? "Submitted successfully: every testcase produced the expected output."
           : "Submission Failed: at least one testcase did not match the expected output.",
-
         runs,
         isSubmit: true,
       });
+
+      // console.log("Final Submission Result:", {
+      //   verdict: isAccepted ? "accepted" : "wrong-answer",
+      //   runtime: maxRuntime,
+      //   memory: maxMemory,
+      //   runs,
+      // });
     } catch (error) {
+      console.error("Submission execution error:", error);
+
       setSubmitExecutionResult({
         verdict: "wrong-answer",
         code: code,
         language: selectedLanguage,
-        runtime: maxRuntime,
-        memory: maxMemory,
+        runtime: 0,
+        memory: 0,
         message: error?.response?.data?.error
-          ? `Execution Error: ${error.response.data.error}`
-          : `Execution Error: ${error.message}`,
+          ? `Execution Error: ${
+              typeof error.response.data.error === "string"
+                ? error.response.data.error
+                : JSON.stringify(error.response.data.error)
+            }`
+          : `Execution Error: ${error?.message || "Unknown execution error"}`,
 
         runs: [],
         isSubmit: true,
@@ -409,7 +582,10 @@ export default function CodeEditorPanel({
           onChange={(e) => {
             const nextLanguage = e.target.value;
             setSelectedLanguage(nextLanguage);
-            setCode(languageOptions.find((option) => option.value === nextLanguage)?.codeLines ?? "");
+            setCode(
+              languageOptions.find((option) => option.value === nextLanguage)
+                ?.codeLines ?? "",
+            );
           }}
         >
           {languageOptions.map((option) => (
@@ -446,7 +622,11 @@ export default function CodeEditorPanel({
             type="button"
             className="p-1.5 text-[#547060] hover:text-[#183226] rounded hover:bg-[#dcecdf] transition-colors cursor-pointer"
             onClick={() => {
-              setCode(languageOptions.find((option) => option.value === selectedLanguage)?.codeLines ?? "");
+              setCode(
+                languageOptions.find(
+                  (option) => option.value === selectedLanguage,
+                )?.codeLines ?? "",
+              );
             }}
           >
             <RotateCcw className="w-3.5 h-3.5" />

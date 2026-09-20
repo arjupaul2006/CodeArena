@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 const { exec } = require("child_process");
+const axios = require("axios");
 
 const languages = {
   c: {
@@ -39,7 +40,142 @@ const languages = {
   },
 };
 
+const languageMap = {
+  python: {
+    language: "python3",
+    versionIndex: "5",
+  },
+
+  cpp: {
+    language: "cpp17",
+    versionIndex: "1",
+  },
+
+  c: {
+    language: "c",
+    versionIndex: "5",
+  },
+
+  java: {
+    language: "java",
+    versionIndex: "5",
+  },
+
+  javascript: {
+    language: "nodejs",
+    versionIndex: "4",
+  },
+};
+
+// const WANDBOX_URL = "https://wandbox.org/api/compile.json";
+const JDOODLE_URL = "https://api.jdoodle.com/v1/execute";
+
 module.exports.executeCode = async (req, res) => {
+  try {
+    const { code, language, languageId, input } = req.body;
+
+    // -----------------------------
+    // Validation
+    // -----------------------------
+
+    if (!code) {
+      return res.status(400).json({
+        success: false,
+        message: "Code is required",
+      });
+    }
+
+    if (!language) {
+      return res.status(400).json({
+        success: false,
+        message: "Language is required",
+      });
+    }
+
+    // -----------------------------
+    // Check JDoodle credentials
+    // -----------------------------
+
+    if (!process.env.JDOODLE_CLIENT_ID || !process.env.JDOODLE_CLIENT_SECRET) {
+      return res.status(500).json({
+        success: false,
+        message: "JDoodle credentials are not configured",
+      });
+    }
+
+    // -----------------------------
+    // JDoodle language mapping
+    // -----------------------------
+
+    const selectedLanguage = languageMap[language];
+
+    if (!selectedLanguage) {
+      return res.status(400).json({
+        success: false,
+        message: "Unsupported language",
+      });
+    }
+
+    // -----------------------------
+    // Send code to JDoodle
+    // -----------------------------
+
+    const response = await axios.post(
+      JDOODLE_URL,
+      {
+        clientId: process.env.JDOODLE_CLIENT_ID,
+        clientSecret: process.env.JDOODLE_CLIENT_SECRET,
+
+        script: code,
+
+        language: selectedLanguage.language,
+
+        versionIndex: selectedLanguage.versionIndex,
+
+        stdin: input || "",
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        timeout: 30000,
+      },
+    );
+
+    const result = response.data;
+
+    console.log("JDoodle response:", result);
+
+    // -----------------------------
+    // Return result
+    // -----------------------------
+
+    return res.json({
+      success: true,
+      compilerMessage: result.error || "",
+      programMessage: result.output || "",
+      status: result.statusCode,
+      signal: null,
+      result: result,
+      memory: result.memory || null,
+      cpuTime: result.cpuTime || null,
+    });
+  } 
+  
+  catch (error) {
+    console.error("JDoodle error:", error.response?.data || error.message);
+
+    return res.status(500).json({
+      success: false,
+
+      message: "Code execution failed",
+
+      error: error.response?.data || error.message,
+    });
+  }
+};
+/* module.exports.executeCode = async (req, res) => {
   try {
     const { code, input, language, problem } = req.body;
 
@@ -143,5 +279,4 @@ module.exports.executeCode = async (req, res) => {
       error: err.message,
     });
   }
-};
-
+}; */
