@@ -39,6 +39,13 @@ const userSchema = new mongoose.Schema(
         required: true,
       },
     ],
+
+    contestsParticipated: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Contest",
+      },
+    ],
   },
   {
     timestamps: true,

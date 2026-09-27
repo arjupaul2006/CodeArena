@@ -23,9 +23,9 @@ module.exports.getProblemById = async (req, res) => {
     const problemId = req.params.id;
     const problem = await Problem.findById(problemId);
 
-    // Fetch test cases using problemNo
+    // Fetch test cases using problemId
     const testCaseData = await TestCase.findOne({
-      problemNo: problem.problemNo,
+      problemId: problem._id,
     });
 
     res.status(200).json({

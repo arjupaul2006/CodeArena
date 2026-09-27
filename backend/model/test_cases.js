@@ -7,6 +7,12 @@ const testCaseSchema = new mongoose.Schema(
       required: true,
     },
 
+    problemId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Problem",
+      required: true,
+    },
+
     test_cases: [
       {
         input: {

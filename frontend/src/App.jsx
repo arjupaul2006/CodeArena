@@ -9,6 +9,8 @@ import Problems from "./pages/Problems";
 import Dashboard from "./pages/Dashboard";
 import Submissions from "./pages/Submissions";
 import WriteCode from "./pages/WriteCode";
+import Contest from "./pages/Contest";
+import ContestProblems from "./pages/ContestProblemsLists";
 import Signin from "./authentication/Signin";
 import Login from "./authentication/Login";
 import UserProtect from "./authentication/UserProtect";
@@ -44,6 +46,22 @@ function App() {
             element={
               <UserProtect>
                 <Submissions />
+              </UserProtect>
+            }
+          />
+          <Route
+            path="/contests"
+            element={
+              <UserProtect>
+                <Contest />
+              </UserProtect>
+            }
+          />
+          <Route
+            path="/contests/:contestId"
+            element={
+              <UserProtect>
+                <ContestProblems />
               </UserProtect>
             }
           />

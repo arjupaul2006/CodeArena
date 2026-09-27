@@ -5,10 +5,15 @@ const express = require('express');
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
 
+
+// Internal Module
 const codeExecutionRoute = require('./routes/codeExecutionRoute')
 const problemsRoute = require('./routes/problemRoute')
 const userSigninRoute = require('./routes/userSigninRoute')
 const submitProblemRoute = require('./routes/submitProblem')
+const contestRoute = require('./routes/contestRoute')
+
+
 
 const app = express();
 
@@ -22,6 +27,7 @@ app.use('/api', codeExecutionRoute)
 app.use('/api', problemsRoute)
 app.use('/api', userSigninRoute)
 app.use('/api', submitProblemRoute)
+app.use('/api', contestRoute)
 
 
 app.use('/', (req, res, next) => { 
