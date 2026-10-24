@@ -1,4 +1,4 @@
-import React from 'react'
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowRight,
@@ -9,15 +9,62 @@ import {
   Trophy,
   Users,
 } from "lucide-react";
+import { useState } from "react";
 
-function ContestCard({ contest, onJoin, joined, getStatus, formatDate, statusStyles }) {
-  const status = getStatus(contest);
+function ContestCard({
+  contest,
+  onJoin,
+  joined,
+  getStatus,
+  formatDate,
+  statusStyles,
+}) {
+  // const status = getStatus(contest);
+  const [status, setStatus] = useState("upcoming");
   const problemCount = contest.problems?.length || 0;
   const navigate = useNavigate();
 
   const handleEnterContest = (contestId) => {
     navigate(`/contests/${contestId}`);
-  }
+  };
+
+  // check the status of the contest and update the status accordingly
+  useEffect(() => {
+    const now = Date.now();
+    const startTime = new Date(contest.startTime).getTime();
+    const endTime = new Date(contest.endTime).getTime();
+
+    if (now < startTime) {
+      setStatus("upcoming");
+    } else if (now > endTime) {
+      // Contest has ended
+      setStatus("ended");
+    } else {
+      setStatus("live");
+    }
+  }, [contest]);
+
+  // can not navigate to contest if the contest has not started
+  useEffect(() => {
+    if (!contest?.startTime || !contest?.endTime) return;
+
+    const checkContestStatus = () => {
+      const now = Date.now();
+      const startTime = new Date(contest.startTime).getTime();
+
+      // Contest has not started
+      if (now < startTime) {
+        navigate("/contests", { replace: true });
+        return;
+      }
+    };
+
+    checkContestStatus();
+
+    const interval = setInterval(checkContestStatus, 1000);
+
+    return () => clearInterval(interval);
+  }, [contest?.startTime, contest?.endTime, navigate]);
 
   return (
     <article className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-[#b7d2bb] bg-[#f4faf1] shadow-lg shadow-[#8eae94]/10 transition-all hover:-translate-y-0.5 hover:border-[#8eae94] hover:shadow-xl">
@@ -66,7 +113,7 @@ function ContestCard({ contest, onJoin, joined, getStatus, formatDate, statusSty
           {(contest.participants?.length || 0).toLocaleString()} registered
         </span>
 
-        {contest.status === "live" ? (
+        {status === "live" ? (
           <button
             onClick={() => handleEnterContest(contest._id)}
             className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${joined ? "bg-[#dcecdf] text-[#2f6b45]" : "bg-[#3f7d55] text-white shadow-md shadow-[#8eae94]/30 hover:bg-[#326844]"}`}
@@ -85,13 +132,17 @@ function ContestCard({ contest, onJoin, joined, getStatus, formatDate, statusSty
           </button>
         ) : (
           <button
-            onClick={() => onJoin(contest._id)}
+            onClick={() =>
+              status === "ended"
+                ? handleEnterContest(contest._id)
+                : onJoin(contest._id)
+            }
             className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${joined ? "bg-[#dcecdf] text-[#2f6b45]" : "bg-[#3f7d55] text-white shadow-md shadow-[#8eae94]/30 hover:bg-[#326844]"}`}
           >
-            {contest.status === "outdated" ? (
+            {status === "ended" ? (
               <>
-                <CheckCircle2 className="h-3.5 w-3.5" />
-                Outdated
+                <ArrowRight className="h-3.5 w-3.5" />
+                View problems
               </>
             ) : joined ? (
               <>
@@ -111,4 +162,4 @@ function ContestCard({ contest, onJoin, joined, getStatus, formatDate, statusSty
   );
 }
 
-export default ContestCard
+export default ContestCard;

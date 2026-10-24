@@ -115,6 +115,7 @@ export default function Contest() {
     loadContests();
   }, []);
 
+  // Filter contests based on the active tab
   const filteredContests = useMemo(
     () =>
       contests.filter(
@@ -123,6 +124,7 @@ export default function Contest() {
     [activeTab, contests],
   );
 
+  // Find the first live contest for the banner
   const liveContest = contests.find((contest) => getStatus(contest) === "live");
 
   // Function to handle joining or leaving a contest

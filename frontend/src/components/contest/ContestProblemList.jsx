@@ -103,15 +103,17 @@ export default function ContestProblemList({
 
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#668170]">
                     <span>
-                      Acceptance:{" "}
+                      Your attempts:{" "}
                       <strong className="text-[#244333]">
-                        {(
-                          ((problem.solvedCount || 100) / (problem.totalAttempts || 200)) *
-                          100
-                        ).toFixed(1)}
-                        %
-                      </strong>{" "}
-                      ({problem.solvedCount} / {problem.totalAttempts})
+                        {problem.attempts || 0}
+                      </strong>
+                    </span>
+                    <span>•</span>
+                    <span>
+                      Last verdict:{" "}
+                      <strong className="text-[#244333]">
+                        {problem.lastStatus || "Not attempted"}
+                      </strong>
                     </span>
                     <span>•</span>
                     <span>Time Limit: {problem.timeLimit || 2000}ms</span>

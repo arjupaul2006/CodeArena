@@ -14,6 +14,7 @@ import ContestProblems from "./pages/ContestProblemsLists";
 import Signin from "./authentication/Signin";
 import Login from "./authentication/Login";
 import UserProtect from "./authentication/UserProtect";
+import ContextWriteCode from "./pages/ContextWriteCode";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -62,6 +63,14 @@ function App() {
             element={
               <UserProtect>
                 <ContestProblems />
+              </UserProtect>
+            }
+          />
+          <Route
+            path="/contests/write-code/:contestId/:problemId"
+            element={
+              <UserProtect>
+                <ContextWriteCode />
               </UserProtect>
             }
           />

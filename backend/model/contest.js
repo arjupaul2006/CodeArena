@@ -41,17 +41,11 @@ const contestSchema = new mongoose.Schema(
         },
       },
     ],
-
-    status: {
-      type: String,
-      enum: ["upcoming", "live", "completed"],
-      default: "upcoming",
-    },
   },
   {
     timestamps: true,
     collection: "contest",
-  }
+  },
 );
 
 const Contest = mongoose.model("Contest", contestSchema);

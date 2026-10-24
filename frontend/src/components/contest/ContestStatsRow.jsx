@@ -1,9 +1,9 @@
 import React from "react";
 import { BarChart2, CheckCircle2, Trophy, Zap } from "lucide-react";
 
-export default function ContestStatsRow({ contest, solvedCount }) {
+export default function ContestStatsRow({ contest, solvedCount, attempts = 0 }) {
   const totalProblems = contest.problems?.length || 4;
-  const progressPercent = ((solvedCount / totalProblems) * 100).toFixed(0);
+  const progressPercent = Math.min(100, (solvedCount / totalProblems) * 100).toFixed(0);
 
   return (
     <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -29,7 +29,10 @@ export default function ContestStatsRow({ contest, solvedCount }) {
           <Trophy className="h-4 w-4 text-amber-600" />
         </div>
         <p className="mt-2 text-2xl font-black text-[#183226]">
-          {contest.userScore || 350} <span className="text-xs font-normal text-[#668170]">pts</span>
+          {contest.problems
+            ?.filter((problem) => problem.status === "solved")
+            .reduce((score, problem) => score + (problem.points || 0), 0) || 0}{" "}
+          <span className="text-xs font-normal text-[#668170]">pts</span>
         </p>
         <p className="mt-1 text-[11px] font-medium text-[#547060]">Penalty: 00:25:30</p>
       </div>
@@ -40,9 +43,13 @@ export default function ContestStatsRow({ contest, solvedCount }) {
           <BarChart2 className="h-4 w-4 text-[#3f7d55]" />
         </div>
         <p className="mt-2 text-2xl font-black text-[#183226]">
-          #{contest.userRank || 18}
+          {contest.userRank ? `#${contest.userRank}` : "—"}
         </p>
-        <p className="mt-1 text-[11px] font-medium text-[#547060]">Top 2% of competitors</p>
+        <p className="mt-1 text-[11px] font-medium text-[#547060]">
+          {contest.userRank
+            ? `Position among ${contest.participantsCount || contest.participants?.length || 0} competitors`
+            : "Submit a solution to get ranked"}
+        </p>
       </div>
 
       <div className="rounded-2xl border border-[#b7d2bb] bg-[#f4faf1] p-4 shadow-sm hover:border-[#8eae94] transition-all">
@@ -51,7 +58,9 @@ export default function ContestStatsRow({ contest, solvedCount }) {
           <Zap className="h-4 w-4 text-amber-500" />
         </div>
         <p className="mt-2 text-2xl font-black text-[#183226]">66.7%</p>
-        <p className="mt-1 text-[11px] font-medium text-[#547060]">2 of 3 submissions accepted</p>
+        <p className="mt-1 text-[11px] font-medium text-[#547060]">
+          {attempts} {attempts === 1 ? "attempt" : "attempts"} recorded
+        </p>
       </div>
     </section>
   );

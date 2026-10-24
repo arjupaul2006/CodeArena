@@ -1,10 +1,16 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useContext, useEffect, useMemo, useState } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, RefreshCw, Share2 } from "lucide-react";
+import { io } from "socket.io-client";
 
 import Sidebar from "../components/problems/SideBar";
 import TopNav from "../components/problems/TopNav";
-import { fetchContestById } from "../../services/contextServices";
+import {
+  fetchContestById,
+  fetchContestLeaderboard,
+  fetchContestProgress,
+  fetchContestSubmissions,
+} from "../../services/contextServices";
 
 // Modular Components
 import { defaultContestData } from "../components/contest/defaultContestData";
@@ -15,13 +21,17 @@ import ContestLeaderboard from "../components/contest/ContestLeaderboard";
 import ContestRulesAnnouncements from "../components/contest/ContestRulesAnnouncements";
 import ContestSubmissionsLog from "../components/contest/ContestSubmissionsLog";
 import ProblemQuickViewModal from "../components/contest/ProblemQuickViewModal";
+import { UserDataContext } from "../context/UserContext";
 
 export default function ContestProblems({ contestIdProp, onBackProp }) {
+
   const params = useParams();
   const navigate = useNavigate();
   const activeContestId = params.contestId;
+  const { user } = useContext(UserDataContext);
 
   const [contest, setContest] = useState(defaultContestData);
+  const [progress, setProgress] = useState(null);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("problems"); // 'problems' | 'leaderboard' | 'rules' | 'submissions'
   const [searchQuery, setSearchQuery] = useState("");
@@ -32,6 +42,7 @@ export default function ContestProblems({ contestIdProp, onBackProp }) {
   const [timeLeft, setTimeLeft] = useState({ hours: "00", minutes: "00", seconds: "00" });
   const [contestStatus, setContestStatus] = useState("live");
 
+
   // Fetch contest details from backend API
   useEffect(() => {
     if (!activeContestId) return;
@@ -41,25 +52,64 @@ export default function ContestProblems({ contestIdProp, onBackProp }) {
     const loadContest = async () => {
       setLoading(true);
 
-      const data = await fetchContestById(activeContestId);
-      console.log("Fetched Contest Data:", data);
+      const [data, progressData, leaderboardData, submissionsData] =
+        await Promise.all([
+        fetchContestById(activeContestId),
+        fetchContestProgress(activeContestId),
+        fetchContestLeaderboard(activeContestId),
+        fetchContestSubmissions(activeContestId),
+      ]);
 
       if (isMounted && data) {
         const formattedProblems = (data.problems || []).map((prob, idx) => ({
           ...prob,
           letter: String.fromCharCode(65 + idx),
           points: prob.points || (idx + 1) * 100,
-          solvedCount: prob.solvedCount || Math.floor(Math.random() * 500 + 50),
-          totalAttempts: prob.totalAttempts || Math.floor(Math.random() * 800 + 100),
-          status: prob.status || "unsolved",
+          status:
+            progressData?.problems?.find(
+              (item) => item.problemId === prob._id,
+            )?.solved
+              ? "solved"
+              : "unsolved",
+          attempts:
+            progressData?.problems?.find(
+              (item) => item.problemId === prob._id,
+            )?.attempts || 0,
+          lastStatus:
+            progressData?.problems?.find(
+              (item) => item.problemId === prob._id,
+            )?.lastStatus || null,
         }));
 
         setContest({
           ...defaultContestData,
           ...data,
           problems: formattedProblems.length ? formattedProblems : defaultContestData.problems,
+          leaderboard: leaderboardData.leaderboard.map((entry) => ({
+            ...entry,
+            isUser: String(entry.userId) === String(user?._id),
+          })),
+          userRank: leaderboardData.userRank,
+          mySubmissions: submissionsData.map((submission) => ({
+            id: submission.id,
+            problemTitle: submission.problemTitle,
+            problemLetter:
+              String.fromCharCode(
+                65 +
+                (data.problems || []).findIndex(
+                  (problem) =>
+                    problem._id === String(submission.problemId),
+                ),
+              ),
+            language: submission.language,
+            status: submission.status,
+            runtime: `${submission.runtime} ms`,
+            memory: `${submission.memory} MB`,
+            time: new Date(submission.submittedAt).toLocaleString(),
+          })),
         });
       }
+      if (isMounted) setProgress(progressData);
       if (isMounted) setLoading(false);
     };
 
@@ -68,6 +118,45 @@ export default function ContestProblems({ contestIdProp, onBackProp }) {
       isMounted = false;
     };
   }, [activeContestId]);
+
+  // Socket.io integration for real-time leaderboard updates
+  useEffect(() => {
+    if (!activeContestId) return undefined;
+
+    const socket = io(
+      import.meta.env.VITE_BACKEND_URL || "http://localhost:4000",
+      {
+        transports: ["websocket"],
+        withCredentials: true,
+      },
+    );
+
+    // Handle leaderboard updates from the server
+    const handleLeaderboardUpdate = (event) => {
+      if (event.contestId !== activeContestId) return;
+
+      setContest((currentContest) => ({
+        ...currentContest,
+        leaderboard: event.leaderboard.map((entry) => ({
+          ...entry,
+          isUser: String(entry.userId) === String(user?._id),
+        })),
+        userRank:
+          event.leaderboard.find(
+            (entry) => String(entry.userId) === String(user?._id),
+          )?.rank || null,
+      }));
+    };
+
+    socket.emit("contest:join", activeContestId);
+    socket.on("contest:leaderboard:update", handleLeaderboardUpdate);
+
+    return () => {
+      socket.emit("contest:leave", activeContestId);
+      socket.off("contest:leaderboard:update", handleLeaderboardUpdate);
+      socket.disconnect();
+    };
+  }, [activeContestId, user?._id]);
 
   // Live countdown timer calculation
   useEffect(() => {
@@ -121,9 +210,10 @@ export default function ContestProblems({ contestIdProp, onBackProp }) {
     });
   }, [contest.problems, searchQuery, difficultyFilter]);
 
+  // Function to handle problem solving navigation
   const handleSolveProblem = (problem) => {
     if (problem._id) {
-      navigate(`/write-code?id=${problem._id}`);
+      navigate(`/contests/write-code/${activeContestId}/${problem._id}`);
     } else {
       navigate(`/write-code`);
     }
@@ -142,10 +232,9 @@ export default function ContestProblems({ contestIdProp, onBackProp }) {
     }
   };
 
-  const solvedCount = useMemo(
-    () => contest.problems?.filter((p) => p.status === "solved").length || 0,
-    [contest.problems]
-  );
+  const solvedCount = progress?.solvedCount ||
+    contest.problems?.filter((p) => p.status === "solved").length ||
+    0;
   const totalPoints = useMemo(
     () => contest.problems?.reduce((acc, p) => acc + (p.points || 100), 0) || 0,
     [contest.problems]
@@ -201,7 +290,11 @@ export default function ContestProblems({ contestIdProp, onBackProp }) {
           />
 
           {/* Quick Stats Summary Component */}
-          <ContestStatsRow contest={contest} solvedCount={solvedCount} />
+          <ContestStatsRow
+            contest={contest}
+            solvedCount={solvedCount}
+            attempts={progress?.attempts || 0}
+          />
 
           {/* Tab Navigation Menu */}
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#b7d2bb] pb-2">

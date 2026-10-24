@@ -15,6 +15,7 @@ import axios from "axios";
 
 export default function ProblemDescription({
   demoproblem,
+  contestId,
   problem,
   testCases,
   sampleTestCases,
@@ -101,6 +102,7 @@ export default function ProblemDescription({
           const response = await axios.post(
             `${backendUrl}/api/submit-problem`,
             {
+              contestId,
               problemId: problem._id,
             },
             {
@@ -121,7 +123,7 @@ export default function ProblemDescription({
     };
 
     submitProblem();
-  }, [submitExecutionResult, problem?._id, user?._id]);
+  }, [contestId, submitExecutionResult, problem?._id, user?._id, setUser]);
 
   // Submit problem to the submission history list when submission verdict is accepted
   useEffect(() => {
@@ -141,6 +143,7 @@ export default function ProblemDescription({
           const response = await axios.post(
             `${backendUrl}/api/submissionHistory`,
             {
+              contestId,
               problemId: problem._id,
               code: submitExecutionResult?.code || "",
               language: submitExecutionResult?.language || "",
@@ -164,7 +167,7 @@ export default function ProblemDescription({
     };
 
     submitProblem();
-  }, [submitExecutionResult, problem?._id, user?._id]);
+  }, [contestId, submitExecutionResult, problem?._id, user?._id]);
 
   return (
     <div className="flex flex-col h-full bg-[#e8f3e8]">

@@ -3,6 +3,7 @@ const Problem = require("../model/problems");
 const TestCase = require("../model/test_cases");
 const User = require("../model/user");
 const Submission = require("../model/submission");
+const { getContestLeaderboard } = require("../services/leaderboardService");
 
 module.exports.submitProblem = async (req, res) => {
   try {
@@ -16,7 +17,7 @@ module.exports.submitProblem = async (req, res) => {
     const user = await User.findByIdAndUpdate(
       userId,
       { $addToSet: { solvedProblems: problemId } },
-      { new: true },
+      { returnDocument: "after" },
     );
 
     if (!user) {
@@ -35,8 +36,17 @@ module.exports.submitProblem = async (req, res) => {
 module.exports.addSubmissionHistory = async (req, res) => {
   try {
     const userId = req.user?._id || req.body.userId;
-    const { problemId, code, language, status, runtime, memory } = req.body;
+    const {
+      contestId,
+      problemId,
+      code,
+      language,
+      status,
+      runtime,
+      memory,
+    } = req.body;
     const submission = new Submission({
+      contestId,
       userId,
       problemId,
       code,
@@ -46,6 +56,19 @@ module.exports.addSubmissionHistory = async (req, res) => {
       memory,
     });
     await submission.save();
+
+    if (contestId) {
+      const leaderboard = await getContestLeaderboard(contestId);
+      const io = req.app.get("io");
+
+      if (io) {
+        io.to(`contest:${contestId}`).emit("contest:leaderboard:update", {
+          contestId,
+          leaderboard,
+        });
+      }
+    }
+
     return res
       .status(200)
       .json({ message: "Submission history added successfully", submission });
