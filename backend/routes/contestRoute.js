@@ -4,6 +4,7 @@ const contestController = require("../controllers/contestController");
 const { authUser } = require("../middleware/authUser");
 
 route.get("/contests", contestController.getAllContests);
+route.get("/leaderboard", authUser, contestController.getGlobalLeaderboard);
 route.get("/contests/:contestId/progress", authUser, contestController.getContestProgress);
 route.get("/contests/:contestId/leaderboard", authUser, contestController.getContestLeaderboard);
 route.get("/contests/:contestId/submissions", authUser, contestController.getContestSubmissions);

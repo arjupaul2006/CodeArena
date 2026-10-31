@@ -46,6 +46,25 @@ const userSchema = new mongoose.Schema(
         ref: "Contest",
       },
     ],
+
+    totalContestScore: {
+      type: Number,
+      default: 0,
+    },
+
+    contestScores: [
+      {
+        contestId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Contest",
+          required: true,
+        },
+        score: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
   },
   {
     timestamps: true,

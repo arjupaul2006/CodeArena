@@ -159,8 +159,11 @@ export default function WriteCode() {
     message: "Submit your code to see submission results.",
     runs: [],
   });
+  const [historySelection, setHistorySelection] = useState(null);
+  const [lastSubmission, setLastSubmission] = useState(null);
 
   const searchParams = useSearchParams()[0];
+
 
   // fetch problem with its id
   useEffect(() => {
@@ -217,6 +220,9 @@ export default function WriteCode() {
             sampleTestCases={sampleTestCases}
             runExecutionResult={runExecutionResult}
             submitExecutionResult={submitExecutionResult}
+            onSubmissionHistorySelect={setHistorySelection}
+            lastSubmission={lastSubmission}
+            setLastSubmission={setLastSubmission}
           />
         </div>
 
@@ -231,6 +237,7 @@ export default function WriteCode() {
             setRunExecutionResult={setRunExecutionResult}
             submitExecutionResult={submitExecutionResult}
             setSubmitExecutionResult={setSubmitExecutionResult}
+            historySelection={historySelection}
           />
         </div>
       </div>

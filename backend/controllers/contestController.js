@@ -3,7 +3,10 @@ const Contest = require("../model/contest");
 const ContestTestCase = require("../model/contestTestCases");
 const ContestProblem = require("../model/contestProblems");
 const User = require("../model/user");
-const { getContestLeaderboard } = require("../services/leaderboardService");
+const {
+  getContestLeaderboard,
+  getGlobalLeaderboard,
+} = require("../services/leaderboardService");
 const Problem = require("../model/problems");
 const ContestSubmission = require("../model/contestSubmissions");
 const mongoose = require("mongoose");
@@ -152,6 +155,7 @@ module.exports.getContestSubmissions = async (req, res) => {
       submissions: submissions.map((submission) => ({
         id: submission._id,
         problemId: submission.problemId,
+        code: submission.code,
         problemTitle:
           problemTitles.get(submission.problemId.toString()) ||
           "Untitled problem",
@@ -342,6 +346,25 @@ module.exports.getContestLeaderboard = async (req, res) => {
   } catch (error) {
     console.error("Error retrieving contest leaderboard:", error);
     return res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+module.exports.getGlobalLeaderboard = async (req, res) => {
+  try {
+    const leaderboard = await getGlobalLeaderboard(req.user._id);
+    const userEntry = leaderboard.find((entry) => entry.isUser);
+
+    return res.json({
+      success: true,
+      leaderboard,
+      userRank: userEntry?.rank || null,
+    });
+  } catch (error) {
+    console.error("Error retrieving global leaderboard:", error);
+    return res.status(500).json({
       success: false,
       message: error.message,
     });

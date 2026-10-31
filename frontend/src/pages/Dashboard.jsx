@@ -212,6 +212,11 @@ export default function DashboardOverview() {
     },
   ]);
 
+  const [streaks, setStreaks] = useState({
+    currentStreak: 0,
+    maxStreak: 0,
+  });
+
   // Fetch problems from the backend API and update the state
   useEffect(() => {
     const fetchProblems = async () => {
@@ -265,6 +270,35 @@ export default function DashboardOverview() {
     fetchSubmissionHistory();
   }, []);
 
+  // Fetch submission streaks from the backend
+  useEffect(() => {
+    const fetchStreaks = async () => {
+      try {
+        const backendUrl =
+          import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          `${backendUrl}/api/getSubmissionEachDay`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+          },
+        );
+
+        setStreaks({
+          currentStreak: response.data?.currentStreak || 0,
+          maxStreak: response.data?.maxStreak || 0,
+        });
+      } catch (error) {
+        console.error("Error fetching submission streaks:", error);
+      }
+    };
+
+    fetchStreaks();
+  }, []);
+
   const stat = [
     {
       label: "Global Rank",
@@ -282,8 +316,8 @@ export default function DashboardOverview() {
     },
     {
       label: "Current Streak",
-      value: "14 Days",
-      sub: "Max: 32 days",
+      value: `${streaks.currentStreak} days`,
+      sub: `Max: ${streaks.maxStreak} days`,
       icon: Flame,
       color: "text-orange-400 bg-orange-500/10 border-orange-500/20",
     },

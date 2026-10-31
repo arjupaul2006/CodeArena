@@ -106,7 +106,7 @@ export default function SubmissionHistoryTable() {
                   key={idx}
                   className="hover:bg-[#eef7eb] transition-colors cursor-pointer"
                 >
-                  <td className={`py-4 px-6 font-bold font-mono text-emerald-700`}>
+                  <td className={`py-4 px-6 font-bold font-mono ${row?.status == "accepted" ? "text-emerald-700" : "text-rose-700"}`}>
                     {row?.status == "accepted" ? "Accepted" : "Wrong Answer"}
                   </td>
                   <td className="py-4 px-6 text-[#183226] font-semibold hover:text-[#2f6b45] transition-colors">

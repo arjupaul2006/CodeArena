@@ -6,7 +6,8 @@ export default function ContestSubmissionsLog({ submissions }) {
     <div className="rounded-2xl border border-[#b7d2bb] bg-[#f4faf1] p-5 shadow-sm">
       <h3 className="font-bold text-[#183226] text-lg mb-4">My Submissions Log</h3>
 
-      <div className="overflow-x-auto">
+      {submissions?.length ? (
+        <div className="overflow-x-auto">
         <table className="w-full text-left text-xs text-[#244333]">
           <thead className="border-b border-[#b7d2bb] bg-[#eef7eb] text-[11px] font-bold uppercase tracking-wider text-[#547060]">
             <tr>
@@ -52,7 +53,12 @@ export default function ContestSubmissionsLog({ submissions }) {
             ))}
           </tbody>
         </table>
-      </div>
+        </div>
+      ) : (
+        <p className="rounded-xl border border-dashed border-[#b7d2bb] bg-[#eef7eb] p-8 text-center text-sm text-[#668170]">
+          No submissions for this contest yet.
+        </p>
+      )}
     </div>
   );
 }

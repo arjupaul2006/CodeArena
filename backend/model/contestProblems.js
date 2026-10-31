@@ -74,6 +74,11 @@ const contestProblemSchema = new mongoose.Schema(
       default: [],
     },
 
+    score: {
+      type: Number,
+      default: 0,
+    },
+
     timeLimit: {
       type: Number,
       default: 2000, // milliseconds

@@ -44,6 +44,7 @@ export default function CodeEditorPanel({
   setRunExecutionResult: propsSetRunExecutionResult,
   submitExecutionResult: propsSubmitExecutionResult,
   setSubmitExecutionResult: propsSetSubmitExecutionResult,
+  historySelection,
 }) {
   const languageOptions = [
     {
@@ -206,7 +207,15 @@ export default function CodeEditorPanel({
     } catch (error) {
       console.error("Error fetching problem data:", error);
     }
-  }, [problem, selectedLanguage]);
+  }, [problem]);
+
+  // Update code and language when historySelection changes
+  useEffect(() => {
+    if (!historySelection) return;
+
+    setCode(historySelection.code || "");
+    setSelectedLanguage(historySelection.language || "python");
+  }, [historySelection]);
 
   // ----- Handle code execution for Run button (runs sample test cases)
   const handleRunCodeExecution = async () => {

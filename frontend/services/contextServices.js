@@ -142,6 +142,26 @@ export const fetchContestLeaderboard = async (contestId) => {
   }
 };
 
+export const fetchGlobalLeaderboard = async () => {
+  try {
+    const response = await axios.get(
+      `${backendUrl}/api/leaderboard`,
+      authConfig(),
+    );
+
+    return {
+      leaderboard: response.data.leaderboard || [],
+      userRank: response.data.userRank || null,
+    };
+  } catch (error) {
+    console.error("Failed to fetch global leaderboard.", error);
+    return {
+      leaderboard: [],
+      userRank: null,
+    };
+  }
+};
+
 export const fetchContestSubmissions = async (contestId) => {
   try {
     const response = await axios.get(

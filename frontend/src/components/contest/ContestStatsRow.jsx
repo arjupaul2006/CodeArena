@@ -31,7 +31,7 @@ export default function ContestStatsRow({ contest, solvedCount, attempts = 0 }) 
         <p className="mt-2 text-2xl font-black text-[#183226]">
           {contest.problems
             ?.filter((problem) => problem.status === "solved")
-            .reduce((score, problem) => score + (problem.points || 0), 0) || 0}{" "}
+            .reduce((score, problem) => score + (problem.score || 0), 0) || 0}{" "}
           <span className="text-xs font-normal text-[#668170]">pts</span>
         </p>
         <p className="mt-1 text-[11px] font-medium text-[#547060]">Penalty: 00:25:30</p>

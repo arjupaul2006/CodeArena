@@ -6,6 +6,7 @@ import TopNav from "../components/problems/TopNav";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { fetchContestById } from "../../services/contextServices";
 import ContestProblemDescription from "../components/contestWriteCode/ContestProblemDescription";
+import ContestCodeEditor from "../components/contestWriteCode/ContestCodeEditor";
 
 export default function ContextWriteCode() {
   // const problem = {
@@ -346,9 +347,10 @@ export default function ContextWriteCode() {
 
         {/* Right Panel */}
         <div className="relative h-full overflow-hidden bg-[#dcecdf]">
-          <CodeEditorPanel
+          <ContestCodeEditor
             demoproblem={demoproblem}
             problem={problem}
+            contestId={contestId}
             testCases={effectiveTestCases}
             sampleTestCases={sampleTestCases}
             runExecutionResult={runExecutionResult}

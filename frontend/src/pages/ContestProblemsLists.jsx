@@ -13,7 +13,6 @@ import {
 } from "../../services/contextServices";
 
 // Modular Components
-import { defaultContestData } from "../components/contest/defaultContestData";
 import ContestHeroBanner from "../components/contest/ContestHeroBanner";
 import ContestStatsRow from "../components/contest/ContestStatsRow";
 import ContestProblemList from "../components/contest/ContestProblemList";
@@ -30,7 +29,12 @@ export default function ContestProblems({ contestIdProp, onBackProp }) {
   const activeContestId = params.contestId;
   const { user } = useContext(UserDataContext);
 
-  const [contest, setContest] = useState(defaultContestData);
+  const [contest, setContest] = useState({
+    problems: [],
+    leaderboard: [],
+    mySubmissions: [],
+    announcements: [],
+  });
   const [progress, setProgress] = useState(null);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("problems"); // 'problems' | 'leaderboard' | 'rules' | 'submissions'
@@ -51,6 +55,13 @@ export default function ContestProblems({ contestIdProp, onBackProp }) {
 
     const loadContest = async () => {
       setLoading(true);
+      setContest({
+        problems: [],
+        leaderboard: [],
+        mySubmissions: [],
+        announcements: [],
+      });
+      setProgress(null);
 
       const [data, progressData, leaderboardData, submissionsData] =
         await Promise.all([
@@ -64,7 +75,7 @@ export default function ContestProblems({ contestIdProp, onBackProp }) {
         const formattedProblems = (data.problems || []).map((prob, idx) => ({
           ...prob,
           letter: String.fromCharCode(65 + idx),
-          points: prob.points || (idx + 1) * 100,
+          points: prob.score || 100, // Default to 100 if score is not provided
           status:
             progressData?.problems?.find(
               (item) => item.problemId === prob._id,
@@ -82,15 +93,17 @@ export default function ContestProblems({ contestIdProp, onBackProp }) {
         }));
 
         setContest({
-          ...defaultContestData,
           ...data,
-          problems: formattedProblems.length ? formattedProblems : defaultContestData.problems,
-          leaderboard: leaderboardData.leaderboard.map((entry) => ({
+          problems: formattedProblems,
+          leaderboard: (leaderboardData?.leaderboard || []).map((entry) => ({
             ...entry,
             isUser: String(entry.userId) === String(user?._id),
           })),
-          userRank: leaderboardData.userRank,
-          mySubmissions: submissionsData.map((submission) => ({
+          userRank: leaderboardData?.userRank || null,
+          mySubmissions: (Array.isArray(submissionsData)
+            ? submissionsData
+            : []
+          ).map((submission) => ({
             id: submission.id,
             problemTitle: submission.problemTitle,
             problemLetter:

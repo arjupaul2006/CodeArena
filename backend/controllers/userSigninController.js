@@ -86,3 +86,7 @@ module.exports.validateToken = async (req, res, next) => {
     return res.status(401).json({ message: "Invalid token." });
   }
 };
+
+module.exports.userLogout = async (req, res, next) => {
+  res.status(200).json({ message: "User logged out successfully" });
+};

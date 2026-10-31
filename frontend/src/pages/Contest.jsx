@@ -18,6 +18,7 @@ import {
   addContestToUserProfile,
   addParticipant,
   fetchContests,
+  fetchGlobalLeaderboard,
   removeContestFromUserProfile,
   removeParticipant,
 } from "../../services/contextServices";
@@ -103,6 +104,8 @@ export default function Contest() {
   const [activeTab, setActiveTab] = useState("all");
   // State to track joined contests
   const [joinedContests, setJoinedContests] = useState([]);
+  const [globalLeaderboard, setGlobalLeaderboard] = useState([]);
+  const [globalUserRank, setGlobalUserRank] = useState(null);
   const { user } = useContext(UserDataContext);
 
   // fetch the contest
@@ -114,6 +117,18 @@ export default function Contest() {
 
     loadContests();
   }, []);
+
+  useEffect(() => {
+    if (!user?._id) return;
+
+    const loadGlobalLeaderboard = async () => {
+      const data = await fetchGlobalLeaderboard();
+      setGlobalLeaderboard(data.leaderboard);
+      setGlobalUserRank(data.userRank);
+    };
+
+    loadGlobalLeaderboard();
+  }, [user?._id, user?.totalContestScore]);
 
   // Filter contests based on the active tab
   const filteredContests = useMemo(
@@ -238,8 +253,13 @@ export default function Contest() {
           {/* Stats */}
           <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[
-              { label: "Your rank", value: "#248", icon: Medal },
-              { label: "Contests joined", value: "12", icon: Trophy },
+              {
+                label: "Your rank",
+                value: globalUserRank ? `#${globalUserRank}` : "--",
+                icon: Medal,
+              },
+              { label: "Total contest score", value: `${user.totalContestScore}`, icon: Trophy },
+              { label: "Contests joined", value: `${user.contestsParticipated?.length}`, icon: Trophy },
               { label: "Best finish", value: "Top 8%", icon: Crown },
               { label: "Current streak", value: "4 weeks", icon: Flame },
             ].map(({ label, value, icon: Icon }) => (
@@ -326,29 +346,27 @@ export default function Contest() {
                   <ArrowRight className="ml-1 inline h-3.5 w-3.5" />
                 </button>
               </div>
-              {["byteBender", "algo_anya", "recursiveRay", "sam_codes"].map(
-                (name, index) => (
+              {globalLeaderboard.slice(0, 4).map((entry) => (
                   <div
-                    key={name}
+                    key={entry.userId}
                     className="flex items-center gap-3 border-t border-[#dcecdf] py-3"
                   >
                     <span
-                      className={`w-5 text-center text-xs font-bold ${index === 0 ? "text-amber-600" : "text-[#668170]"}`}
+                      className={`w-5 text-center text-xs font-bold ${entry.rank === 1 ? "text-amber-600" : "text-[#668170]"}`}
                     >
-                      {index + 1}
+                      {entry.rank}
                     </span>
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#c5dfc9] text-xs font-bold text-[#3f7d55]">
-                      {name.charAt(0).toUpperCase()}
+                      {entry.avatar}
                     </div>
                     <span className="flex-1 text-sm font-semibold text-[#244333]">
-                      {name}
+                      {entry.name}
                     </span>
                     <span className="text-xs font-bold text-[#547060]">
-                      {[842, 796, 754, 721][index]} pts
+                      {entry.score} pts
                     </span>
                   </div>
-                ),
-              )}
+                ))}
             </div>
 
             <div className="rounded-2xl border border-[#b7d2bb] bg-[#d5e7d7] p-5 lg:col-span-2">

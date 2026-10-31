@@ -1,14 +1,48 @@
 import React, { useContext, useState, useEffect } from "react";
+import axios from "axios";
 import { CheckCircle2, Code2 } from "lucide-react";
 import { UserDataContext } from "../../context/UserContext";
 
 export default function ProfileCard() {
   const { user } = useContext(UserDataContext);
   const [imageError, setImageError] = useState(false);
+  const [streaks, setStreaks] = useState({
+    currentStreak: 0,
+    maxStreak: 0,
+  });
 
   useEffect(() => {
     setImageError(false);
   }, [user?.profileImage]);
+
+  // Fetch submission streaks from the backend
+  useEffect(() => {
+    const fetchStreaks = async () => {
+      try {
+        const backendUrl =
+          import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          `${backendUrl}/api/getSubmissionEachDay`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+          },
+        );
+
+        setStreaks({
+          currentStreak: response.data?.currentStreak || 0,
+          maxStreak: response.data?.maxStreak || 0,
+        });
+      } catch (error) {
+        console.error("Error fetching submission streaks:", error);
+      }
+    };
+
+    fetchStreaks();
+  }, []);
 
   return (
     <div className="bg-[#f4faf1] rounded-2xl border border-[#b7d2bb] p-6 flex flex-col items-center text-center justify-between h-full shadow-lg">
@@ -58,7 +92,12 @@ export default function ProfileCard() {
             Streak
           </span>
           <span className="text-base font-black text-emerald-700 font-mono">
-            14 Days
+            {streaks.currentStreak}{" "}
+            {streaks.currentStreak === 1 ? "Day" : "Days"}
+          </span>
+          <span className="block mt-1 text-[10px] text-[#547060]">
+            Best: {streaks.maxStreak}{" "}
+            {streaks.maxStreak === 1 ? "day" : "days"}
           </span>
         </div>
       </div>

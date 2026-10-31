@@ -6,6 +6,7 @@ import {
   FileText,
   FlaskConical,
   Send,
+  History,
   AlertCircle,
   XCircle,
   CheckCircle2,
@@ -21,10 +22,19 @@ export default function ProblemDescription({
   sampleTestCases,
   runExecutionResult,
   submitExecutionResult,
+  onSubmissionHistorySelect,
+  lastSubmission,
+  setLastSubmission,
 }) {
   const [activeTab, setActiveTab] = useState("description");
   const [selectedCaseIdx, setSelectedCaseIdx] = useState(0);
   const [selectedFailedIdx, setSelectedFailedIdx] = useState(0);
+  const [submissionHistory, setSubmissionHistory] = useState([]);
+  const [submissionHistoryLoading, setSubmissionHistoryLoading] = useState(false);
+  const [submissionHistoryError, setSubmissionHistoryError] = useState("");
+  const [historyRefreshKey, setHistoryRefreshKey] = useState(0);
+
+  const [selectedHistoryIdx, setSelectedHistoryIdx] = useState(0);
 
   const { user } = useContext(UserDataContext);
 
@@ -125,9 +135,9 @@ export default function ProblemDescription({
     submitProblem();
   }, [contestId, submitExecutionResult, problem?._id, user?._id, setUser]);
 
-  // Submit problem to the submission history list when submission verdict is accepted
+  // Submit problem to the submission history list
   useEffect(() => {
-    console.log("Submit execution result changed:", submitExecutionResult);
+    // console.log("Submit execution result changed:", submitExecutionResult);
     const submitProblem = async () => {
       const token = localStorage.getItem("token");
 
@@ -159,7 +169,7 @@ export default function ProblemDescription({
             },
           );
 
-          console.log("Submit problem in submission history:", response.data);
+          setHistoryRefreshKey((currentKey) => currentKey + 1);
         } catch (error) {
           console.error("Error submitting problem:", error);
         }
@@ -168,6 +178,47 @@ export default function ProblemDescription({
 
     submitProblem();
   }, [contestId, submitExecutionResult, problem?._id, user?._id]);
+
+  // get submission history by problem id
+  useEffect(() => {
+    const fetchSubmissionHistoryByProblemId = async () => {
+      const token = localStorage.getItem("token");
+      if (!problem?._id || !token) {
+        setSubmissionHistory([]);
+        setSubmissionHistoryError("");
+        return;
+      }
+
+      if (problem?._id) {
+        setSubmissionHistoryLoading(true);
+        try {
+          const response = await axios.post(
+            `${import.meta.env.VITE_BACKEND_URL || "http://localhost:4000"}/api/submissionHistoryByProblemId`,
+            { problemId: problem._id },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                ...(token ? { Authorization: `Bearer ${token}` } : {}),
+              },
+            },
+          );
+          setSubmissionHistory(response.data?.submissions || []);
+          setLastSubmission(response.data?.submissions?.[0] || null);
+          setSubmissionHistoryError("");
+        } catch (error) {
+          console.error(
+            "Error fetching submission history by problem ID:",
+            error,
+          );
+          setSubmissionHistoryError("Unable to load submission history.");
+        } finally {
+          setSubmissionHistoryLoading(false);
+        }
+      }
+    };
+
+    fetchSubmissionHistoryByProblemId();
+  }, [problem?._id, historyRefreshKey]);
 
   return (
     <div className="flex flex-col h-full bg-[#e8f3e8]">
@@ -221,6 +272,25 @@ export default function ProblemDescription({
           {submitFailedRuns.length > 0 && (
             <span className="text-[10px] bg-rose-500/20 text-rose-700 px-2 py-0.5 rounded-full font-extrabold ml-0.5">
               {submitFailedRuns.length} Failed
+            </span>
+          )}
+        </button>
+
+        {/* Submission History Tab */}
+        <button
+          type="button"
+          onClick={() => setActiveTab("history")}
+          className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold transition-all cursor-pointer border-b-2 -mb-px ${
+            activeTab === "history"
+              ? "border-[#3f7d55] text-[#183226] bg-[#e8f3e8] rounded-t-lg shadow-xs"
+              : "border-transparent text-[#547060] hover:text-[#183226] hover:bg-[#e8f3e8]/60 rounded-t-lg"
+          }`}
+        >
+          <History className="w-3.5 h-3.5 text-[#3f7d55]" />
+          History
+          {submissionHistory.length > 0 && (
+            <span className="text-[10px] bg-[#3f7d55]/15 text-[#2f6b45] px-2 py-0.5 rounded-full font-extrabold ml-0.5">
+              {submissionHistory.length}
             </span>
           )}
         </button>
@@ -524,6 +594,87 @@ export default function ProblemDescription({
               </div>
             )}
           </div>
+        ) : activeTab === "history" ? (
+          <div className="space-y-5">
+            <div>
+              <h2 className="text-lg font-extrabold text-[#183226]">
+                Submission History
+              </h2>
+              <p className="text-xs text-[#547060] mt-0.5">
+                Review your submissions for this problem.
+              </p>
+            </div>
+
+            {submissionHistoryLoading ? (
+              <div className="p-8 text-center bg-[#f4faf1] border border-[#b7d2bb] rounded-xl text-xs text-[#547060]">
+                Loading submission history...
+              </div>
+            ) : submissionHistoryError ? (
+              <div className="p-8 text-center bg-rose-500/10 border border-rose-500/30 rounded-xl text-xs text-rose-800">
+                {submissionHistoryError}
+              </div>
+            ) : submissionHistory.length === 0 ? (
+              <div className="p-8 text-center bg-[#f4faf1] border border-[#b7d2bb] rounded-xl text-xs text-[#547060]">
+                No submissions for this problem yet.
+              </div>
+            ) : (
+              <div className="overflow-x-auto bg-[#f4faf1] border border-[#b7d2bb] rounded-xl">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-[#b7d2bb] text-[10px] uppercase tracking-wider text-[#547060] font-bold bg-[#e8f3e8]">
+                      <th className="py-3 px-4">Status</th>
+                      <th className="py-3 px-4">Language</th>
+                      <th className="py-3 px-4">Runtime</th>
+                      <th className="py-3 px-4">Memory</th>
+                      <th className="py-3 px-4">Submitted</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#b7d2bb] text-xs font-medium text-[#244333]">
+                    {submissionHistory.map((submission) => {
+                      const accepted = submission.status === "accepted";
+                      const submittedAt = new Date(submission.submissionDate);
+
+                      return (
+                        <tr
+                          key={submission._id}
+                          onClick={() =>
+                            onSubmissionHistorySelect?.({
+                              code: submission.code,
+                              language: submission.language,
+                            })
+                          }
+                          className="hover:bg-[#eef7eb] cursor-pointer"
+                          title="Open this submission in the editor"
+                        >
+                          <td
+                            className={`py-3 px-4 font-bold ${
+                              accepted ? "text-emerald-700" : "text-rose-700"
+                            }`}
+                          >
+                            {accepted ? "Accepted" : "Failed"}
+                          </td>
+                          <td className="py-3 px-4 font-mono">
+                            {submission.language}
+                          </td>
+                          <td className="py-3 px-4 font-mono text-[#547060]">
+                            {submission.runtime ?? "N/A"} ms
+                          </td>
+                          <td className="py-3 px-4 font-mono text-[#547060]">
+                            {submission.memory ?? "N/A"} KB
+                          </td>
+                          <td className="py-3 px-4 text-[#668170]">
+                            {Number.isNaN(submittedAt.getTime())
+                              ? "Unknown"
+                              : submittedAt.toLocaleString()}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
         ) : (
           /* Submission Tab View */
           <div className="space-y-5">
@@ -537,7 +688,63 @@ export default function ProblemDescription({
               </p>
             </div>
 
-            {!submitExecutionResult?.verdict ? (
+            {lastSubmission && (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-[#f4faf1] border border-[#b7d2bb] rounded-xl p-4">
+                <div>
+                  <div className="text-[10px] uppercase tracking-wider font-bold text-[#547060]">
+                    Status
+                  </div>
+                  <div
+                    className={`mt-1 text-sm font-extrabold ${
+                      lastSubmission.status === "accepted"
+                        ? "text-emerald-700"
+                        : "text-rose-700"
+                    }`}
+                  >
+                    {String(lastSubmission.status || "N/A").replaceAll(
+                      "-",
+                      " ",
+                    )}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[10px] uppercase tracking-wider font-bold text-[#547060]">
+                    Language
+                  </div>
+                  <div className="mt-1 text-sm font-mono font-bold text-[#183226]">
+                    {lastSubmission.language || "N/A"}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[10px] uppercase tracking-wider font-bold text-[#547060]">
+                    Runtime
+                  </div>
+                  <div className="mt-1 text-sm font-mono font-bold text-[#183226]">
+                    {lastSubmission.runtime ?? "N/A"} ms
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[10px] uppercase tracking-wider font-bold text-[#547060]">
+                    Memory
+                  </div>
+                  <div className="mt-1 text-sm font-mono font-bold text-[#183226]">
+                    {lastSubmission.memory ?? "N/A"} KB
+                  </div>
+                </div>
+                <div className="col-span-2 sm:col-span-4 border-t border-[#b7d2bb] pt-3">
+                  <div className="text-[10px] uppercase tracking-wider font-bold text-[#547060]">
+                    Submitted
+                  </div>
+                  <div className="mt-1 text-xs text-[#385a43]">
+                    {lastSubmission.submissionDate
+                      ? new Date(lastSubmission.submissionDate).toLocaleString()
+                      : "Unknown"}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {!submitExecutionResult?.verdict && !lastSubmission ? (
               <div className="p-8 text-center bg-[#f4faf1] border border-[#b7d2bb] rounded-xl text-xs text-[#547060]">
                 No submission results available yet. Submit your code to view
                 results here.

@@ -133,14 +133,57 @@ module.exports.getTotalSubmissionInEachDay = async (req, res) => {
       { $sort: { _id: 1 } },
     ]);
 
-    console.log("Total submissions in each day:", submissions);
+    const activeDates = submissions.map((submission) => submission._id);
+    const activeDateSet = new Set(activeDates);
+    let maxStreak = 0;
+    let streak = 0;
 
-    return res
-      .status(200)
-      .json({
-        message: "Total submissions in each day retrieved successfully",
-        submissions,
-      });
+    activeDates.forEach((date, index) => {
+      if (index > 0) {
+        const previousDate = new Date(`${activeDates[index - 1]}T00:00:00Z`);
+        const currentDate = new Date(`${date}T00:00:00Z`);
+        const dayDifference =
+          (currentDate - previousDate) / (1000 * 60 * 60 * 24);
+
+        streak = dayDifference === 1 ? streak + 1 : 1;
+      } else {
+        streak = 1;
+      }
+
+      maxStreak = Math.max(maxStreak, streak);
+    });
+
+    const today = new Date();
+    const todayDate = today.toISOString().slice(0, 10);
+    const yesterday = new Date(today);
+    yesterday.setUTCDate(yesterday.getUTCDate() - 1);
+    const latestDate = activeDateSet.has(todayDate)
+      ? todayDate
+      : yesterday.toISOString().slice(0, 10);
+
+    let currentStreak = 0;
+    if (activeDateSet.has(latestDate)) {
+      currentStreak = 1;
+      let date = new Date(`${latestDate}T00:00:00Z`);
+
+      while (true) {
+        date.setUTCDate(date.getUTCDate() - 1);
+        const previousDate = date.toISOString().slice(0, 10);
+
+        if (!activeDateSet.has(previousDate)) {
+          break;
+        }
+
+        currentStreak += 1;
+      }
+    }
+
+    return res.status(200).json({
+      message: "Total submissions in each day retrieved successfully",
+      submissions,
+      currentStreak,
+      maxStreak,
+    });
 
   } catch (error) {
     console.error("Error retrieving total submissions in each day:", error);
