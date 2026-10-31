@@ -41,4 +41,5 @@ route.post('/validate-token', userController.validateToken)
 
 route.post('/logout', userController.userLogout)
 
+
 module.exports = route

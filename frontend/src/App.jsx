@@ -15,6 +15,7 @@ import Signin from "./authentication/Signin";
 import Login from "./authentication/Login";
 import UserProtect from "./authentication/UserProtect";
 import ContextWriteCode from "./pages/ContextWriteCode";
+import Profile from "./pages/Profile";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -75,6 +76,15 @@ function App() {
             }
           />
           <Route path="/write-code" element={<WriteCode />} />
+
+          <Route
+            path="/profile"
+            element={
+              <UserProtect>
+                <Profile />
+              </UserProtect>
+            }
+          />
         </Routes>
       </div>
     </>

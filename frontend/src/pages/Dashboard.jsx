@@ -343,7 +343,7 @@ export default function DashboardOverview() {
 
         // number of problems in each category
         const categoryCounts = data.problems.reduce((acc, problem) => {
-          problem?.tags.forEach((tag) => {
+          problem?.tags?.forEach((tag) => {
             acc[tag] = (acc[tag] || 0) + 1;
           });
           return acc;

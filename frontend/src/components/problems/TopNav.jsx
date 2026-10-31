@@ -1,12 +1,13 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Search, Bell, Settings, Code2 } from "lucide-react";
 import { UserDataContext } from "../../context/UserContext";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export default function TopNav() {
   const { user } = useContext(UserDataContext);
   const [imageError, setImageError] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setImageError(false);
@@ -79,6 +80,10 @@ export default function TopNav() {
             <div
               className="h-8 w-8 rounded-full border border-[#a6cbaa] bg-[#3f7d55] text-white flex items-center justify-center font-bold text-xs ring-2 ring-[#c5dfc9] shadow-xs shrink-0 select-none uppercase"
               title={user?.username || user?.name || "User"}
+              onClick={() => {
+                // Navigate to profile page
+                navigate("/profile");
+              }}
             >
               {(user?.username || user?.name || user?.email || "U")
                 .charAt(0)
