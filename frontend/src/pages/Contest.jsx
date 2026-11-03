@@ -118,6 +118,7 @@ export default function Contest() {
     loadContests();
   }, []);
 
+  // fetch the global leaderboard
   useEffect(() => {
     if (!user?._id) return;
 

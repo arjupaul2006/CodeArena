@@ -16,11 +16,11 @@ export default function SubmissionHistoryCard({ submissions = [] }) {
 
   const filterOptions = [
     "All",
-    "Accepted",
-    "Wrong Answer",
-    "Runtime Error",
+    "accepted",
+    "wrong-answer",
+    "runtime-error",
     "TLE",
-    "Compilation Error",
+    "compilation-error",
   ];
 
   const filteredSubmissions =
@@ -67,6 +67,8 @@ export default function SubmissionHistoryCard({ submissions = [] }) {
         };
     }
   };
+
+  console.log("Submissions:", submissions);
 
   return (
     <section className="mt-6 overflow-hidden rounded-3xl border border-[#b7d2bb] bg-[#f4faf1] shadow-xl shadow-[#8eae94]/20 transition-all">
@@ -135,7 +137,7 @@ export default function SubmissionHistoryCard({ submissions = [] }) {
 
             return (
               <div
-                key={`${submission.problem}-${submission.submittedAt}-${index}`}
+                key={`${submission.problemId?.title}-${submission.submissionDate}-${index}`}
                 className="group p-4 sm:p-6 transition-all hover:bg-[#e8f3e8]/70"
               >
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -143,7 +145,7 @@ export default function SubmissionHistoryCard({ submissions = [] }) {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2.5">
                       <h3 className="truncate font-extrabold text-[#183226] text-base group-hover:text-[#3f7d55] transition-colors">
-                        {submission.problem}
+                        {submission.problemId?.title}
                       </h3>
                       <span className="rounded-md border border-[#b7d2bb] bg-[#e8f3e8] px-2 py-0.5 text-[11px] font-mono font-bold text-[#385a43]">
                         {submission.language}
@@ -153,17 +155,17 @@ export default function SubmissionHistoryCard({ submissions = [] }) {
                     <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-[#668170]">
                       <span className="flex items-center gap-1">
                         <Clock className="h-3 w-3 text-[#76a980]" />
-                        {submission.submittedAt}
+                        {submission.submissionDate}
                       </span>
                     </div>
                   </div>
 
                   {/* Right Column: Execution Metrics & Status Chip */}
                   <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 text-xs">
-                    {submission.executionTime && submission.executionTime !== "—" && (
+                    {submission.runtime && submission.runtime !== "—" && (
                       <div className="flex items-center gap-1.5 rounded-xl border border-[#b7d2bb] bg-[#e8f3e8] px-2.5 py-1.5 font-mono text-[#385a43]">
                         <Cpu className="h-3.5 w-3.5 text-[#547060]" />
-                        <span>{submission.executionTime}</span>
+                        <span>{submission.runtime}</span>
                       </div>
                     )}
 
@@ -174,10 +176,10 @@ export default function SubmissionHistoryCard({ submissions = [] }) {
                       </div>
                     )}
 
-                    {submission.tests && (
+                    {!submission.tests && (
                       <div className="flex items-center gap-1.5 rounded-xl border border-[#b7d2bb] bg-[#e8f3e8] px-2.5 py-1.5 font-mono font-semibold text-[#183226]">
                         <span className="text-[#668170]">Tests:</span>
-                        <span>{submission.tests}</span>
+                        <span>fully passed</span>
                       </div>
                     )}
 

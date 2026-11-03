@@ -10,7 +10,7 @@ import {
   Star,
 } from "lucide-react";
 
-export default function ContestPerformanceCard({ contestStats = [] }) {
+export default function ContestPerformanceCard({ contestStats = [], user }) {
   const getContestIcon = (label) => {
     switch (label) {
       case "Contests Participated":
@@ -31,6 +31,7 @@ export default function ContestPerformanceCard({ contestStats = [] }) {
         return Award;
     }
   };
+
 
   return (
     <section className="mt-6 overflow-hidden rounded-3xl border border-[#b7d2bb] bg-[#f4faf1] shadow-xl shadow-[#8eae94]/20 transition-all">

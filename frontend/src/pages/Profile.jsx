@@ -11,6 +11,7 @@ import BadgesShowcase from "../components/profile/BadgesShowcase";
 import EditProfileModal from "../components/profile/EditProfileModal";
 import { UserDataContext } from "../context/UserContext";
 import axios from "axios";
+import { fetchGlobalLeaderboard } from "../../services/contextServices";
 
 const initialProfileData = {
   username: "Alex DevNull",
@@ -54,7 +55,7 @@ const initialProfileData = {
   contestStats: [
     {
       label: "Contests Participated",
-      value: "12",
+      value: `12`,
       description: "Total contests joined",
     },
     {
@@ -162,6 +163,8 @@ export default function Profile() {
     maxStreak: 0,
   });
 
+  const [globalUserRank, setGlobalUserRank] = useState(null);
+
   // Sync with UserDataContext whenever user changes or updates
   useEffect(() => {
     if (user && typeof user === "object") {
@@ -215,7 +218,7 @@ export default function Profile() {
       0,
     ) || 186;
 
-  // fetch number of toatl problems in each category
+  // fetch number of total problems in each category
   useEffect(() => {
     const fetchProblems = async () => {
       try {
@@ -290,7 +293,7 @@ export default function Profile() {
     {},
   );
 
-  //fetch submission history from user context
+  //fetch submission history
   useEffect(() => {
     const fetchSubmissionHistory = async () => {
       try {
@@ -345,6 +348,74 @@ export default function Profile() {
 
     fetchStreaks();
   }, []);
+
+  // change context stats
+  useEffect(() => {
+    const highestContestScore = user?.contestScores?.reduce((max, contest) => {
+      return contest.score > max ? contest.score : max;
+    }, 0);
+
+    const averageContextScore =
+      user?.contestScores?.reduce((sum, contest) => sum + contest.score, 0) /
+      (user?.contestScores?.length || 1);
+
+    // fetch the global leaderboard rank for the user
+    if (!user?._id) return;
+
+    const loadGlobalLeaderboard = async () => {
+      const data = await fetchGlobalLeaderboard();
+      setGlobalUserRank(data.userRank);
+    };
+
+    loadGlobalLeaderboard();
+
+    console.log('Global leaderboard rank for user:', globalUserRank);
+
+    const contest_stats = [
+      {
+        label: "Contests Participated",
+        value: `${user?.contestsParticipated?.length || "0"}`,
+        description: "Total contests joined",
+      },
+      {
+        label: "Total Contest Score",
+        value: `${user?.totalContestScore || "0"}`,
+        description: "Sum of contest scores",
+      },
+      {
+        label: "Highest Contest Score",
+        value: `${highestContestScore || "0"}`,
+        description: "Best individual contest score",
+      },
+      {
+        label: "Average Contest Score",
+        value: `${averageContextScore || "0"}`,
+        description: "Average score per contest",
+      },
+      {
+        label: "Contest Rank",
+        value: globalUserRank ? `#${globalUserRank}` : "#1,248",
+        description: "Current overall leaderboard rank",
+      },
+    ];
+
+    if (user) {
+      setProfile((prevProfile) => ({
+        ...prevProfile,
+        contestStats: contest_stats,
+      }));
+    }
+  }, [user, globalUserRank]);
+
+  // change submission history in initialProfileData
+  useEffect(() => {
+    if (user) {
+      setProfile((prevProfile) => ({
+        ...prevProfile,
+        submissions: submissionHistory,
+      }));
+    }
+  }, [submissionHistory, user]);
 
   return (
     <div className="flex min-h-screen bg-[#e8f3e8] font-sans text-[#244333] antialiased selection:bg-[#3f7d55] selection:text-white">
@@ -417,7 +488,10 @@ export default function Profile() {
             {/* TAB: Contest Performance */}
             {activeTab === "contests" && (
               <div className="space-y-6 animate-in fade-in duration-300">
-                <ContestPerformanceCard contestStats={profile.contestStats} />
+                <ContestPerformanceCard
+                  contestStats={profile.contestStats}
+                  user={user}
+                />
               </div>
             )}
 
