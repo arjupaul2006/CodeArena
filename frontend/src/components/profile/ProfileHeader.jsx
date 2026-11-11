@@ -4,6 +4,7 @@ import {
   CheckCircle2,
   Clock3,
   Edit3,
+  ImagePlus,
   Mail,
   ShieldCheck,
   Share2,
@@ -16,9 +17,11 @@ export default function ProfileHeader({
   user,
   onEditClick,
   onShareClick,
+  onProfileImageChange,
 }) {
   const [imageError, setImageError] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [imageUploadError, setImageUploadError] = useState("");
 
   // Robust username resolver: ensures username is never empty or hidden
   const displayUsername =
@@ -38,6 +41,23 @@ export default function ProfileHeader({
     (user?.email && user.email.trim()) ||
     "alex.devnull@codearena.dev";
 
+  const formattedCreatedAt = (date_time) => {
+    if (!date_time) return "Joined Recently";
+
+    const date = new Date(date_time);
+    if (Number.isNaN(date.getTime())) return "Joined Recently";
+
+    return date.toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
+
   const handleShare = () => {
     if (onShareClick) {
       onShareClick();
@@ -46,6 +66,40 @@ export default function ProfileHeader({
     navigator.clipboard?.writeText(window.location.href);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  // Handle profile image upload and validation
+  const handleImageUpload = (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setImageUploadError("Please choose an image file.");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setImageUploadError("Please choose an image smaller than 5 MB.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result !== "string") {
+        setImageUploadError("The selected image could not be read.");
+        return;
+      }
+
+      setImageError(false);
+      setImageUploadError("");
+      onProfileImageChange?.(file, reader.result);
+    };
+    reader.onerror = () => {
+      setImageUploadError("The selected image could not be read.");
+    };
+    reader.readAsDataURL(file);
   };
 
   return (
@@ -62,7 +116,9 @@ export default function ProfileHeader({
           <Trophy className="h-3.5 w-3.5 text-amber-300" />
           <span>Knight Division</span>
           <span className="hidden sm:inline-block text-[#a6cbaa]">|</span>
-          <span className="hidden sm:inline-block font-mono text-emerald-200">Tier III</span>
+          <span className="hidden sm:inline-block font-mono text-emerald-200">
+            Tier III
+          </span>
         </div>
       </div>
 
@@ -73,10 +129,21 @@ export default function ProfileHeader({
           <div className="flex flex-col sm:flex-row items-center sm:items-end gap-4 sm:gap-5 text-center sm:text-left">
             {/* Avatar */}
             <div className="relative shrink-0 group">
-              <div className="h-28 w-28 sm:h-36 sm:w-36 rounded-2xl sm:rounded-3xl border-4 border-[#f4faf1] bg-[#dcecdf] shadow-xl overflow-hidden ring-2 ring-[#a6cbaa]/50">
-                {profile?.profileImage && !imageError ? (
+              <input
+                id="profile-image-upload"
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="sr-only"
+              />
+              <label
+                htmlFor="profile-image-upload"
+                className="block h-28 w-28 sm:h-36 sm:w-36 cursor-pointer rounded-2xl sm:rounded-3xl border-4 border-[#f4faf1] bg-[#dcecdf] shadow-xl overflow-hidden ring-2 ring-[#a6cbaa]/50 focus-within:ring-4 focus-within:ring-[#3f7d55]/50"
+                title="Change profile image"
+              >
+                {user?.profileImage && !imageError ? (
                   <img
-                    src={profile.profileImage}
+                    src={user.profileImage}
                     alt={`${displayUsername} avatar`}
                     onError={() => setImageError(true)}
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
@@ -86,6 +153,10 @@ export default function ProfileHeader({
                     {displayUsername.charAt(0).toUpperCase()}
                   </div>
                 )}
+              </label>
+              <div className="pointer-events-none absolute inset-1 flex items-center justify-center rounded-xl sm:rounded-2xl bg-black/45 text-white opacity-0 transition-opacity group-hover:opacity-100">
+                <ImagePlus className="h-7 w-7" aria-hidden="true" />
+                <span className="sr-only">Choose a new profile image</span>
               </div>
               {/* Online / Active Badge Indicator */}
               <div className="absolute bottom-1 right-1 rounded-full bg-[#f4faf1] p-1 shadow-md">
@@ -94,6 +165,11 @@ export default function ProfileHeader({
                   <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500"></span>
                 </span>
               </div>
+              {imageUploadError && (
+                <p className="absolute left-1/2 top-full mt-2 w-48 -translate-x-1/2 text-center text-[11px] font-semibold text-red-600">
+                  {imageUploadError}
+                </p>
+              )}
             </div>
 
             {/* Username & Title Details */}
@@ -135,8 +211,13 @@ export default function ProfileHeader({
               <Mail className="h-4 w-4" />
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-[#668170]">Email</p>
-              <p className="truncate text-xs font-semibold text-[#183226]" title={displayEmail}>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[#668170]">
+                Email
+              </p>
+              <p
+                className="truncate text-xs font-semibold text-[#183226]"
+                title={displayEmail}
+              >
                 {displayEmail}
               </p>
             </div>
@@ -147,7 +228,9 @@ export default function ProfileHeader({
               <ShieldCheck className="h-4 w-4" />
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-[#668170]">Rank Standing</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[#668170]">
+                Rank Standing
+              </p>
               <p className="truncate text-xs font-semibold text-[#183226]">
                 {displayRole || "Grandmaster Track"}
               </p>
@@ -159,9 +242,11 @@ export default function ProfileHeader({
               <CalendarDays className="h-4 w-4" />
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-[#668170]">Member Since</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[#668170]">
+                Member Since
+              </p>
               <p className="truncate text-xs font-semibold text-[#183226]">
-                {profile?.joinedDate || "January 2024"}
+                {formattedCreatedAt(user?.createdAt || profile?.createdAt)}
               </p>
             </div>
           </div>
@@ -171,9 +256,12 @@ export default function ProfileHeader({
               <Clock3 className="h-4 w-4" />
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-[#668170]">Last Active</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[#668170]">
+                Last Active
+              </p>
               <p className="truncate text-xs font-semibold text-[#183226]">
-                {profile?.lastActive || "Active Today"}
+                {formattedCreatedAt(user?.updatedAt || profile?.lastActive) ||
+                  "Recently Active"}
               </p>
             </div>
           </div>

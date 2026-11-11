@@ -75,6 +75,10 @@ export default function TopNav() {
               alt={user?.username || "User avatar"}
               onError={() => setImageError(true)}
               className="h-8 w-8 rounded-full border border-[#a6cbaa] object-cover ring-2 ring-[#c5dfc9]"
+              onClick={() => {
+                // Navigate to profile page
+                navigate("/profile");
+              }}
             />
           ) : (
             <div

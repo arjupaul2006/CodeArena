@@ -96,6 +96,25 @@ module.exports.getSubmissionHistory = async (req, res) => {
   }
 };
 
+module.exports.getSubmissionHistoryForProfile = async (req, res) => {
+  try {
+    const searchUserId = req.body.searchUserId || null;
+    const userId = searchUserId || req.user?._id || req.body.userId;
+    const submissions = await Submission.find({ userId })
+      .populate("problemId")
+      .sort({ submissionDate: -1 });
+    return res
+      .status(200)
+      .json({
+        message: "Submission history retrieved successfully",
+        submissions,
+      });
+  } catch (error) {
+    console.error("Error retrieving submission history:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 module.exports.submissionHistoryByProblemId = async (req, res) => {
   try {
     const userId = req.user?._id || req.body.userId;

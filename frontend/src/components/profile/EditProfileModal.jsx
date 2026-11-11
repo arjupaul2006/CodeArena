@@ -1,20 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { X, User, Mail, Briefcase, Image as ImageIcon, FileText, Check } from "lucide-react";
 
 export default function EditProfileModal({
   isOpen,
   onClose,
-  initialData,
+  user,
   onSave,
 }) {
   const [formData, setFormData] = useState({
-    username: initialData?.username || "",
-    role: initialData?.role || "",
-    email: initialData?.email || "",
-    bio: initialData?.bio || "Passionate competitive programmer striving for grandmaster rating.",
-    profileImage: initialData?.profileImage || "",
+    username: user?.username || "",
+    role: user?.role || "",
+    email: user?.email || "",
+    profileImage: user?.profileImage || "",
   });
   const [savedSuccess, setSavedSuccess] = useState(false);
+
+  // Update formData when user prop changes
+  useEffect(() => {
+    setFormData({
+      username: user?.username || "",
+      role: user?.role || "",
+      email: user?.email || "",
+      profileImage: user?.profileImage || "",
+    });
+  }, [user]);
 
   if (!isOpen) return null;
 
@@ -129,23 +138,6 @@ export default function EditProfileModal({
                 onChange={handleChange}
                 className="w-full rounded-xl border border-[#b7d2bb] bg-[#e8f3e8] py-2.5 pl-10 pr-4 text-sm font-semibold text-[#183226] focus:border-[#3f7d55] focus:outline-none focus:ring-1 focus:ring-[#3f7d55]"
                 placeholder="https://images.unsplash.com/..."
-              />
-            </div>
-          </div>
-
-          {/* Bio */}
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-[#385a43] mb-1.5">
-              Bio Summary
-            </label>
-            <div className="relative">
-              <textarea
-                name="bio"
-                rows={2}
-                value={formData.bio}
-                onChange={handleChange}
-                className="w-full rounded-xl border border-[#b7d2bb] bg-[#e8f3e8] p-3 text-sm font-medium text-[#183226] focus:border-[#3f7d55] focus:outline-none focus:ring-1 focus:ring-[#3f7d55]"
-                placeholder="Short bio for your public profile..."
               />
             </div>
           </div>

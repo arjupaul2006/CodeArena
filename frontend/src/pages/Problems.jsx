@@ -6,8 +6,12 @@ import DailyChallenge from "../components/problems/DailyChallenge";
 import CategoriesCard from "../components/problems/CategoriesCard";
 import ProgressCard from "../components/problems/ProgressCard";
 import { UserDataContext } from "../context/UserContext";
+import { useSearchParams } from "react-router-dom";
 
 const Problems = () => {
+
+  const [searchParams] = useSearchParams();
+  const tag = searchParams.get("tag") || null;
 
   return (
     <div className="flex min-h-screen bg-[#e8f3e8] text-[#244333] font-sans antialiased">
@@ -30,7 +34,7 @@ const Problems = () => {
               </p>
             </div>
 
-            <ProblemTable />
+            <ProblemTable tag={tag} />
           </div>
 
           {/* Right Column: Widgets */}

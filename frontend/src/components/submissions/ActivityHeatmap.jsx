@@ -17,8 +17,13 @@ export default function ActivityHeatmap() {
   useEffect(() => {
     const fetchSubmissionData = async () => {
       try {
-        const response = await axios.get(
+        const response = await axios.post(
           `${backendUrl}/api/getSubmissionEachDay`,
+          {
+            data: {
+              searchUserId: null, 
+            },
+          },
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

@@ -7,6 +7,7 @@ route.post("/submit-problem", authUser, submitProblemController.submitProblem);
 
 route.post('/submissionHistory', authUser, submitProblemController.addSubmissionHistory);
 route.get('/submissionHistory', authUser, submitProblemController.getSubmissionHistory);
+route.post('/submissionHistoryForProfile', authUser, submitProblemController.getSubmissionHistoryForProfile);
 
 route.post('/submissionHistoryByProblemId', authUser, submitProblemController.submissionHistoryByProblemId);
 

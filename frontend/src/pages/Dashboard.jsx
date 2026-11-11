@@ -277,8 +277,13 @@ export default function DashboardOverview() {
         const backendUrl =
           import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
         const token = localStorage.getItem("token");
-        const response = await axios.get(
+        const response = await axios.post(
           `${backendUrl}/api/getSubmissionEachDay`,
+          {
+            data: {
+              searchUserId: null, 
+            },
+          },
           {
             headers: {
               "Content-Type": "application/json",
@@ -367,7 +372,7 @@ export default function DashboardOverview() {
       // number of solved problems in each category
       const solvedCategoryCounts = (user?.solvedProblems || []).reduce(
         (acc, problem) => {
-          problem?.tags.forEach((tag) => {
+          problem?.tags?.forEach((tag) => {
             acc[tag] = (acc[tag] || 0) + 1;
           });
           return acc;
@@ -468,6 +473,7 @@ export default function DashboardOverview() {
                     <div
                       key={index}
                       className="p-3.5 bg-[#e8f3e8] rounded-xl border border-[#b7d2bb] space-y-2"
+                      onClick={() => navigate(`/problems?tag=${skill.name}`)}
                     >
                       <div className="flex justify-between items-baseline">
                         <span className="text-xs font-bold text-[#385a43]">
@@ -512,6 +518,7 @@ export default function DashboardOverview() {
                       <div
                         key={idx}
                         className="flex justify-between items-start p-2.5 rounded-xl bg-[#e8f3e8] border border-[#b7d2bb] text-xs"
+                        onClick={() => navigate(`/write-code?id=${item.problemId?._id}`)}
                       >
                         <div className="space-y-0.5">
                           <span className="font-semibold text-[#385a43] block truncate max-w-[180px]">

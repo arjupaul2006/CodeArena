@@ -22,8 +22,13 @@ export default function ProfileCard() {
         const backendUrl =
           import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
         const token = localStorage.getItem("token");
-        const response = await axios.get(
+        const response = await axios.post(
           `${backendUrl}/api/getSubmissionEachDay`,
+          {
+            data: {
+              searchUserId: null, 
+            },
+          },
           {
             headers: {
               "Content-Type": "application/json",

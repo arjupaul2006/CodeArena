@@ -9,6 +9,7 @@ import {
   Sparkles,
   BarChart2,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function ProblemSolvingCard({
   problemSolving,
@@ -17,6 +18,7 @@ export default function ProblemSolvingCard({
   totalProblemCategories,
   totalDifficultyCounts,
   solvedDifficultyCounts,
+  submissionHistory,
 }) {
   const difficulty = [
     {
@@ -36,9 +38,11 @@ export default function ProblemSolvingCard({
     },
   ];
 
-  const pending = problemSolving.pending || 0;
+  const navigation = useNavigate();
+
+  // const pending = problemSolving.pending || 0;
   const mostPracticed = problemSolving.mostPracticed || "N/A";
-  const recentlySolved = problemSolving.recentlySolved || [];
+  const recentlySolved = submissionHistory.slice(0, 5);
 
   const totalSolved = difficulty.reduce((sum, d) => sum + (d.solved || 0), 0);
   const totalAvailable = difficulty.reduce((sum, d) => sum + (d.total || 0), 0);
@@ -46,6 +50,15 @@ export default function ProblemSolvingCard({
     totalAvailable > 0 ? Math.round((totalSolved / totalAvailable) * 100) : 0;
 
   const categories = Object.keys(totalProblemCategories);
+
+  const pending = submissionHistory.filter((submission, index, arr) => {
+    return (
+      submission.status === "Wrong Answer" &&
+      !arr.some(
+        (s) => s.problemId === submission.problemId && s.status === "Accepted",
+      )
+    );
+  })?.length || 0;
 
   return (
     <section className="mt-6 rounded-3xl border border-[#b7d2bb] bg-[#f4faf1] p-5 sm:p-8 shadow-xl shadow-[#8eae94]/20 transition-all">
@@ -222,12 +235,20 @@ export default function ProblemSolvingCard({
             <ul className="mt-3.5 space-y-2.5">
               {recentlySolved.map((problem) => (
                 <li
-                  key={problem}
+                  key={problem?.problemId}
                   className="flex items-center justify-between rounded-xl border border-[#b7d2bb]/50 bg-[#e8f3e8]/50 px-3 py-2 text-xs font-semibold text-[#183226] transition-colors hover:bg-[#e8f3e8]"
                 >
-                  <div className="flex items-center gap-2 truncate">
+                  <div
+                    className="flex items-center gap-2 truncate"
+                    onClick={() =>
+                      navigation(`/write-code?id=${problem?.problemId?._id}`)
+                    }
+                    cursor="pointer"
+                  >
                     <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
-                    <span className="truncate">{problem}</span>
+                    <span className="truncate">
+                      {problem?.problemId?.title}
+                    </span>
                   </div>
                   <ChevronRight className="h-3.5 w-3.5 shrink-0 text-[#668170]" />
                 </li>

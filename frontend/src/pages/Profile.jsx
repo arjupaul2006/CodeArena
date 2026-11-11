@@ -1,6 +1,6 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
+import { Search } from "lucide-react";
 import Sidebar from "../components/problems/SideBar";
-import TopNav from "../components/problems/TopNav";
 import ProfileHeader from "../components/profile/ProfileHeader";
 import ProfileTabs from "../components/profile/ProfileTabs";
 import ProfileStatsOverview from "../components/profile/ProfileStatsOverview";
@@ -12,6 +12,7 @@ import EditProfileModal from "../components/profile/EditProfileModal";
 import { UserDataContext } from "../context/UserContext";
 import axios from "axios";
 import { fetchGlobalLeaderboard } from "../../services/contextServices";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 const initialProfileData = {
   username: "Alex DevNull",
@@ -148,7 +149,11 @@ const initialProfileData = {
 };
 
 export default function Profile() {
+  const [searchParams] = useSearchParams();
+  const userId = searchParams?.get("id") || null;
   const { user, setUser } = useContext(UserDataContext);
+  const [profileUser, setProfileUser] = useState(user);
+
   const [profile, setProfile] = useState(initialProfileData);
   const [activeTab, setActiveTab] = useState("activity");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -164,6 +169,100 @@ export default function Profile() {
   });
 
   const [globalUserRank, setGlobalUserRank] = useState(null);
+  const [toast, setToast] = useState(null);
+  const toastTimeoutRef = useRef(null);
+  const [userSearch, setUserSearch] = useState("");
+  const [userResults, setUserResults] = useState([]);
+  const [isSearchingUsers, setIsSearchingUsers] = useState(false);
+  const [userSearchError, setUserSearchError] = useState("");
+
+  const navigate = useNavigate();
+
+  const showToast = (type, message) => {
+    setToast({ type, message });
+    clearTimeout(toastTimeoutRef.current);
+    toastTimeoutRef.current = setTimeout(() => setToast(null), 3500);
+  };
+
+  // Clear the toast timeout when the component unmounts
+  useEffect(() => {
+    return () => clearTimeout(toastTimeoutRef.current);
+  }, []);
+
+  // Search users
+  useEffect(() => {
+    const query = userSearch.trim();
+
+    if (query.length < 2) {
+      setUserResults([]);
+      setUserSearchError("");
+      setIsSearchingUsers(false);
+      return;
+    }
+
+    const controller = new AbortController();
+    const searchUsers = async () => {
+      setIsSearchingUsers(true);
+      setUserSearchError("");
+
+      try {
+        const backendUrl =
+          import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+        const response = await axios.get(
+          `${backendUrl}/api/users/search?q=${encodeURIComponent(query)}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            signal: controller.signal,
+          },
+        );
+        setUserResults(response.data?.users || []);
+      } catch (error) {
+        if (error.name !== "CanceledError" && error.code !== "ERR_CANCELED") {
+          console.error("Error searching users:", error);
+          setUserSearchError("Unable to search users.");
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsSearchingUsers(false);
+        }
+      }
+    };
+
+    const timeoutId = setTimeout(searchUsers, 250);
+    return () => {
+      clearTimeout(timeoutId);
+      controller.abort();
+    };
+  }, [userSearch]);
+
+  // fetch the data of searched user profile
+  useEffect(() => {
+    const fetchProfileUser = async () => {
+      if (!userId) {
+        setProfileUser(user);
+        return;
+      };
+
+      try {
+        const backendUrl =
+          import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+        const response = await axios.get(`${backendUrl}/api/users/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        const profileUserData = response.data?.user;
+        setProfileUser(profileUserData);
+      } catch (error) {
+        console.error("Error fetching profile user:", error);
+        showToast("error", "Unable to fetch user profile.");
+      }
+    };
+
+    fetchProfileUser();
+  }, [userId, user]);
 
   // Sync with UserDataContext whenever user changes or updates
   useEffect(() => {
@@ -186,7 +285,8 @@ export default function Profile() {
     }
   }, [user]);
 
-  const handleSaveProfile = (updatedData) => {
+  // Save the updated profile data
+  const handleSaveProfile = async (updatedData) => {
     setProfile((prev) => ({
       ...prev,
       ...updatedData,
@@ -196,24 +296,71 @@ export default function Profile() {
       setUser((prevUser) => ({
         ...prevUser,
         username: updatedData.username,
-        name: updatedData.username,
         email: updatedData.email,
         profileImage: updatedData.profileImage,
         role: updatedData.role,
-        bio: updatedData.bio,
       }));
+    }
+
+    // Send the updated profile data to the backend
+    try {
+      const backendUrl =
+        import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+      await axios.post(`${backendUrl}/api/update-profile`, updatedData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        user: user, // Include the user object in the request body
+      });
+      showToast("success", "Profile updated successfully.");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      showToast("error", "Unable to update your profile.");
+    }
+  };
+
+  // Update profile image to backend and context
+  const handleProfileImageChange = async (file, profileImageUrl) => {
+    const previousImageUrl = user?.profileImage || "";
+    const formData = new FormData();
+    formData.append("profileImage", file);
+    setProfile((prev) => ({ ...prev, profileImage: profileImageUrl }));
+    setUser((prevUser) => ({ ...prevUser, profileImage: profileImageUrl }));
+
+    try {
+      const backendUrl =
+        import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+      const response = await axios.patch(
+        `${backendUrl}/api/update-profile-image`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      );
+      const savedImageUrl =
+        response.data?.user?.profileImage || profileImageUrl;
+      setProfile((prev) => ({ ...prev, profileImage: savedImageUrl }));
+      setUser((prevUser) => ({ ...prevUser, profileImage: savedImageUrl }));
+      showToast("success", "Profile image changed successfully.");
+    } catch (error) {
+      setProfile((prev) => ({ ...prev, profileImage: previousImageUrl }));
+      setUser((prevUser) => ({ ...prevUser, profileImage: previousImageUrl }));
+      console.error("Error updating profile image:", error);
+      showToast("error", "Unable to change your profile image.");
     }
   };
 
   const currentUsername =
-    profile?.username ||
+    profileUser?.username ||
     user?.username ||
     user?.name ||
     (user?.email ? user.email.split("@")[0] : null) ||
     "Alex DevNull";
 
   const totalSolved =
-    profile.problemSolving?.difficulty?.reduce(
+    profileUser?.problemSolving?.difficulty?.reduce(
       (acc, d) => acc + (d.solved || 0),
       0,
     ) || 186;
@@ -249,15 +396,15 @@ export default function Profile() {
 
   // fetch number of solved problems in each category
   useEffect(() => {
-    if (user) {
+    if (profileUser) {
       console.log(
         "User solved problems in Dashboard:",
-        user,
-        user.solvedProblems,
+        profileUser,
+        profileUser.solvedProblems,
       );
 
       // number of solved problems in each category
-      const solvedCategoryCounts = (user?.solvedProblems || []).reduce(
+      const solvedCategoryCounts = (profileUser?.solvedProblems || []).reduce(
         (acc, problem) => {
           problem?.tags.forEach((tag) => {
             acc[tag] = (acc[tag] || 0) + 1;
@@ -270,7 +417,7 @@ export default function Profile() {
       //   console.log("Solved category counts:", solvedCategoryCounts);
       setSolvedProblemCategories(solvedCategoryCounts);
     }
-  }, [user]);
+  }, [profileUser]);
 
   //fetch number of easy, medium, hard problems total
   const totalDifficultyCounts = problems.reduce((acc, problem) => {
@@ -282,7 +429,7 @@ export default function Profile() {
   }, {});
 
   // fetch number of easy, medium, hard problems solved
-  const solvedDifficultyCounts = (user?.solvedProblems || []).reduce(
+  const solvedDifficultyCounts = (profileUser?.solvedProblems || []).reduce(
     (acc, problem) => {
       const difficulty = problem.difficulty?.toLowerCase();
       if (difficulty) {
@@ -299,8 +446,11 @@ export default function Profile() {
       try {
         const backendUrl =
           import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
-        const response = await axios.get(
-          `${backendUrl}/api/submissionHistory`,
+        const response = await axios.post(
+          `${backendUrl}/api/submissionHistoryForProfile`,
+          {
+            searchUserId: profileUser?._id || null,
+          },
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -318,7 +468,7 @@ export default function Profile() {
     if (user) {
       fetchSubmissionHistory();
     }
-  }, [user]);
+  }, [profileUser]);
 
   // Fetch submission streaks from the backend
   useEffect(() => {
@@ -327,8 +477,13 @@ export default function Profile() {
         const backendUrl =
           import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
         const token = localStorage.getItem("token");
-        const response = await axios.get(
+        const response = await axios.post(
           `${backendUrl}/api/getSubmissionEachDay`,
+          {
+            data: {
+              searchUserId: profileUser?._id || null,
+            },
+          },
           {
             headers: {
               "Content-Type": "application/json",
@@ -351,16 +506,21 @@ export default function Profile() {
 
   // change context stats
   useEffect(() => {
-    const highestContestScore = user?.contestScores?.reduce((max, contest) => {
-      return contest.score > max ? contest.score : max;
-    }, 0);
+    const highestContestScore = profileUser?.contestScores?.reduce(
+      (max, contest) => {
+        return contest.score > max ? contest.score : max;
+      },
+      0,
+    );
 
     const averageContextScore =
-      user?.contestScores?.reduce((sum, contest) => sum + contest.score, 0) /
-      (user?.contestScores?.length || 1);
+      profileUser?.contestScores?.reduce(
+        (sum, contest) => sum + contest.score,
+        0,
+      ) / (profileUser?.contestScores?.length || 1);
 
     // fetch the global leaderboard rank for the user
-    if (!user?._id) return;
+    if (!profileUser?._id) return;
 
     const loadGlobalLeaderboard = async () => {
       const data = await fetchGlobalLeaderboard();
@@ -369,17 +529,17 @@ export default function Profile() {
 
     loadGlobalLeaderboard();
 
-    console.log('Global leaderboard rank for user:', globalUserRank);
+    console.log("Global leaderboard rank for user:", globalUserRank);
 
     const contest_stats = [
       {
         label: "Contests Participated",
-        value: `${user?.contestsParticipated?.length || "0"}`,
+        value: `${profileUser?.contestsParticipated?.length || "0"}`,
         description: "Total contests joined",
       },
       {
         label: "Total Contest Score",
-        value: `${user?.totalContestScore || "0"}`,
+        value: `${profileUser?.totalContestScore || "0"}`,
         description: "Sum of contest scores",
       },
       {
@@ -399,35 +559,137 @@ export default function Profile() {
       },
     ];
 
-    if (user) {
+    if (profileUser) {
       setProfile((prevProfile) => ({
         ...prevProfile,
         contestStats: contest_stats,
       }));
     }
-  }, [user, globalUserRank]);
+  }, [profileUser, globalUserRank]);
 
   // change submission history in initialProfileData
   useEffect(() => {
-    if (user) {
+    if (profileUser) {
       setProfile((prevProfile) => ({
         ...prevProfile,
         submissions: submissionHistory,
       }));
     }
-  }, [submissionHistory, user]);
+  }, [submissionHistory, profileUser]);
 
   return (
     <div className="flex min-h-screen bg-[#e8f3e8] font-sans text-[#244333] antialiased selection:bg-[#3f7d55] selection:text-white">
+      {toast && (
+        <div
+          role="status"
+          className={`fixed right-4 top-4 z-[70] flex max-w-sm items-center gap-3 rounded-xl border px-4 py-3 text-sm font-semibold shadow-xl ${
+            toast.type === "success"
+              ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+              : "border-red-200 bg-red-50 text-red-800"
+          }`}
+        >
+          <span
+            className={`h-2.5 w-2.5 shrink-0 rounded-full ${
+              toast.type === "success" ? "bg-emerald-500" : "bg-red-500"
+            }`}
+          />
+          <span>{toast.message}</span>
+          <button
+            type="button"
+            onClick={() => setToast(null)}
+            className="ml-2 text-current/60 hover:text-current"
+            aria-label="Dismiss notification"
+          >
+            ×
+          </button>
+        </div>
+      )}
       {/* Persistent Sidebar matching platform navigation */}
       <Sidebar />
 
       {/* Main Framework Content Container */}
       <div className="flex min-w-0 flex-1 flex-col pb-20 md:pb-0 md:pl-64">
-        <TopNav />
-
         {/* Content Body Grid */}
         <main className="mx-auto w-full max-w-[1440px] flex-1 p-4 sm:p-6 lg:p-8 space-y-6">
+          {/* Search Users Section */}
+          <div className="relative max-w-xl">
+            <label
+              htmlFor="people-search"
+              className="mb-2 block text-sm font-semibold text-[#183226]"
+            >
+              Find people
+            </label>
+            <div className="relative">
+              <Search
+                aria-hidden="true"
+                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#668170]"
+              />
+              <input
+                id="people-search"
+                type="search"
+                value={userSearch}
+                onChange={(event) => setUserSearch(event.target.value)}
+                placeholder="Search by username..."
+                autoComplete="off"
+                className="w-full rounded-xl border border-[#b7d2bb] bg-white py-2.5 pl-10 pr-4 text-sm text-[#385a43] outline-none transition focus:border-[#3f7d55] focus:ring-2 focus:ring-[#3f7d55]/20"
+              />
+            </div>
+            {(isSearchingUsers ||
+              userSearchError ||
+              userResults.length > 0) && (
+              <div className="absolute left-0 right-0 top-[4.5rem] z-20 overflow-hidden rounded-xl border border-[#b7d2bb] bg-white shadow-lg">
+                {isSearchingUsers && (
+                  <p className="px-4 py-3 text-sm text-[#668170]">
+                    Searching users...
+                  </p>
+                )}
+                {!isSearchingUsers && userSearchError && (
+                  <p className="px-4 py-3 text-sm text-red-700">
+                    {userSearchError}
+                  </p>
+                )}
+                {!isSearchingUsers &&
+                  !userSearchError &&
+                  userResults.map((result) => (
+                    <div
+                      key={result._id}
+                      className="flex items-center gap-3 px-4 py-3 hover:bg-[#f1f8f1]"
+                      onClick={() => {
+                        navigate(`/profile/?id=${result._id}`);
+                      }}
+                    >
+                      {result.profileImage ? (
+                        <img
+                          src={result.profileImage}
+                          alt=""
+                          className="h-8 w-8 rounded-full object-cover"
+                        />
+                      ) : (
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#c5dfc9] text-sm font-bold text-[#3f7d55]">
+                          {result.username.charAt(0).toUpperCase()}
+                        </span>
+                      )}
+                      <div>
+                        <p className="text-sm font-semibold text-[#183226]">
+                          {result.username}
+                        </p>
+                        <p className="text-xs text-[#668170]">
+                          {result.role || "CodeArena member"}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                {!isSearchingUsers &&
+                  !userSearchError &&
+                  userResults.length === 0 && (
+                    <p className="px-4 py-3 text-sm text-[#668170]">
+                      No users found.
+                    </p>
+                  )}
+              </div>
+            )}
+          </div>
+
           {/* Top Page Breadcrumb & Title */}
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#3f7d55]">
@@ -445,8 +707,9 @@ export default function Profile() {
           {/* Section 1: Hero Profile Header Card */}
           <ProfileHeader
             profile={profile}
-            user={user}
+            user={profileUser}
             onEditClick={() => setIsEditModalOpen(true)}
+            onProfileImageChange={handleProfileImageChange}
           />
 
           {/* Section Navigation Tabs */}
@@ -473,6 +736,7 @@ export default function Profile() {
                   totalProblemCategories={totalProblemCategories}
                   totalDifficultyCounts={totalDifficultyCounts}
                   solvedDifficultyCounts={solvedDifficultyCounts}
+                  submissionHistory={submissionHistory}
                 />
                 <ProfileStatsOverview
                   acceptanceRate={
@@ -490,7 +754,7 @@ export default function Profile() {
               <div className="space-y-6 animate-in fade-in duration-300">
                 <ContestPerformanceCard
                   contestStats={profile.contestStats}
-                  user={user}
+                  user={profileUser}
                 />
               </div>
             )}
@@ -501,30 +765,6 @@ export default function Profile() {
                 <SubmissionHistoryCard submissions={submissionHistory} />
               </div>
             )}
-
-            {/* TAB: Badges & Honors */}
-            {activeTab === "badges" && (
-              <div className="space-y-6 animate-in fade-in duration-300">
-                <BadgesShowcase />
-              </div>
-            )}
-
-            {/* TAB: View All */}
-            {activeTab === "all" && (
-              <div className="space-y-6 animate-in fade-in duration-300">
-                <ProfileStatsOverview
-                  stats={profile.stats}
-                  acceptanceRate={
-                    profile.stats.find((s) => s.label === "Acceptance Rate")
-                      ?.value || "75%"
-                  }
-                />
-                <ProblemSolvingCard problemSolving={profile.problemSolving} />
-                <ContestPerformanceCard contestStats={profile.contestStats} />
-                <BadgesShowcase />
-                <SubmissionHistoryCard submissions={profile.submissions} />
-              </div>
-            )}
           </div>
         </main>
       </div>
@@ -533,7 +773,7 @@ export default function Profile() {
       <EditProfileModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        initialData={profile}
+        user={profileUser}
         onSave={handleSaveProfile}
       />
     </div>

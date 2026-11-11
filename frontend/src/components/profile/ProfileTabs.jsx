@@ -28,18 +28,6 @@ export default function ProfileTabs({ activeTab, onTabChange, counts = {} }) {
       icon: History,
       badge: counts.submissionCount || null,
     },
-    {
-      id: "badges",
-      label: "Badges & Honors",
-      icon: Award,
-      badge: counts.badgesCount || "4",
-    },
-    {
-      id: "all",
-      label: "View All",
-      icon: LayoutGrid,
-      badge: null,
-    },
   ];
 
   return (

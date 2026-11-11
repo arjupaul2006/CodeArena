@@ -13,12 +13,12 @@ import {
 import axios from "axios";
 import { UserDataContext } from "../../context/UserContext";
 
-export default function ProblemTable() {
+export default function ProblemTable({ tag }) {
   const { user, setUser } = useContext(UserDataContext);
   const navigate = useNavigate();
   const [problems, setProblems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(tag || ""); // Initialize with tag if provided
   const [selectedDifficulty, setSelectedDifficulty] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
