@@ -175,6 +175,7 @@ export default function Profile() {
   const [userResults, setUserResults] = useState([]);
   const [isSearchingUsers, setIsSearchingUsers] = useState(false);
   const [userSearchError, setUserSearchError] = useState("");
+  const [canEditProfile, setCanEditProfile] = useState(true);
 
   const navigate = useNavigate();
 
@@ -255,6 +256,7 @@ export default function Profile() {
         });
         const profileUserData = response.data?.user;
         setProfileUser(profileUserData);
+        setCanEditProfile(profileUserData?._id === user?._id);
       } catch (error) {
         console.error("Error fetching profile user:", error);
         showToast("error", "Unable to fetch user profile.");
@@ -406,7 +408,7 @@ export default function Profile() {
       // number of solved problems in each category
       const solvedCategoryCounts = (profileUser?.solvedProblems || []).reduce(
         (acc, problem) => {
-          problem?.tags.forEach((tag) => {
+          problem?.tags?.forEach((tag) => {
             acc[tag] = (acc[tag] || 0) + 1;
           });
           return acc;
@@ -414,7 +416,7 @@ export default function Profile() {
         {},
       );
 
-      //   console.log("Solved category counts:", solvedCategoryCounts);
+      console.log("Solved category counts:", solvedCategoryCounts);
       setSolvedProblemCategories(solvedCategoryCounts);
     }
   }, [profileUser]);
@@ -708,6 +710,7 @@ export default function Profile() {
           <ProfileHeader
             profile={profile}
             user={profileUser}
+            canEditProfile={canEditProfile}
             onEditClick={() => setIsEditModalOpen(true)}
             onProfileImageChange={handleProfileImageChange}
           />

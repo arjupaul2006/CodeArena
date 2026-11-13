@@ -93,6 +93,8 @@ module.exports.getUserById = async (req, res) => {
   try {
     const user = await userModel
       .findById(req.params.userId)
+      .populate("solvedProblems")
+      .populate("contestsParticipated")
       .select("-password");
 
     if (!user) {

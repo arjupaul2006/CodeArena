@@ -11,10 +11,13 @@ import {
   Trophy,
   Sparkles,
 } from "lucide-react";
+import { useContext } from "react";
+import UserContext from "../../context/UserContext";
 
 export default function ProfileHeader({
   profile,
   user,
+  canEditProfile,
   onEditClick,
   onShareClick,
   onProfileImageChange,
@@ -22,23 +25,24 @@ export default function ProfileHeader({
   const [imageError, setImageError] = useState(false);
   const [copied, setCopied] = useState(false);
   const [imageUploadError, setImageUploadError] = useState("");
+  const [isEditOptionsOpen, setIsEditOptionsOpen] = useState(true);
 
   // Robust username resolver: ensures username is never empty or hidden
   const displayUsername =
-    (profile?.username && profile.username.trim()) ||
     (user?.username && user.username.trim()) ||
+    (profile?.username && profile.username.trim()) ||
     (user?.name && user.name.trim()) ||
     (user?.email && user.email.split("@")[0]) ||
     "Alex DevNull";
 
   const displayRole =
-    (profile?.role && profile.role.trim()) ||
     (user?.role && user.role.trim()) ||
+    (profile?.role && profile.role.trim()) ||
     "Senior Backend Engineer";
 
   const displayEmail =
-    (profile?.email && profile.email.trim()) ||
     (user?.email && user.email.trim()) ||
+    (profile?.email && profile.email.trim()) ||
     "alex.devnull@codearena.dev";
 
   const formattedCreatedAt = (date_time) => {
@@ -193,14 +197,16 @@ export default function ProfileHeader({
               <Share2 className="h-3.5 w-3.5" />
               <span>{copied ? "Copied Link!" : "Share"}</span>
             </button>
-            <button
-              type="button"
-              onClick={onEditClick}
-              className="inline-flex flex-1 sm:flex-initial items-center justify-center gap-2 rounded-xl bg-[#3f7d55] px-5 py-2.5 text-xs sm:text-sm font-bold text-white shadow-md shadow-[#8eae94]/40 transition-all hover:bg-[#326844] hover:shadow-lg hover:shadow-[#8eae94]/50 cursor-pointer active:scale-98"
-            >
-              <Edit3 className="h-4 w-4" />
-              <span>Edit Profile</span>
-            </button>
+            {canEditProfile && (
+              <button
+                type="button"
+                onClick={onEditClick}
+                className="inline-flex flex-1 sm:flex-initial items-center justify-center gap-2 rounded-xl bg-[#3f7d55] px-5 py-2.5 text-xs sm:text-sm font-bold text-white shadow-md shadow-[#8eae94]/40 transition-all hover:bg-[#326844] hover:shadow-lg hover:shadow-[#8eae94]/50 cursor-pointer active:scale-98"
+              >
+                <Edit3 className="h-4 w-4" />
+                <span>Edit Profile</span>
+              </button>
+            )}
           </div>
         </div>
 
