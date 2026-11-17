@@ -27,9 +27,6 @@ export default function WorkspaceHeader() {
 
       {/* Controls */}
       <div className="flex items-center gap-3">
-        <button className="bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-semibold px-3 py-1.5 rounded-md transition-all shadow-md shadow-blue-900/20">
-          Upgrade Pro
-        </button>
         <button className="p-1.5 text-[#547060] hover:text-[#183226] rounded-md hover:bg-[#dcecdf] transition-colors">
           <Bell className="w-4.5 h-4.5" />
         </button>

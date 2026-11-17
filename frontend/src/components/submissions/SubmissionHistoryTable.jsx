@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 import { UserDataContext } from "../../context/UserContext";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 // Mock empty historical dataset or rows tracking code execution values
 const mockSubmissions = [
@@ -37,6 +38,7 @@ const mockSubmissions = [
 export default function SubmissionHistoryTable() {
 
   const [submissionHistory, setSubmissionHistory] = React.useState([]);
+  const navigate = useNavigate();
 
   // Fetch submission history from the backend API
   useEffect(() => {
@@ -105,6 +107,9 @@ export default function SubmissionHistoryTable() {
                 <tr
                   key={idx}
                   className="hover:bg-[#eef7eb] transition-colors cursor-pointer"
+                  onClick={() => {
+                    navigate(`/write-code?submission_id=${row._id}`);
+                  }}
                 >
                   <td className={`py-4 px-6 font-bold font-mono ${row?.status == "accepted" ? "text-emerald-700" : "text-rose-700"}`}>
                     {row?.status == "accepted" ? "Accepted" : "Wrong Answer"}

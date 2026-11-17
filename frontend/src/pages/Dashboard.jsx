@@ -281,7 +281,7 @@ export default function DashboardOverview() {
           `${backendUrl}/api/getSubmissionEachDay`,
           {
             data: {
-              searchUserId: null, 
+              searchUserId: null,
             },
           },
           {
@@ -335,7 +335,7 @@ export default function DashboardOverview() {
     },
   ];
 
-  // fetch number of toatl problems in each category
+  // fetch number of total problems in each category
   useEffect(() => {
     const fetchProblems = async () => {
       try {
@@ -367,7 +367,11 @@ export default function DashboardOverview() {
   // fetch number of solved problems in each category
   useEffect(() => {
     if (user) {
-      console.log("User solved problems in Dashboard:", user, user.solvedProblems);
+      console.log(
+        "User solved problems in Dashboard:",
+        user,
+        user.solvedProblems,
+      );
 
       // number of solved problems in each category
       const solvedCategoryCounts = (user?.solvedProblems || []).reduce(
@@ -414,12 +418,6 @@ export default function DashboardOverview() {
               <h1 className="text-2xl lg:text-3xl font-extrabold text-[#183226] tracking-tight">
                 Welcome back, Developer! 👋
               </h1>
-              <p className="text-[#547060] text-sm mt-1 max-w-xl">
-                You're in the top{" "}
-                <span className="text-rose-400 font-bold">8%</span> of coders
-                this week. Keep up the momentum to secure your spot in the rank
-                brackets.
-              </p>
             </div>
             <button
               className="bg-[#3f7d55] hover:bg-[#326844] text-white font-bold text-sm px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shrink-0 shadow-lg shadow-[#8eae94]/40 cursor-pointer"
@@ -469,28 +467,33 @@ export default function DashboardOverview() {
                   Skill Index & Strengths
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {cats.map((skill, index) => (
-                    <div
-                      key={index}
-                      className="p-3.5 bg-[#e8f3e8] rounded-xl border border-[#b7d2bb] space-y-2"
-                      onClick={() => navigate(`/problems?tag=${skill.name}`)}
-                    >
-                      <div className="flex justify-between items-baseline">
-                        <span className="text-xs font-bold text-[#385a43]">
-                          {skill.name}
-                        </span>
-                        <span className="text-[10px] text-[#668170] font-medium">
-                          {skill.level}
-                        </span>
-                      </div>
-                      <div className="w-full bg-[#c5dcc8] h-1.5 rounded-full overflow-hidden">
+                  {cats.map(
+                    (skill, index) =>
+                      Object.keys(totalProblemCategories).includes(skill.name) && (
                         <div
-                          className={`h-full bg-gradient-to-r ${skill.color}`}
-                          style={{ width: skill.progress }}
-                        ></div>
-                      </div>
-                    </div>
-                  ))}
+                          key={index}
+                          className="p-3.5 bg-[#e8f3e8] rounded-xl border border-[#b7d2bb] space-y-2"
+                          onClick={() =>
+                            navigate(`/problems?tag=${skill.name}`)
+                          }
+                        >
+                          <div className="flex justify-between items-baseline">
+                            <span className="text-xs font-bold text-[#385a43]">
+                              {skill.name}
+                            </span>
+                            <span className="text-[10px] text-[#668170] font-medium">
+                              {skill.level}
+                            </span>
+                          </div>
+                          <div className="w-full bg-[#c5dcc8] h-1.5 rounded-full overflow-hidden">
+                            <div
+                              className={`h-full bg-gradient-to-r ${skill.color}`}
+                              style={{ width: skill.progress }}
+                            ></div>
+                          </div>
+                        </div>
+                      ),
+                  )}
                 </div>
               </div>
             </div>
@@ -518,7 +521,9 @@ export default function DashboardOverview() {
                       <div
                         key={idx}
                         className="flex justify-between items-start p-2.5 rounded-xl bg-[#e8f3e8] border border-[#b7d2bb] text-xs"
-                        onClick={() => navigate(`/write-code?id=${item.problemId?._id}`)}
+                        onClick={() =>
+                          navigate(`/write-code?submission_id=${item._id}`)
+                        }
                       >
                         <div className="space-y-0.5">
                           <span className="font-semibold text-[#385a43] block truncate max-w-[180px]">

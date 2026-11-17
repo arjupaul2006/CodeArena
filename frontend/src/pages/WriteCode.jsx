@@ -3,7 +3,8 @@ import WorkspaceHeader from "../components/writecode/WorkspaceHeader";
 import ProblemDescription from "../components/writecode/ProblemDescription";
 import CodeEditorPanel from "../components/writecode/CodeEditorPanel";
 import TopNav from "../components/problems/TopNav";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import axios from "axios";
 
 export default function WriteCode() {
   // const problem = {
@@ -138,6 +139,8 @@ export default function WriteCode() {
   };
 
   const [problem, setProblem] = useState(null);
+  const [code, setCode] = useState("");
+  const [selectedLanguage, setSelectedLanguage] = useState("python");
   const [testCases, setTestCases] = useState([]);
   // const [executionResult, setExecutionResult] = useState({
   //   verdict: null,
@@ -162,8 +165,82 @@ export default function WriteCode() {
   const [historySelection, setHistorySelection] = useState(null);
   const [lastSubmission, setLastSubmission] = useState(null);
 
-  const searchParams = useSearchParams()[0];
+  const navigate = useNavigate();
 
+  const searchParams = useSearchParams()[0];
+  const submissionId = searchParams.get("submission_id");
+
+  // fetch submission with submissionId
+  useEffect(() => {
+    try {
+      const fetchSubmittedCode = async () => {
+        const backendUrl =
+          import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+
+        const response = await axios.post(
+          `${backendUrl}/api/submissionHistoryById`,
+          {
+            submissionId: submissionId,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          },
+        );
+
+        const data = response.data;
+        console.log("Fetched submitted code:", data?.submission);
+
+        if (data && data.submission) {
+          setProblem(data?.submission?.problemId || null);
+          setCode(data?.submission?.code || "");
+          setSelectedLanguage(data?.submission?.language || "python");
+        }
+      };
+      fetchSubmittedCode();
+    } catch (error) {
+      console.error("Error fetching problem data:", error);
+    }
+  }, [submissionId]);
+
+  // fetch last submission with problemId
+  useEffect(() => {
+    try {
+      const problemId = searchParams.get("id");
+      if (!problemId) return;
+
+      const fetchLastSubmission = async () => {
+        const backendUrl =
+          import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+
+        const response = await axios.post(
+          `${backendUrl}/api/submissionHistoryByProblemId`,
+          {
+            problemId: problemId,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          },
+        );
+
+        const data = response.data;
+        console.log("Fetched last submission:", data?.submissions);
+
+        if (data && data.submissions && data.submissions.length > 0) {
+          setCode(data?.submissions[0]?.code || "");
+          setSelectedLanguage(data?.submissions[0]?.language || "python");
+          setLastSubmission(data?.submissions[0] || null);
+        }
+      };
+
+      fetchLastSubmission();
+    } catch (error) {
+      console.error("Error fetching last submission:", error);
+    }
+  }, [searchParams]);
 
   // fetch problem with its id
   useEffect(() => {
@@ -198,10 +275,13 @@ export default function WriteCode() {
   const effectiveTestCases =
     testCases && testCases.length > 0
       ? testCases
-      : problem?.test_cases || problem?.testCases || demoproblem?.test_cases || [];
+      : problem?.test_cases ||
+        problem?.testCases ||
+        demoproblem?.test_cases ||
+        [];
 
   const sampleTestCases = effectiveTestCases.filter(
-    (tc) => tc.isSample || tc.is_sample
+    (tc) => tc.isSample || tc.is_sample,
   );
 
   return (
@@ -216,6 +296,7 @@ export default function WriteCode() {
           <ProblemDescription
             demoproblem={demoproblem}
             problem={problem}
+            submissionId={submissionId}
             testCases={effectiveTestCases}
             sampleTestCases={sampleTestCases}
             runExecutionResult={runExecutionResult}
@@ -231,6 +312,8 @@ export default function WriteCode() {
           <CodeEditorPanel
             demoproblem={demoproblem}
             problem={problem}
+            submittedCode={code}
+            submittedLanguage={selectedLanguage}
             testCases={effectiveTestCases}
             sampleTestCases={sampleTestCases}
             runExecutionResult={runExecutionResult}

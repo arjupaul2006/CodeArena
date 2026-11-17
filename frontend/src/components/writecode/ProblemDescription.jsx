@@ -18,6 +18,7 @@ export default function ProblemDescription({
   demoproblem,
   contestId,
   problem,
+  submissionId,
   testCases,
   sampleTestCases,
   runExecutionResult,
@@ -101,7 +102,7 @@ export default function ProblemDescription({
       const token = localStorage.getItem("token");
 
       if (
-        submitExecutionResult?.verdict === "accepted" &&
+        submitExecutionResult?.verdict === "Accepted" &&
         problem?._id &&
         (user?._id || token)
       ) {
@@ -447,16 +448,14 @@ export default function ProblemDescription({
             {runExecutionResult?.verdict && (
               <div
                 className={`p-3.5 rounded-xl border flex items-center justify-between text-xs font-bold shadow-xs ${
-                  runExecutionResult.verdict === "accepted"
+                  runExecutionResult.verdict === "Accepted"
                     ? "bg-emerald-500/15 text-emerald-800 border-emerald-500/30"
                     : "bg-rose-500/15 text-rose-800 border-rose-500/30"
                 }`}
               >
                 <span className="text-xs font-extrabold uppercase">
                   Status:{" "}
-                  {runExecutionResult.verdict === "accepted"
-                    ? "Accepted"
-                    : "Wrong Answer"}
+                  {runExecutionResult.verdict}
                 </span>
                 <span className="text-[11px] font-semibold opacity-90">
                   {runExecutionResult.message}
@@ -521,7 +520,7 @@ export default function ProblemDescription({
                                     : "bg-rose-500/15 text-rose-800 border-rose-500/30"
                                 }`}
                               >
-                                {runResult.passed ? "Passed" : "Failed"}
+                                {runResult.verdict}
                               </span>
                             )}
                           </div>
@@ -631,7 +630,7 @@ export default function ProblemDescription({
                   </thead>
                   <tbody className="divide-y divide-[#b7d2bb] text-xs font-medium text-[#244333]">
                     {submissionHistory.map((submission) => {
-                      const accepted = submission.status === "accepted";
+                      const accepted = submission.status === "Accepted";
                       const submittedAt = new Date(submission.submissionDate);
 
                       return (
@@ -651,7 +650,7 @@ export default function ProblemDescription({
                               accepted ? "text-emerald-700" : "text-rose-700"
                             }`}
                           >
-                            {accepted ? "Accepted" : "Failed"}
+                            {submission?.status || "N/A"}
                           </td>
                           <td className="py-3 px-4 font-mono">
                             {submission.language}
@@ -680,7 +679,7 @@ export default function ProblemDescription({
           <div className="space-y-5">
             <div>
               <h2 className="text-lg font-extrabold text-[#183226]">
-                Submission Results
+                Latest Submission Results
               </h2>
               <p className="text-xs text-[#547060] mt-0.5">
                 Review failed test cases, wrong outputs, and compilation or
@@ -696,7 +695,7 @@ export default function ProblemDescription({
                   </div>
                   <div
                     className={`mt-1 text-sm font-extrabold ${
-                      lastSubmission.status === "accepted"
+                      lastSubmission.status === "Accepted"
                         ? "text-emerald-700"
                         : "text-rose-700"
                     }`}
@@ -749,7 +748,7 @@ export default function ProblemDescription({
                 No submission results available yet. Submit your code to view
                 results here.
               </div>
-            ) : submitFailedRuns.length === 0 ? (
+            ) : submitFailedRuns.length === 0 && submitExecutionResult?.verdict === "Accepted" ? (
               <div className="p-6 bg-emerald-500/15 border border-emerald-500/30 rounded-xl text-emerald-900 space-y-2">
                 <div className="flex items-center gap-2 font-bold text-sm">
                   <CheckCircle2 className="w-5 h-5 text-emerald-600" />
@@ -761,13 +760,13 @@ export default function ProblemDescription({
                   any errors.
                 </p>
               </div>
-            ) : (
+            ) : submitFailedRuns.length > 0 && submitExecutionResult?.verdict !== "Accepted" && (
               <div className="space-y-4">
                 {/* Overall Status Banner */}
                 <div className="p-3.5 rounded-xl border flex items-center justify-between text-xs font-bold shadow-xs bg-rose-500/15 text-rose-800 border-rose-500/30">
                   <span className="flex items-center gap-1.5 text-xs font-extrabold uppercase">
                     <XCircle className="w-4 h-4 text-rose-600" />
-                    Status: Wrong Answer ({submitFailedRuns.length} of{" "}
+                    Status: {submitExecutionResult?.verdict || "Wrong Answer"} ({submitFailedRuns.length} of{" "}
                     {submitExecutionResult.runs.length} test cases failed)
                   </span>
                   <span className="text-[11px] font-semibold opacity-90">
@@ -809,9 +808,7 @@ export default function ProblemDescription({
                               Case {run.id} Failure Details
                             </h4>
                             <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded border bg-rose-500/15 text-rose-800 border-rose-500/30">
-                              {run.isErrorFound
-                                ? "Execution Error"
-                                : "Wrong Answer"}
+                              {run?.verdict || "Failed"}
                             </span>
                           </div>
                           {run.isSample && (

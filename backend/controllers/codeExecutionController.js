@@ -144,6 +144,25 @@ module.exports.executeCode = async (req, res) => {
     );
 
     const result = response.data;
+    const output = (result.output || "").toLowerCase();
+
+    let verdict = "Accepted";
+
+    if (
+      output.includes("timed out") ||
+      output.includes("timeout") ||
+      output.includes("output limit reached")
+    ) {
+      verdict = "Time Limit Exceeded";
+    } else if (result.error) {
+      verdict = "Internal Error";
+    } else if (
+      /compilation failed|compilation error|syntaxerror|fatal error|error:/.test(
+        output,
+      )
+    ) {
+      verdict = "Compilation Error";
+    }
 
     console.log("JDoodle response:", result);
 
@@ -160,18 +179,32 @@ module.exports.executeCode = async (req, res) => {
       result: result,
       memory: result.memory || null,
       cpuTime: result.cpuTime || null,
+      verdict: verdict,
     });
-  } 
-  
-  catch (error) {
-    console.error("JDoodle error:", error.response?.data || error.message);
+  } catch (error) {
+    console.error("JDoodle error:", error);
+    console.error("JDoodle error response:", error.response?.data || error.message);
+
+    if (error.code === "ECONNABORTED" || error.code === "ETIMEDOUT") {
+      return res.status(504).json({
+        success: false,
+        verdict: "Execution Service Timeout",
+        message: "JDoodle took too long to respond.",
+      });
+    }
+
+    if (error.response?.status === 429) {
+      return res.status(503).json({
+        success: false,
+        verdict: "Internal Error",
+        message: "JDoodle API credits exhausted.",
+      });
+    }
 
     return res.status(500).json({
       success: false,
-
-      message: "Code execution failed",
-
-      error: error.response?.data || error.message,
+      verdict: "Internal Error",
+      message: "Code execution failed.",
     });
   }
 };

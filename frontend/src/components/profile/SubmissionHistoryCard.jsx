@@ -10,9 +10,11 @@ import {
   Code2,
   Filter,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function SubmissionHistoryCard({ submissions = [] }) {
   const [activeFilter, setActiveFilter] = useState("All");
+  const navigate = useNavigate();
 
   const filterOptions = [
     "All",
@@ -139,6 +141,10 @@ export default function SubmissionHistoryCard({ submissions = [] }) {
               <div
                 key={`${submission.problemId?.title}-${submission.submissionDate}-${index}`}
                 className="group p-4 sm:p-6 transition-all hover:bg-[#e8f3e8]/70"
+                onClick={() => {
+                  // Navigate to the submission details page
+                  navigate(`/write-code?submission_id=${submission._id}`);
+                }}
               >
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                   {/* Left Column: Problem Name & Meta */}

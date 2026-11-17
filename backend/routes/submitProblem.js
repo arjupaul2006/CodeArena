@@ -10,6 +10,7 @@ route.get('/submissionHistory', authUser, submitProblemController.getSubmissionH
 route.post('/submissionHistoryForProfile', authUser, submitProblemController.getSubmissionHistoryForProfile);
 
 route.post('/submissionHistoryByProblemId', authUser, submitProblemController.submissionHistoryByProblemId);
+route.post('/submissionHistoryById', authUser, submitProblemController.getSubmissionById);
 
 route.get('/getSubmissionEachDay', authUser, submitProblemController.getTotalSubmissionInEachDay);
 

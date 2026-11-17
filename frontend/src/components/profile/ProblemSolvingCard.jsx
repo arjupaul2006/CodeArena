@@ -51,14 +51,13 @@ export default function ProblemSolvingCard({
 
   const categories = Object.keys(totalProblemCategories);
 
-  const pending = submissionHistory.filter((submission, index, arr) => {
-    return (
-      submission.status === "Wrong Answer" &&
-      !arr.some(
-        (s) => s.problemId === submission.problemId && s.status === "Accepted",
-      )
-    );
-  })?.length || 0;
+  console.log("Submissions History:", submissionHistory);
+
+  const pending = new Set(
+    submissionHistory
+      .filter((submission) => submission.status !== "Accepted")
+      .map((submission) => submission.problemId._id),
+  ).size || 0;
 
   return (
     <section className="mt-6 rounded-3xl border border-[#b7d2bb] bg-[#f4faf1] p-5 sm:p-8 shadow-xl shadow-[#8eae94]/20 transition-all">
@@ -233,21 +232,25 @@ export default function ProblemSolvingCard({
             </div>
 
             <ul className="mt-3.5 space-y-2.5">
-              {recentlySolved.map((problem) => (
+              {recentlySolved.map((submission) => (
                 <li
-                  key={problem?.problemId}
+                  key={submission?.submissionDate}
                   className="flex items-center justify-between rounded-xl border border-[#b7d2bb]/50 bg-[#e8f3e8]/50 px-3 py-2 text-xs font-semibold text-[#183226] transition-colors hover:bg-[#e8f3e8]"
+                  onClick={() =>
+                    navigation(`/write-code?submission_id=${submission?._id}`)
+                  }
+                  cursor="pointer"
                 >
                   <div
                     className="flex items-center gap-2 truncate"
                     onClick={() =>
-                      navigation(`/write-code?id=${problem?.problemId?._id}`)
+                      navigation(`/write-code?id=${submission?.problemId?._id}`)
                     }
                     cursor="pointer"
                   >
                     <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
                     <span className="truncate">
-                      {problem?.problemId?.title}
+                      {submission?.problemId?.title}
                     </span>
                   </div>
                   <ChevronRight className="h-3.5 w-3.5 shrink-0 text-[#668170]" />

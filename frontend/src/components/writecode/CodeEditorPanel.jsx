@@ -38,6 +38,8 @@ const areOutputsEqual = (actual, expected) => {
 export default function CodeEditorPanel({
   demoproblem,
   problem,
+  submittedCode,
+  submittedLanguage,
   testCases,
   sampleTestCases: propsSampleTestCases,
   runExecutionResult: propsRunExecutionResult,
@@ -165,49 +167,15 @@ export default function CodeEditorPanel({
       ? propsSampleTestCases
       : targetTestCases.filter((tc) => tc.isSample || tc.is_sample);
 
-
-  // fetch submitted code
+  // Initialize code and language from submittedCode and submittedLanguage if available
   useEffect(() => {
-    try {
-      const fetchSubmittedCode = async () => {
-        const backendUrl =
-          import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
-
-        const response = await axios.post(
-          `${backendUrl}/api/submissionHistoryByProblemId`,
-          {
-            problemId: problem?._id,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          },
-        );
-
-        const data = response.data;
-
-        if(data && data.submissions && data.submissions.length > 0) {
-          setCode(data?.submissions[0]?.code || "");
-          setSelectedLanguage(data?.submissions[0]?.language || "python");
-        } 
-        
-        else {
-          setCode(
-            languageOptions.find((option) => option.value === selectedLanguage)
-              ?.codeLines ?? "",
-          );
-          setSelectedLanguage(selectedLanguage);
-        }
-
-        // console.log("Fetched submitted code:", data?.submissions[0]?.code || null);
-      };
-
-      fetchSubmittedCode();
-    } catch (error) {
-      console.error("Error fetching problem data:", error);
+    if (submittedCode) {
+      setCode(submittedCode);
     }
-  }, [problem]);
+    if (submittedLanguage) {
+      setSelectedLanguage(submittedLanguage);
+    }
+  }, [submittedCode, submittedLanguage]);
 
   // Update code and language when historySelection changes
   useEffect(() => {
@@ -328,6 +296,12 @@ export default function CodeEditorPanel({
           actualOutput,
           isSample: Boolean(testCase.isSample || testCase.is_sample),
           passed,
+          verdict:
+            data?.verdict === "Accepted"
+              ? passed
+                ? "Accepted"
+                : "Wrong Answer"
+              : data?.verdict,
           isErrorFound,
           runtime: result.cpuTime ?? data?.cpuTime ?? null,
           memory: result.memory ?? data?.memory ?? null,
@@ -340,19 +314,41 @@ export default function CodeEditorPanel({
       // Check all test cases
       // --------------------------------
 
-      const isAccepted =
-        runs.length > 0 && runs.every((result) => result.passed);
+      let verdict = "Wrong Answer";
+      for (const run of runs) {
+        if (run.isErrorFound) {
+          verdict = "Runtime Error";
+          break;
+        }
+        if (run.verdict === "Time Limit Exceeded") {
+          verdict = "Time Limit Exceeded";
+          break;
+        }
+        if (run.verdict !== "Accepted") {
+          verdict = run.verdict || "Wrong Answer";
+          break;
+        }
+      }
+
+      if (runs.length > 0 && runs.every((run) => run.passed)) {
+        verdict = "Accepted";
+      }
 
       // --------------------------------
       // Final result
       // --------------------------------
 
       setRunExecutionResult({
-        verdict: isAccepted ? "accepted" : "wrong-answer",
+        verdict: verdict,
 
-        message: isAccepted
-          ? "Ran successfully: every sample testcase produced the expected output."
-          : "Wrong answer: at least one sample testcase did not match the expected output.",
+        message:
+          verdict === "Accepted"
+            ? "All sample testcases passed successfully."
+            : verdict === "Runtime Error"
+              ? "Execution Error: At least one sample testcase produced an error."
+              : verdict === "Time Limit Exceeded"
+                ? "Execution Error: At least one sample testcase exceeded the time limit."
+                : "Some sample testcases did not produce the expected output.",
 
         runs,
 
@@ -361,23 +357,40 @@ export default function CodeEditorPanel({
 
       console.log("Final Execution Result:", runs);
     } catch (error) {
-      console.error("Code Execution Error:", error);
+      console.error("Code Execution Error:", error, error.response.status);
 
-      setRunExecutionResult({
-        verdict: "wrong-answer",
+      if (error.response && error.response.status === 504) {
+        setRunExecutionResult({
+          verdict: "Time Limit Exceeded",
+          message:
+            "Execution Service Timeout: The code execution took too long to respond.",
+          runs: [],
+          isSubmit: false,
+        });
+      } else if (error.response && error.response.status === 503) {
+        setRunExecutionResult({
+          verdict: "Internal Error",
+          message: "Execution Service Error: JDoodle API credits exhausted.",
+          runs: [],
+          isSubmit: false,
+        });
+      } else {
+        setRunExecutionResult({
+          verdict: "Wrong Answer",
 
-        message: error?.response?.data?.error
-          ? `Execution Error: ${
-              typeof error.response.data.error === "string"
-                ? error.response.data.error
-                : JSON.stringify(error.response.data.error)
-            }`
-          : `Execution Error: ${error?.message || "Unknown error"}`,
+          message: error?.response?.data?.error
+            ? `Execution Error: ${
+                typeof error.response.data.error === "string"
+                  ? error.response.data.error
+                  : JSON.stringify(error.response.data.error)
+              }`
+            : `Execution Error: ${error?.message || "Unknown error"}`,
 
-        runs: [],
+          runs: [],
 
-        isSubmit: false,
-      });
+          isSubmit: false,
+        });
+      }
     } finally {
       setIsRunning(false);
     }
@@ -535,6 +548,12 @@ export default function CodeEditorPanel({
           actualOutput,
           isSample: Boolean(testCase.isSample || testCase.is_sample),
           passed,
+          verdict:
+            data?.verdict === "Accepted"
+              ? passed
+                ? "Accepted"
+                : "Wrong Answer"
+              : data?.verdict,
           isErrorFound,
           runtime,
           memory,
@@ -556,46 +575,89 @@ export default function CodeEditorPanel({
       // Check ALL test cases
       // --------------------------------
 
-      const isAccepted =
+      let verdict = "Wrong Answer";
+      for (const run of runs) {
+        if (run.isErrorFound) {
+          verdict = "Runtime Error";
+          break;
+        }
+        if (run.verdict === "Time Limit Exceeded") {
+          verdict = "Time Limit Exceeded";
+          break;
+        }
+        if (run.verdict !== "Accepted") {
+          verdict = run.verdict;
+          break;
+        }
+      }
+
+      if (
         runs.length === testCasesToSubmit.length &&
-        runs.every((result) => result.passed);
+        runs.every((run) => run.passed)
+      ) {
+        verdict = "Accepted";
+      }
 
       // --------------------------------
       // Final submission result
       // --------------------------------
 
       setSubmitExecutionResult({
-        verdict: isAccepted ? "accepted" : "wrong-answer",
+        verdict: verdict,
         code: code,
         language: selectedLanguage,
         runtime: maxRuntime,
         memory: maxMemory,
-        message: isAccepted
-          ? "Submitted successfully: every testcase produced the expected output."
-          : "Submission Failed: at least one testcase did not match the expected output.",
+        message:
+          verdict === "Accepted"
+            ? "All sample testcases passed successfully."
+            : verdict === "Compilation Error"
+              ? "Execution Error: At least one sample testcase produced an error."
+              : verdict === "Time Limit Exceeded"
+                ? "Execution Error: At least one sample testcase exceeded the time limit."
+                : "Some sample testcases did not produce the expected output.",
         runs,
         isSubmit: true,
       });
+      console.log("Final Submission Result:", runs);
     } catch (error) {
       console.error("Submission execution error:", error);
 
-      setSubmitExecutionResult({
-        verdict: "wrong-answer",
-        code: code,
+      const submissionError = {
+        code,
         language: selectedLanguage,
         runtime: 0,
         memory: 0,
-        message: error?.response?.data?.error
-          ? `Execution Error: ${
-              typeof error.response.data.error === "string"
-                ? error.response.data.error
-                : JSON.stringify(error.response.data.error)
-            }`
-          : `Execution Error: ${error?.message || "Unknown execution error"}`,
-
         runs: [],
         isSubmit: true,
-      });
+      };
+
+      if (error?.response?.status === 504) {
+        setSubmitExecutionResult({
+          ...submissionError,
+          verdict: "Time Limit Exceeded",
+          message:
+            "Execution Service Timeout: The code execution took too long to respond.",
+        });
+      } else if (error?.response?.status === 503) {
+        setSubmitExecutionResult({
+          ...submissionError,
+          verdict: "Internal Error",
+          message: "Execution Service Error: JDoodle API credits exhausted.",
+        });
+      } else {
+        setSubmitExecutionResult({
+          ...submissionError,
+          verdict: "Wrong Answer",
+          message: error?.response?.data?.error
+            ? `Execution Error: ${
+                typeof error.response.data.error === "string"
+                  ? error.response.data.error
+                  : JSON.stringify(error.response.data.error)
+              }`
+            : `Execution Error: ${error?.message || "Unknown error"}`,
+        });
+      }
     } finally {
       setIsSubmitting(false);
     }

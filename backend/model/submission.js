@@ -27,14 +27,6 @@ const submissionSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: [
-        "accepted",
-        "wrong-answer",
-        "time-limit-exceeded",
-        "runtime-error",
-        "compilation-error",
-        "memory-limit-exceeded",
-      ],
       required: true,
     },
 

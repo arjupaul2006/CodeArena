@@ -117,7 +117,7 @@ module.exports.getSubmissionHistoryForProfile = async (req, res) => {
 
 module.exports.submissionHistoryByProblemId = async (req, res) => {
   try {
-    const userId = req.user?._id || req.body.userId;
+    const userId = req.body.userId || req.user?._id;
     const { problemId } = req.body;
     const submissions = await Submission.find({ userId, problemId })
       .populate("problemId")
@@ -131,6 +131,24 @@ module.exports.submissionHistoryByProblemId = async (req, res) => {
       });
   } catch (error) {
     console.error("Error retrieving submission history:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+module.exports.getSubmissionById = async (req, res) => {
+  try {
+    const { submissionId } = req.body;
+    const submission = await Submission.findById(submissionId).populate(
+      "problemId",
+    );
+    return res
+      .status(200)
+      .json({
+        message: "Submission retrieved successfully",
+        submission,
+      });
+  } catch (error) {
+    console.error("Error retrieving submission:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };

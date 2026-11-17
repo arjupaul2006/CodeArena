@@ -57,9 +57,6 @@ export default function TopNav() {
 
       {/* Right: Actions & Profile */}
       <div className="flex items-center gap-3.5">
-        <button className="hidden sm:inline-flex bg-[#3f7d55] hover:bg-[#326844] text-white font-bold text-xs px-3.5 py-1.5 rounded-xl transition-all shadow-md shadow-[#8eae94]/40 cursor-pointer">
-          Upgrade Pro
-        </button>
         <button className="p-2 text-[#547060] hover:text-[#183226] rounded-xl hover:bg-[#dcecdf] relative transition-colors cursor-pointer">
           <Bell className="h-4 w-4" />
           <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full animate-pulse"></span>
