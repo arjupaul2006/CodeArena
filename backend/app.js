@@ -12,6 +12,7 @@ const problemsRoute = require("./routes/problemRoute");
 const userRoute = require("./routes/userRoute");
 const submitProblemRoute = require("./routes/submitProblem");
 const contestRoute = require("./routes/contestRoute");
+const settingsRoute = require("./routes/settingsRoute");
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use("/api", problemsRoute);
 app.use("/api", userRoute);
 app.use("/api", submitProblemRoute);
 app.use("/api", contestRoute);
+app.use("/api/settings", settingsRoute);
 
 app.use("/", (req, res, next) => {
   res.send("Hello World");

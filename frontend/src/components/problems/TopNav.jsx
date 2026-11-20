@@ -61,7 +61,11 @@ export default function TopNav() {
           <Bell className="h-4 w-4" />
           <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full animate-pulse"></span>
         </button>
-        <button className="p-2 text-[#547060] hover:text-[#183226] rounded-xl hover:bg-[#dcecdf] transition-colors cursor-pointer">
+        <button
+          onClick={() => navigate("/settings")}
+          aria-label="Open settings"
+          className="p-2 text-[#547060] hover:text-[#183226] rounded-xl hover:bg-[#dcecdf] transition-colors cursor-pointer"
+        >
           <Settings className="h-4 w-4" />
         </button>
 

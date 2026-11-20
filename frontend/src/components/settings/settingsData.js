@@ -1,0 +1,55 @@
+import { Bell, Code2, Palette, User } from "lucide-react";
+
+export const settingsSections = [
+  { id: "account", label: "Account Settings", description: "Profile and personal information", icon: User },
+  { id: "editor", label: "Editor Preferences", description: "Customize the coding environment", icon: Code2 },
+  { id: "appearance", label: "Appearance", description: "Themes and interface", icon: Palette },
+  { id: "notifications", label: "Notifications", description: "Manage alerts and reminders", icon: Bell },
+];
+
+export const defaultPreferences = {
+  editorTheme: "VS Dark",
+  fontSize: 14,
+  fontFamily: "JetBrains Mono",
+  fontWeight: "400",
+  lineHeight: 24,
+  letterSpacing: 0,
+  tabSize: 2,
+  wordWrap: true,
+  minimap: true,
+  lineNumbers: true,
+  folding: true,
+  autoIndent: "full",
+  autoCompletion: true,
+  autoClosingBrackets: "always",
+  formatOnPaste: true,
+  formatOnType: false,
+  matchBrackets: "always",
+  cursorStyle: "line",
+  smoothScrolling: true,
+  fontLigatures: true,
+  defaultLanguage: "C++",
+  vimMode: false,
+  applicationTheme: "System",
+  accentColor: "Green",
+  sidebar: "Expanded",
+  density: "Comfortable",
+  animations: true,
+  contestReminders: true,
+  contestStartingSoon: true,
+  contestResults: true,
+  leaderboardUpdates: false,
+  problemsAdded: true,
+  contestAnnouncements: true,
+  systemUpdates: true,
+  importantAnnouncements: true,
+  weeklyProgress: true,
+  securityAlerts: true,
+  productUpdates: false,
+};
+
+export const notificationKeys = [
+  "contestReminders", "contestStartingSoon", "contestResults", "leaderboardUpdates",
+  "problemsAdded", "contestAnnouncements", "systemUpdates", "importantAnnouncements",
+  "weeklyProgress", "securityAlerts", "productUpdates",
+];

@@ -1,9 +1,11 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Bell, Settings, Code2 } from 'lucide-react';
 import { UserDataContext } from '../../context/UserContext';
+import { useNavigate } from 'react-router-dom';
 
 export default function WorkspaceHeader() {
   const { user } = useContext(UserDataContext);
+  const navigate = useNavigate();
   const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
@@ -30,7 +32,7 @@ export default function WorkspaceHeader() {
         <button className="p-1.5 text-[#547060] hover:text-[#183226] rounded-md hover:bg-[#dcecdf] transition-colors">
           <Bell className="w-4.5 h-4.5" />
         </button>
-        <button className="p-1.5 text-[#547060] hover:text-[#183226] rounded-md hover:bg-[#dcecdf] transition-colors">
+        <button onClick={() => navigate('/settings')} aria-label="Open settings" className="p-1.5 text-[#547060] hover:text-[#183226] rounded-md hover:bg-[#dcecdf] transition-colors">
           <Settings className="w-4.5 h-4.5" />
         </button>
 

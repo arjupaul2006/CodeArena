@@ -1,7 +1,3 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "./assets/vite.svg";
-import heroImg from "./assets/hero.png";
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
@@ -16,10 +12,9 @@ import Login from "./authentication/Login";
 import UserProtect from "./authentication/UserProtect";
 import ContextWriteCode from "./pages/ContextWriteCode";
 import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <>
       <div>
@@ -82,6 +77,14 @@ function App() {
             element={
               <UserProtect>
                 <Profile />
+              </UserProtect>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <UserProtect>
+                <Settings />
               </UserProtect>
             }
           />

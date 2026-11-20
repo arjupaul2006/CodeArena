@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Editor from "@monaco-editor/react";
 import { RotateCcw, Maximize2 } from "lucide-react";
 import axios from "axios";
+import { SettingsDataContext } from "../../context/SettingsContext";
+import { getEditorConfig, getEditorLanguage } from "./editorConfig";
 
 const normalizeOutput = (value) => String(value ?? "").trim();
 
@@ -123,6 +125,13 @@ export default function CodeEditorPanel({
     },
   ];
 
+  const {settings, setSettings} = useContext(SettingsDataContext);
+  const editorOptions = getEditorConfig(settings?.editor || {});
+
+  const language = getEditorLanguage(
+    settings?.editor?.defaultLanguage || "cpp"
+  );
+
   const [localRunExecutionResult, setLocalRunExecutionResult] = useState({
     verdict: null,
     message: "Run your code to compare outputs against testcases.",
@@ -150,7 +159,7 @@ export default function CodeEditorPanel({
 
   const [code, setCode] = useState("");
 
-  const [selectedLanguage, setSelectedLanguage] = useState("python");
+  const [selectedLanguage, setSelectedLanguage] = useState(language || "python");
 
   // All available test cases for the current problem
   const targetTestCases =
@@ -663,6 +672,9 @@ export default function CodeEditorPanel({
     }
   };
 
+  
+  
+
   return (
     <div className="relative flex flex-col h-full min-h-0 overflow-hidden">
       {/* Editor Controls Bar */}
@@ -740,16 +752,8 @@ export default function CodeEditorPanel({
           height="100%"
           language={selectedLanguage}
           value={code}
-          theme="vs"
-          options={{
-            minimap: {
-              enabled: false,
-            },
-            scrollBeyondLastLine: false,
-            fontSize: 14,
-            fontFamily: "Fira Code, monospace",
-            automaticLayout: true,
-          }}
+          theme={settings?.editor?.theme || "vs-dark"}
+          options={editorOptions}
           onChange={(value) => setCode(value ?? "")}
         />
       </div>
