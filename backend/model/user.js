@@ -10,6 +10,11 @@ const userSchema = new mongoose.Schema(
       unique: true,
     },
 
+    fullName: {
+      type: String,
+      required: true,
+    },
+
     email: {
       type: String,
       required: true,
@@ -22,6 +27,42 @@ const userSchema = new mongoose.Schema(
     },
 
     profileImage: {
+      type: String,
+      default: "",
+    },
+
+    linkedin: {
+      type: String,
+      default: "",
+    },
+
+    github: {
+      type: String,
+      default: "",
+    },
+
+    gender: {
+      type: String,
+      enum: ["", "male", "female", "other", "prefer-not-to-say"],
+      default: "",
+    },
+
+    xLink: {
+      type: String,
+      default: "",
+    },
+
+    birthday: {
+      type: Date,
+      default: null,
+    },
+
+    location: {
+      type: String,
+      default: "",
+    },
+
+    bio: {
       type: String,
       default: "",
     },

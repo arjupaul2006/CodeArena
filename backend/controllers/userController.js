@@ -14,7 +14,7 @@ module.exports.createNewUser = async (req, res, next) => {
     return res.status(401).json({ errors: errors.array() });
   }
 
-  const { username, email, password } = req.body;
+  const { username, fullName, email, password } = req.body;
 
   // if captain is already exits
   const isUserAlreadyExits = await User.findOne({ email });
@@ -28,6 +28,7 @@ module.exports.createNewUser = async (req, res, next) => {
   // create a new user in database
   const user = await createUser({
     username,
+    fullName,
     email,
     password: hashedPassword,
   });
@@ -131,14 +132,76 @@ module.exports.searchUsers = async (req, res) => {
   }
 };
 
+module.exports.changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user?._id;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: "Both password fields are required" });
+    }
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: "New password must be at least 6 characters" });
+    }
+
+    const user = await userModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const isCurrentPasswordValid = await user.comparePassword(currentPassword);
+    if (!isCurrentPasswordValid) {
+      return res.status(400).json({ message: "Current password is incorrect" });
+    }
+
+    user.password = await userModel.hashPassword(newPassword);
+    await user.save();
+
+    return res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    console.error("Error changing password:", error);
+    return res.status(500).json({ message: "Unable to update password" });
+  }
+};
+
 module.exports.updateProfile = async (req, res, next) => {
-  const { username, role, email, bio, profileImage } = req.body;
+  const {
+    username,
+    role,
+    email,
+    fullName,
+    profileImage,
+    linkedin,
+    github,
+    gender,
+    xLink,
+    birthday,
+    location,
+    bio,
+  } = req.body;
   const userId = req.user?._id;
+
+  if (typeof username === "string" && /\s/.test(username)) {
+    return res.status(400).json({ message: "Username cannot contain spaces" });
+  }
 
   try {
     const user = await userModel.findByIdAndUpdate(
       userId,
-      { username, role, email, profileImage },
+      {
+        username,
+        role,
+        email,
+        fullName,
+        profileImage,
+        linkedin,
+        github,
+        gender,
+        xLink,
+        birthday: birthday || null,
+        location,
+        bio,
+      },
       { returnDocument: "after" },
     );
 

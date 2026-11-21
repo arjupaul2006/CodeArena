@@ -45,6 +45,11 @@ export default function ProfileHeader({
     (profile?.email && profile.email.trim()) ||
     "alex.devnull@codearena.dev";
 
+  const displayBio =
+    (user?.bio && user.bio.trim()) ||
+    (profile?.bio && profile.bio.trim()) ||
+    "";
+
   const formattedCreatedAt = (date_time) => {
     if (!date_time) return "Joined Recently";
 
@@ -209,6 +214,17 @@ export default function ProfileHeader({
             )}
           </div>
         </div>
+
+        {displayBio && (
+          <div className="mt-6 rounded-2xl border border-[#b7d2bb] bg-[#e8f3e8]/70 p-4 sm:p-5">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[#668170]">
+              About Me
+            </p>
+            <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-[#244333]">
+              {displayBio}
+            </p>
+          </div>
+        )}
 
         {/* Quick Meta Pills Grid */}
         <div className="mt-7 grid grid-cols-1 gap-3 border-t border-[#b7d2bb] pt-6 sm:grid-cols-2 lg:grid-cols-4">

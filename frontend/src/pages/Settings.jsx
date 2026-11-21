@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import {
   Check,
   CheckCircle2,
@@ -23,13 +23,23 @@ import { SettingsDataContext } from "../context/SettingsContext";
 
 export default function Settings() {
   const { user, setUser } = useContext(UserDataContext);
-  const {settings, setSettings} = useContext(SettingsDataContext);
+
   const [activeSection, setActiveSection] = useState("account");
-  const [preferences, setPreferences] = useState(defaultPreferences);
+
   const [profile, setProfile] = useState({
-    name: user?.name || "",
+    username: user?.username || "",
+    fullName: user?.fullName || user?.name || "",
+    name: user?.fullName || user?.name || "",
     email: user?.email || "",
     profileImage: user?.profileImage || "",
+    role: user?.role || "",
+    linkedin: user?.linkedin || "",
+    github: user?.github || "",
+    gender: user?.gender || "",
+    xLink: user?.xLink || "",
+    birthday: user?.birthday ? new Date(user.birthday).toISOString().slice(0, 10) : "",
+    location: user?.location || "",
+    bio: user?.bio || "",
   });
   const [saved, setSaved] = useState(false);
   const currentSection = useMemo(
@@ -39,6 +49,9 @@ export default function Settings() {
     [activeSection],
   );
 
+  // for editor preferences
+  const [preferences, setPreferences] = useState(defaultPreferences);
+  const { settings, setSettings } = useContext(SettingsDataContext);
   const [editorData, setEditorData] = useState({
     theme: defaultPreferences.editorTheme,
     fontFamily: defaultPreferences.fontFamily,
@@ -62,6 +75,30 @@ export default function Settings() {
     defaultLanguage: defaultPreferences.defaultLanguage,
   });
 
+  const [toast, setToast] = useState(null);
+  const toastTimeoutRef = useRef(null);
+
+  // update profile state when user context changes
+  useEffect(() => {
+    if (!user) return;
+    setProfile({
+      username: user.username || "",
+      fullName: user.fullName || user.name || "",
+      name: user.fullName || user.name || "",
+      email: user.email || "",
+      profileImage: user.profileImage || "",
+      role: user.role || "",
+      linkedin: user.linkedin || "",
+      github: user.github || "",
+      gender: user.gender || "",
+      xLink: user.xLink || "",
+      birthday: user.birthday
+        ? new Date(user.birthday).toISOString().slice(0, 10)
+        : "",
+      location: user.location || "",
+      bio: user.bio || "",
+    });
+  }, [user]);
 
   // get all settings
   useEffect(() => {
@@ -110,6 +147,11 @@ export default function Settings() {
 
   // Save settings to mongodb and update user context
   const handleSave = async () => {
+    if (typeof profile.username === "string" && /\s/.test(profile.username)) {
+      showToast("error", "Username cannot contain spaces.");
+      return;
+    }
+
     try {
       setPreferences((current) => ({ ...current, editor: editorData }));
       setSettings((current) => ({ ...current, editor: editorData }));
@@ -117,6 +159,28 @@ export default function Settings() {
 
       const backendUrl =
         import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+      const profileData = {
+        username: profile.username,
+        fullName: profile.fullName,
+        email: profile.email,
+        profileImage: profile.profileImage,
+        linkedin: profile.linkedin,
+        github: profile.github,
+        gender: profile.gender,
+        xLink: profile.xLink,
+        birthday: profile.birthday,
+        location: profile.location,
+        bio: profile.bio,
+      };
+      await axios.post(
+        `${backendUrl}/api/update-profile`,
+        profileData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      );
       const response = await axios.post(
         `${backendUrl}/api/settings/updateSettings`,
         {
@@ -136,6 +200,50 @@ export default function Settings() {
       window.setTimeout(() => setSaved(false), 2500);
     } catch (error) {
       console.error("Unable to save settings:", error);
+    }
+  };
+
+  const showToast = (type, message) => {
+    setToast({ type, message });
+    clearTimeout(toastTimeoutRef.current);
+    toastTimeoutRef.current = setTimeout(() => setToast(null), 3500);
+  };
+
+  // Clear the toast timeout when the component unmounts
+  useEffect(() => {
+    return () => clearTimeout(toastTimeoutRef.current);
+  }, []);
+
+  // Update profile image to backend and context
+  const handleProfileImageChange = async (file, profileImageUrl) => {
+    const previousImageUrl = user?.profileImage || "";
+    const formData = new FormData();
+    formData.append("profileImage", file);
+    setProfile((prev) => ({ ...prev, profileImage: profileImageUrl }));
+    setUser((prevUser) => ({ ...prevUser, profileImage: profileImageUrl }));
+
+    try {
+      const backendUrl =
+        import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+      const response = await axios.patch(
+        `${backendUrl}/api/update-profile-image`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      );
+      const savedImageUrl =
+        response.data?.user?.profileImage || profileImageUrl;
+      setProfile((prev) => ({ ...prev, profileImage: savedImageUrl }));
+      setUser((prevUser) => ({ ...prevUser, profileImage: savedImageUrl }));
+      showToast("success", "Profile image changed successfully.");
+    } catch (error) {
+      setProfile((prev) => ({ ...prev, profileImage: previousImageUrl }));
+      setUser((prevUser) => ({ ...prevUser, profileImage: previousImageUrl }));
+      console.error("Error updating profile image:", error);
+      showToast("error", "Unable to change your profile image.");
     }
   };
 
@@ -178,7 +286,11 @@ export default function Settings() {
                 </div>
               </div>
               {activeSection === "account" && (
-                <AccountSettings profile={profile} setProfile={setProfile} />
+                <AccountSettings
+                  profile={profile}
+                  setProfile={setProfile}
+                  onProfileImageChange={handleProfileImageChange}
+                />
               )}
               {activeSection === "editor" && (
                 <EditorPreferences

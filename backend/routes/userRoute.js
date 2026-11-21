@@ -51,6 +51,8 @@ route.get('/users/:userId', authUser, userController.getUserById);
 
 route.post("/update-profile", authUser, userController.updateProfile);
 
+route.patch("/change-password", authUser, userController.changePassword);
+
 route.patch(
   "/update-profile-image",
   authUser,

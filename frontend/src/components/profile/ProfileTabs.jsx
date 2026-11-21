@@ -6,10 +6,16 @@ import {
   History,
   Award,
   LayoutGrid,
+  Info,
 } from "lucide-react";
 
 export default function ProfileTabs({ activeTab, onTabChange, counts = {} }) {
   const tabs = [
+    {
+      id: "details",
+      label: "User Details",
+      icon: Info,
+    },
     {
       id: "activity",
       label: "Coding Activity",

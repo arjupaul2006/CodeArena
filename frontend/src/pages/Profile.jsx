@@ -7,6 +7,7 @@ import ProfileStatsOverview from "../components/profile/ProfileStatsOverview";
 import ProblemSolvingCard from "../components/profile/ProblemSolvingCard";
 import ContestPerformanceCard from "../components/profile/ContestPerformanceCard";
 import SubmissionHistoryCard from "../components/profile/SubmissionHistoryCard";
+import ProfileDetails from "../components/profile/ProfileDetails";
 import BadgesShowcase from "../components/profile/BadgesShowcase";
 import EditProfileModal from "../components/profile/EditProfileModal";
 import { UserDataContext } from "../context/UserContext";
@@ -155,7 +156,7 @@ export default function Profile() {
   const [profileUser, setProfileUser] = useState(user);
 
   const [profile, setProfile] = useState(initialProfileData);
-  const [activeTab, setActiveTab] = useState("activity");
+  const [activeTab, setActiveTab] = useState("details");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const [problems, setProblems] = useState([]);
@@ -244,7 +245,7 @@ export default function Profile() {
       if (!userId) {
         setProfileUser(user);
         return;
-      };
+      }
 
       try {
         const backendUrl =
@@ -279,9 +280,16 @@ export default function Profile() {
           ...prev,
           username: resolvedUsername || prev.username,
           email: user.email || prev.email,
+          fullName: user.fullName || prev.fullName,
           profileImage: user.profileImage || prev.profileImage,
           role: user.role || prev.role,
           bio: user.bio || prev.bio,
+          linkedin: user.linkedin || prev.linkedin,
+          github: user.github || prev.github,
+          gender: user.gender || prev.gender,
+          xLink: user.xLink || prev.xLink,
+          birthday: user.birthday || prev.birthday,
+          location: user.location || prev.location,
         }));
       }
     }
@@ -300,7 +308,15 @@ export default function Profile() {
         username: updatedData.username,
         email: updatedData.email,
         profileImage: updatedData.profileImage,
+        fullName: updatedData.fullName,
         role: updatedData.role,
+        bio: updatedData.bio,
+        linkedin: updatedData.linkedin,
+        github: updatedData.github,
+        gender: updatedData.gender,
+        xLink: updatedData.xLink,
+        birthday: updatedData.birthday,
+        location: updatedData.location,
       }));
     }
 
@@ -729,6 +745,13 @@ export default function Profile() {
 
           {/* Tab Views Content */}
           <div className="transition-all duration-300">
+            {/* TAB: User Details */}
+            {activeTab === "details" && (
+              <div className="animate-in fade-in duration-300">
+                <ProfileDetails user={profileUser} profile={profile} />
+              </div>
+            )}
+
             {/* TAB: Coding Activity */}
             {activeTab === "activity" && (
               <div className="space-y-6 animate-in fade-in duration-300">
