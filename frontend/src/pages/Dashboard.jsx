@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+﻿import React, { useContext, useEffect, useState } from "react";
 import {
   Trophy,
   Terminal,
@@ -402,7 +402,7 @@ export default function DashboardOverview() {
   }, [totalProblemCategories, solvedProblemCategories]);
 
   return (
-    <div className="flex min-h-screen bg-[#e8f3e8] text-[#244333] font-sans antialiased">
+    <div className="flex min-h-screen bg-[#e8f3e8] dark:bg-[#111813] text-[#244333] dark:text-[#edf4ef] font-sans antialiased">
       {/* Shared Persistent Layout Sidebar */}
       <Sidebar />
 
@@ -412,11 +412,11 @@ export default function DashboardOverview() {
 
         <main className="flex-1 p-4 lg:p-6 max-w-[1600px] w-full mx-auto space-y-6">
           {/* 1. Welcome Banner Hero */}
-          <div className="relative rounded-2xl bg-[#cfe8d3] border border-[#a6cbaa] p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 overflow-hidden shadow-xl shadow-[#9ab99f]/30">
+          <div className="relative rounded-2xl bg-[#cfe8d3] border border-[#a6cbaa] dark:border-[#405747] p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 overflow-hidden shadow-xl shadow-[#9ab99f]/30">
             <div className="absolute -top-10 -right-10 w-48 h-48 bg-rose-500/10 rounded-full blur-3xl pointer-events-none"></div>
             <div>
-              <h1 className="text-2xl lg:text-3xl font-extrabold text-[#183226] tracking-tight">
-                Welcome back, Developer! 👋
+              <h1 className="text-2xl lg:text-3xl font-extrabold text-[#183226] dark:text-[#edf4ef] tracking-tight">
+                Welcome back, Developer! ðŸ‘‹
               </h1>
             </div>
             <button
@@ -434,16 +434,16 @@ export default function DashboardOverview() {
               return (
                 <div
                   key={idx}
-                  className="bg-[#f4faf1] rounded-2xl border border-[#b7d2bb] p-4 flex items-center justify-between shadow-md"
+                  className="bg-[#f4faf1] dark:bg-[#172019] rounded-2xl border border-[#b7d2bb] dark:border-[#405747] p-4 flex items-center justify-between shadow-md"
                 >
                   <div className="space-y-1">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-[#668170] block">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-[#668170] dark:text-[#aabdaf] block">
                       {metric.label}
                     </span>
-                    <span className="text-xl lg:text-2xl font-black text-[#244333] tracking-tight block">
+                    <span className="text-xl lg:text-2xl font-black text-[#244333] dark:text-[#edf4ef] tracking-tight block">
                       {metric.value}
                     </span>
-                    <span className="text-[11px] text-[#668170] block">
+                    <span className="text-[11px] text-[#668170] dark:text-[#aabdaf] block">
                       {metric.sub}
                     </span>
                   </div>
@@ -462,8 +462,8 @@ export default function DashboardOverview() {
             {/* Left: Topic Strengths */}
             <div className="xl:col-span-2 space-y-6">
               {/* Skill Proficiency Index Breakdown */}
-              <div className="bg-[#f4faf1] rounded-2xl border border-[#b7d2bb] p-4 lg:p-5 shadow-lg">
-                <h3 className="text-base font-bold text-[#244333] mb-4">
+              <div className="bg-[#f4faf1] dark:bg-[#172019] rounded-2xl border border-[#b7d2bb] dark:border-[#405747] p-4 lg:p-5 shadow-lg">
+                <h3 className="text-base font-bold text-[#244333] dark:text-[#edf4ef] mb-4">
                   Skill Index & Strengths
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -472,20 +472,20 @@ export default function DashboardOverview() {
                       Object.keys(totalProblemCategories).includes(skill.name) && (
                         <div
                           key={index}
-                          className="p-3.5 bg-[#e8f3e8] rounded-xl border border-[#b7d2bb] space-y-2"
+                          className="p-3.5 bg-[#e8f3e8] dark:bg-[#111813] rounded-xl border border-[#b7d2bb] dark:border-[#405747] space-y-2"
                           onClick={() =>
                             navigate(`/problems?tag=${skill.name}`)
                           }
                         >
                           <div className="flex justify-between items-baseline">
-                            <span className="text-xs font-bold text-[#385a43]">
+                            <span className="text-xs font-bold text-[#385a43] dark:text-[#aabdaf]">
                               {skill.name}
                             </span>
-                            <span className="text-[10px] text-[#668170] font-medium">
+                            <span className="text-[10px] text-[#668170] dark:text-[#aabdaf] font-medium">
                               {skill.level}
                             </span>
                           </div>
-                          <div className="w-full bg-[#c5dcc8] h-1.5 rounded-full overflow-hidden">
+                          <div className="w-full bg-[#c5dcc8] dark:bg-[#2b4636] h-1.5 rounded-full overflow-hidden">
                             <div
                               className={`h-full bg-gradient-to-r ${skill.color}`}
                               style={{ width: skill.progress }}
@@ -501,9 +501,9 @@ export default function DashboardOverview() {
             {/* Right Side Pane: Recent Submissions & Upcoming Schedules */}
             <div className="xl:col-span-1 space-y-6 w-full">
               {/* Stream of Live Submissions */}
-              <div className="bg-[#f4faf1] rounded-2xl border border-[#b7d2bb] p-4 lg:p-5 shadow-lg">
+              <div className="bg-[#f4faf1] dark:bg-[#172019] rounded-2xl border border-[#b7d2bb] dark:border-[#405747] p-4 lg:p-5 shadow-lg">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-base font-bold text-[#244333]">
+                  <h3 className="text-base font-bold text-[#244333] dark:text-[#edf4ef]">
                     Recent Activity
                   </h3>
                   <a
@@ -520,16 +520,16 @@ export default function DashboardOverview() {
                     submissionHistory.map((item, idx) => (
                       <div
                         key={idx}
-                        className="flex justify-between items-start p-2.5 rounded-xl bg-[#e8f3e8] border border-[#b7d2bb] text-xs"
+                        className="flex justify-between items-start p-2.5 rounded-xl bg-[#e8f3e8] dark:bg-[#111813] border border-[#b7d2bb] dark:border-[#405747] text-xs"
                         onClick={() =>
                           navigate(`/write-code?submission_id=${item._id}`)
                         }
                       >
                         <div className="space-y-0.5">
-                          <span className="font-semibold text-[#385a43] block truncate max-w-[180px]">
+                          <span className="font-semibold text-[#385a43] dark:text-[#aabdaf] block truncate max-w-[180px]">
                             {item.problemId?.title}
                           </span>
-                          <span className="text-[11px] text-[#668170] flex items-center gap-1">
+                          <span className="text-[11px] text-[#668170] dark:text-[#aabdaf] flex items-center gap-1">
                             <Clock className="h-3 w-3" />{" "}
                             {new Date(item.submissionDate).toDateString()} at{" "}
                             {new Date(item.submissionDate).toLocaleTimeString()}
@@ -550,20 +550,20 @@ export default function DashboardOverview() {
               </div>
 
               {/* Contests Spotlight Card */}
-              <div className="bg-[#f4faf1] rounded-2xl border border-[#b7d2bb] p-4 lg:p-5 shadow-lg relative overflow-hidden">
+              <div className="bg-[#f4faf1] dark:bg-[#172019] rounded-2xl border border-[#b7d2bb] dark:border-[#405747] p-4 lg:p-5 shadow-lg relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-rose-500/10 rounded-full blur-2xl pointer-events-none"></div>
-                <h3 className="text-base font-bold text-[#244333] mb-1">
+                <h3 className="text-base font-bold text-[#244333] dark:text-[#edf4ef] mb-1">
                   Upcoming Arena Battles
                 </h3>
-                <p className="text-xs text-[#668170] mb-4">
+                <p className="text-xs text-[#668170] dark:text-[#aabdaf] mb-4">
                   Compete globally against elite developers.
                 </p>
 
-                <div className="p-3.5 bg-[#e8f3e8] border-l-4 border-[#3f7d55] rounded-r-xl space-y-1.5">
-                  <span className="text-xs font-bold text-[#385a43] block">
+                <div className="p-3.5 bg-[#e8f3e8] dark:bg-[#111813] border-l-4 border-[#3f7d55] rounded-r-xl space-y-1.5">
+                  <span className="text-xs font-bold text-[#385a43] dark:text-[#aabdaf] block">
                     Midnight Knockout Round #48
                   </span>
-                  <span className="text-[11px] text-[#668170] block">
+                  <span className="text-[11px] text-[#668170] dark:text-[#aabdaf] block">
                     Starts in:{" "}
                     <strong className="text-rose-400 font-mono">
                       1d 4h 12m

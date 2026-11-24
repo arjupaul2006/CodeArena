@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+﻿import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import {
   ArrowRight,
@@ -96,7 +96,7 @@ const getStatus = (contest) => {
 const statusStyles = {
   live: "bg-rose-500/10 text-rose-700 border-rose-500/25",
   upcoming: "bg-amber-500/10 text-amber-800 border-amber-500/25",
-  completed: "bg-[#dcecdf] text-[#547060] border-[#b7d2bb]",
+  completed: "bg-[#dcecdf] dark:bg-[#24382b] text-[#547060] dark:text-[#aabdaf] border-[#b7d2bb] dark:border-[#405747]",
 };
 
 export default function Contest() {
@@ -215,24 +215,24 @@ export default function Contest() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#e8f3e8] font-sans text-[#244333] antialiased">
+    <div className="flex min-h-screen bg-[#e8f3e8] dark:bg-[#111813] font-sans text-[#244333] dark:text-[#edf4ef] antialiased">
       <Sidebar />
 
       <div className="flex min-w-0 flex-1 flex-col pb-16 md:pl-64 md:pb-0">
         <TopNav />
         {/* Main Content */}
         <main className="mx-auto w-full max-w-375 flex-1 space-y-6 p-4 sm:p-6 lg:p-8">
-          <section className="relative overflow-hidden rounded-2xl border border-[#b7d2bb] bg-[#183226] px-6 py-7 text-[#f4faf1] shadow-xl sm:px-8">
+          <section className="relative overflow-hidden rounded-2xl border border-[#b7d2bb] dark:border-[#405747] bg-[#183226] px-6 py-7 text-[#f4faf1] shadow-xl sm:px-8">
             <div className="absolute -right-10 -top-16 h-48 w-48 rounded-full border-26 border-[#3f7d55]/40" />
-            <div className="absolute -bottom-24 right-36 h-48 w-48 rounded-full border-18 border-[#b7d2bb]/10" />
+            <div className="absolute -bottom-24 right-36 h-48 w-48 rounded-full border-18 border-[#b7d2bb] dark:border-[#405747]/10" />
             <div className="relative max-w-2xl">
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-[#3f7d55]/40 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#c5dfc9]">
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-[#3f7d55]/40 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#c5dfc9] dark:text-[#b9d7bf]">
                 <Sparkles className="h-3.5 w-3.5" /> Compete. Learn. Level up.
               </div>
               <h1 className="text-3xl font-black tracking-tight sm:text-4xl">
                 Make your next solve count.
               </h1>
-              <p className="mt-3 max-w-xl text-sm leading-6 text-[#c5dfc9]">
+              <p className="mt-3 max-w-xl text-sm leading-6 text-[#c5dfc9] dark:text-[#b9d7bf]">
                 Join timed challenges, test your instincts, and see how your
                 approach stacks up against the CodeArena community.
               </p>
@@ -244,7 +244,7 @@ export default function Contest() {
                     : "New contests every week"}
                 </span>
                 <span className="inline-flex items-center gap-2">
-                  <Users className="h-4 w-4 text-[#c5dfc9]" />
+                  <Users className="h-4 w-4 text-[#c5dfc9] dark:text-[#b9d7bf]" />
                   1,240+ active competitors
                 </span>
               </div>
@@ -266,13 +266,13 @@ export default function Contest() {
             ].map(({ label, value, icon: Icon }) => (
               <div
                 key={label}
-                className="rounded-2xl border border-[#b7d2bb] bg-[#f4faf1] p-4 shadow-sm"
+                className="rounded-2xl border border-[#b7d2bb] dark:border-[#405747] bg-[#f4faf1] dark:bg-[#172019] p-4 shadow-sm"
               >
-                <Icon className="h-4 w-4 text-[#3f7d55]" />
-                <p className="mt-3 text-xl font-black tracking-tight text-[#183226]">
+                <Icon className="h-4 w-4 text-[#3f7d55] dark:text-[#86c79a]" />
+                <p className="mt-3 text-xl font-black tracking-tight text-[#183226] dark:text-[#edf4ef]">
                   {value}
                 </p>
-                <p className="mt-1 text-xs text-[#668170]">{label}</p>
+                <p className="mt-1 text-xs text-[#668170] dark:text-[#aabdaf]">{label}</p>
               </div>
             ))}
           </section>
@@ -280,16 +280,16 @@ export default function Contest() {
           <section className="space-y-4">
             <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
               <div>
-                <h2 className="text-2xl font-bold tracking-tight text-[#183226]">
+                <h2 className="text-2xl font-bold tracking-tight text-[#183226] dark:text-[#edf4ef]">
                   Contest calendar
                 </h2>
-                <p className="mt-1 text-sm text-[#668170]">
+                <p className="mt-1 text-sm text-[#668170] dark:text-[#aabdaf]">
                   Pick a challenge that matches your pace.
                 </p>
               </div>
 
               {/* Tab Navigation */}
-              <div className="flex rounded-xl border border-[#b7d2bb] bg-[#f4faf1] p-1 text-xs font-semibold">
+              <div className="flex rounded-xl border border-[#b7d2bb] dark:border-[#405747] bg-[#f4faf1] dark:bg-[#172019] p-1 text-xs font-semibold">
                 {[
                   ["all", "All contests"],
                   ["live", "Live now"],
@@ -299,7 +299,7 @@ export default function Contest() {
                   <button
                     key={value}
                     onClick={() => setActiveTab(value)}
-                    className={`rounded-lg px-3 py-2 transition-colors ${activeTab === value ? "bg-[#3f7d55] text-white shadow-sm" : "text-[#547060] hover:text-[#183226]"}`}
+                    className={`rounded-lg px-3 py-2 transition-colors ${activeTab === value ? "bg-[#3f7d55] text-white shadow-sm" : "text-[#547060] dark:text-[#aabdaf] hover:text-[#183226] dark:hover:text-[#edf4ef] dark:text-[#edf4ef]"}`}
                   >
                     {label}
                   </button>
@@ -326,7 +326,7 @@ export default function Contest() {
                 ))}
               </div>
             ) : (
-              <div className="rounded-2xl border border-dashed border-[#b7d2bb] bg-[#f4faf1] p-12 text-center text-sm text-[#668170]">
+              <div className="rounded-2xl border border-dashed border-[#b7d2bb] dark:border-[#405747] bg-[#f4faf1] dark:bg-[#172019] p-12 text-center text-sm text-[#668170] dark:text-[#aabdaf]">
                 No contests in this view yet.
               </div>
             )}
@@ -334,15 +334,15 @@ export default function Contest() {
 
           <section className="grid grid-cols-1 gap-6 lg:grid-cols-5">
             {/* Leaderboard */}
-            <div className="rounded-2xl border border-[#b7d2bb] bg-[#f4faf1] p-5 shadow-lg shadow-[#8eae94]/10 lg:col-span-3">
+            <div className="rounded-2xl border border-[#b7d2bb] dark:border-[#405747] bg-[#f4faf1] dark:bg-[#172019] p-5 shadow-lg shadow-[#8eae94]/10 lg:col-span-3">
               <div className="mb-5 flex items-center justify-between">
                 <div>
-                  <h2 className="font-bold text-[#183226]">Live leaderboard</h2>
-                  <p className="mt-1 text-xs text-[#668170]">
+                  <h2 className="font-bold text-[#183226] dark:text-[#edf4ef]">Live leaderboard</h2>
+                  <p className="mt-1 text-xs text-[#668170] dark:text-[#aabdaf]">
                     Weekly Algorithm Sprint
                   </p>
                 </div>
-                <button className="text-xs font-bold text-[#3f7d55] hover:text-[#183226]">
+                <button className="text-xs font-bold text-[#3f7d55] dark:text-[#86c79a] hover:text-[#183226] dark:hover:text-[#edf4ef] dark:text-[#edf4ef]">
                   View full board{" "}
                   <ArrowRight className="ml-1 inline h-3.5 w-3.5" />
                 </button>
@@ -350,28 +350,28 @@ export default function Contest() {
               {globalLeaderboard.slice(0, 4).map((entry) => (
                   <div
                     key={entry.userId}
-                    className="flex items-center gap-3 border-t border-[#dcecdf] py-3"
+                    className="flex items-center gap-3 border-t border-[#dcecdf] dark:border-[#405747] py-3"
                   >
                     <span
-                      className={`w-5 text-center text-xs font-bold ${entry.rank === 1 ? "text-amber-600" : "text-[#668170]"}`}
+                      className={`w-5 text-center text-xs font-bold ${entry.rank === 1 ? "text-amber-600" : "text-[#668170] dark:text-[#aabdaf]"}`}
                     >
                       {entry.rank}
                     </span>
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#c5dfc9] text-xs font-bold text-[#3f7d55]">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#c5dfc9] dark:bg-[#2b4636] text-xs font-bold text-[#3f7d55] dark:text-[#86c79a]">
                       {entry.avatar}
                     </div>
-                    <span className="flex-1 text-sm font-semibold text-[#244333]">
+                    <span className="flex-1 text-sm font-semibold text-[#244333] dark:text-[#edf4ef]">
                       {entry.name}
                     </span>
-                    <span className="text-xs font-bold text-[#547060]">
+                    <span className="text-xs font-bold text-[#547060] dark:text-[#aabdaf]">
                       {entry.score} pts
                     </span>
                   </div>
                 ))}
             </div>
 
-            <div className="rounded-2xl border border-[#b7d2bb] bg-[#d5e7d7] p-5 lg:col-span-2">
-              <div className="flex items-center gap-2 text-[#2f6b45]">
+            <div className="rounded-2xl border border-[#b7d2bb] dark:border-[#405747] bg-[#d5e7d7] dark:bg-[#34483a] p-5 lg:col-span-2">
+              <div className="flex items-center gap-2 text-[#2f6b45] dark:text-[#86c79a]">
                 <Play className="h-4 w-4" />
                 <h2 className="font-bold">How contests work</h2>
               </div>
@@ -396,14 +396,14 @@ export default function Contest() {
                   ],
                 ].map(([number, title, text]) => (
                   <div key={number} className="flex gap-3">
-                    <span className="font-mono text-xs font-bold text-[#3f7d55]">
+                    <span className="font-mono text-xs font-bold text-[#3f7d55] dark:text-[#86c79a]">
                       {number}
                     </span>
                     <div>
-                      <p className="text-sm font-bold text-[#244333]">
+                      <p className="text-sm font-bold text-[#244333] dark:text-[#edf4ef]">
                         {title}
                       </p>
-                      <p className="mt-0.5 text-xs leading-5 text-[#547060]">
+                      <p className="mt-0.5 text-xs leading-5 text-[#547060] dark:text-[#aabdaf]">
                         {text}
                       </p>
                     </div>

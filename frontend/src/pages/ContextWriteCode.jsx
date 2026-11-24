@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Clock } from "lucide-react";
 import ProblemDescription from "../components/writecode/ProblemDescription";
 import CodeEditorPanel from "../components/writecode/CodeEditorPanel";
@@ -299,7 +299,7 @@ export default function ContextWriteCode() {
   }, [contest?.endTime, navigate]);
 
   return (
-    <div className="flex flex-col h-screen bg-[#e8f3e8] text-[#244333] font-sans antialiased overflow-hidden">
+    <div className="flex flex-col h-screen bg-[#e8f3e8] dark:bg-[#111813] text-[#244333] dark:text-[#edf4ef] font-sans antialiased overflow-hidden">
       {/* Top Application Header */}
       <TopNav />
 
@@ -307,10 +307,10 @@ export default function ContextWriteCode() {
         <div
           className={`flex h-10 shrink-0 items-center justify-center gap-2 border-b px-4 text-xs font-bold ${
             contestStatus === "completed"
-              ? "border-[#d6b5b5] bg-[#fff1f1] text-[#8b3a3a]"
+              ? "border-[#d6b5b5] dark:border-[#765050] bg-[#fff1f1] dark:bg-[#3a2020] text-[#8b3a3a] dark:text-[#f2aaaa]"
               : contestStatus === "upcoming"
-                ? "border-[#e3cf9d] bg-[#fff9e8] text-[#896b24]"
-                : "border-[#b7d2bb] bg-[#f4faf1] text-[#244333]"
+                ? "border-[#e3cf9d] dark:border-[#776b43] bg-[#fff9e8] dark:bg-[#383020] text-[#896b24] dark:text-[#dcca82]"
+                : "border-[#b7d2bb] dark:border-[#405747] bg-[#f4faf1] dark:bg-[#172019] text-[#244333] dark:text-[#edf4ef]"
           }`}
           role="timer"
           aria-live="polite"
@@ -332,7 +332,7 @@ export default function ContextWriteCode() {
       {/* Main Split Panels */}
       <div className="flex-1 grid grid-cols-1 xl:grid-cols-2 min-h-0 overflow-hidden">
         {/* Left Panel */}
-        <div className="h-full overflow-hidden border-r border-[#b7d2bb]">
+        <div className="h-full overflow-hidden border-r border-[#b7d2bb] dark:border-[#405747]">
           <ContestProblemDescription
             demoproblem={demoproblem}
             contestId={contestId}
@@ -346,7 +346,7 @@ export default function ContextWriteCode() {
         </div>
 
         {/* Right Panel */}
-        <div className="relative h-full overflow-hidden bg-[#dcecdf]">
+        <div className="relative h-full overflow-hidden bg-[#dcecdf] dark:bg-[#24382b]">
           <ContestCodeEditor
             demoproblem={demoproblem}
             problem={problem}

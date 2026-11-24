@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import Editor from "@monaco-editor/react";
 import { RotateCcw, Maximize2 } from "lucide-react";
 import axios from "axios";
@@ -616,10 +616,10 @@ export default function ContestCodeEditor({
   return (
     <div className="relative flex flex-col h-full min-h-0 overflow-hidden">
       {/* Editor Controls Bar */}
-      <div className="h-11 border-b border-[#b7d2bb] bg-[#eef7eb] px-4 flex items-center justify-between shrink-0">
+      <div className="h-11 border-b border-[#b7d2bb] dark:border-[#405747] bg-[#eef7eb] dark:bg-[#1a241d] px-4 flex items-center justify-between shrink-0">
         {/* Select Language */}
         <select
-          className="bg-[#ffffff] hover:bg-[#e8f3e8] text-xs font-bold px-3 py-1 rounded-xl text-[#183226] border border-[#b7d2bb] flex items-center gap-1 transition-colors focus:outline-none focus:border-[#3f7d55] cursor-pointer"
+          className="bg-[#ffffff] dark:bg-[#172019] hover:bg-[#e8f3e8] dark:hover:bg-[#1a241d] dark:bg-[#111813] text-xs font-bold px-3 py-1 rounded-xl text-[#183226] dark:text-[#edf4ef] border border-[#b7d2bb] dark:border-[#405747] flex items-center gap-1 transition-colors focus:outline-none focus:border-[#3f7d55] cursor-pointer"
           value={selectedLanguage}
           onChange={(e) => {
             const nextLanguage = e.target.value;
@@ -662,7 +662,7 @@ export default function ContestCodeEditor({
           {/* Reset Button */}
           <button
             type="button"
-            className="p-1.5 text-[#547060] hover:text-[#183226] rounded hover:bg-[#dcecdf] transition-colors cursor-pointer"
+            className="p-1.5 text-[#547060] dark:text-[#aabdaf] hover:text-[#183226] dark:hover:text-[#edf4ef] dark:text-[#edf4ef] rounded hover:bg-[#dcecdf] dark:hover:bg-[#24382b] dark:bg-[#24382b] transition-colors cursor-pointer"
             onClick={() => {
               setCode(
                 languageOptions.find(
@@ -677,7 +677,7 @@ export default function ContestCodeEditor({
           {/* Maximize Button */}
           <button
             type="button"
-            className="p-1.5 text-[#547060] hover:text-[#183226] rounded hover:bg-[#dcecdf] transition-colors cursor-pointer"
+            className="p-1.5 text-[#547060] dark:text-[#aabdaf] hover:text-[#183226] dark:hover:text-[#edf4ef] dark:text-[#edf4ef] rounded hover:bg-[#dcecdf] dark:hover:bg-[#24382b] dark:bg-[#24382b] transition-colors cursor-pointer"
           >
             <Maximize2 className="w-3.5 h-3.5" />
           </button>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { Zap } from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -35,13 +35,13 @@ export default function DailyChallenge() {
   };
 
   return (
-    <div className="bg-[#f4faf1] rounded-xl border border-[#b7d2bb] p-4 shadow-lg relative overflow-hidden">
+    <div className="bg-[#f4faf1] dark:bg-[#172019] rounded-xl border border-[#b7d2bb] dark:border-[#405747] p-4 shadow-lg relative overflow-hidden">
       <div className="absolute top-0 right-0 w-24 h-24 bg-[#3f7d55]/10 rounded-full blur-2xl pointer-events-none"></div>
-      <div className="flex items-center gap-1.5 text-xs text-[#2f6b45] font-bold tracking-wider uppercase mb-2">
-        <Zap className="h-3.5 w-3.5 fill-[#3f7d55] text-[#3f7d55]" /> Daily
+      <div className="flex items-center gap-1.5 text-xs text-[#2f6b45] dark:text-[#86c79a] font-bold tracking-wider uppercase mb-2">
+        <Zap className="h-3.5 w-3.5 fill-[#3f7d55] text-[#3f7d55] dark:text-[#86c79a]" /> Daily
         Challenge
       </div>
-      <h3 className="text-lg font-bold text-[#183226] mb-1">
+      <h3 className="text-lg font-bold text-[#183226] dark:text-[#edf4ef] mb-1">
         {randomProblem?.title || "No problem for today"}
       </h3>
       <div className="flex gap-2 mb-4">

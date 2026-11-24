@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { createContext } from "react";
 
 export const SettingsDataContext = createContext();
@@ -46,6 +47,31 @@ const SettingsContext = ({ children }) => {
       productUpdates: false,
     },
   });
+
+  // get all settings
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const backendUrl =
+          import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+        const response = await axios.get(
+          `${backendUrl}/api/settings/getAllSettings`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          },
+        );
+        console.log("Fetched settings:", response.data);
+        const fetchedPreferences = response.data || {};
+        setSettings(fetchedPreferences);       
+      } catch (error) {
+        console.error("Error fetching settings:", error);
+      }
+    };
+
+    fetchSettings();
+  }, []);
 
   return (
     <SettingsDataContext.Provider value={{ settings, setSettings }}>

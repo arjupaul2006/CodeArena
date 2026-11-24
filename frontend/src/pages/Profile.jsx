@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useRef } from "react";
+﻿import React, { useState, useContext, useEffect, useRef } from "react";
 import { Search } from "lucide-react";
 import Sidebar from "../components/problems/SideBar";
 import ProfileHeader from "../components/profile/ProfileHeader";
@@ -106,8 +106,8 @@ const initialProfileData = {
       language: "Python",
       status: "Wrong Answer",
       submittedAt: "Yesterday",
-      executionTime: "—",
-      memory: "—",
+      executionTime: "â€”",
+      memory: "â€”",
       tests: "18 / 24",
     },
     {
@@ -142,8 +142,8 @@ const initialProfileData = {
       language: "JavaScript",
       status: "Compilation Error",
       submittedAt: "5 days ago",
-      executionTime: "—",
-      memory: "—",
+      executionTime: "â€”",
+      memory: "â€”",
       tests: "0 / 49",
     },
   ],
@@ -596,7 +596,7 @@ export default function Profile() {
   }, [submissionHistory, profileUser]);
 
   return (
-    <div className="flex min-h-screen bg-[#e8f3e8] font-sans text-[#244333] antialiased selection:bg-[#3f7d55] selection:text-white">
+    <div className="flex min-h-screen bg-[#e8f3e8] dark:bg-[#111813] font-sans text-[#244333] dark:text-[#edf4ef] antialiased selection:bg-[#3f7d55] selection:text-white">
       {toast && (
         <div
           role="status"
@@ -618,7 +618,7 @@ export default function Profile() {
             className="ml-2 text-current/60 hover:text-current"
             aria-label="Dismiss notification"
           >
-            ×
+            Ã—
           </button>
         </div>
       )}
@@ -633,14 +633,14 @@ export default function Profile() {
           <div className="relative max-w-xl">
             <label
               htmlFor="people-search"
-              className="mb-2 block text-sm font-semibold text-[#183226]"
+              className="mb-2 block text-sm font-semibold text-[#183226] dark:text-[#edf4ef]"
             >
               Find people
             </label>
             <div className="relative">
               <Search
                 aria-hidden="true"
-                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#668170]"
+                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#668170] dark:text-[#aabdaf]"
               />
               <input
                 id="people-search"
@@ -649,15 +649,15 @@ export default function Profile() {
                 onChange={(event) => setUserSearch(event.target.value)}
                 placeholder="Search by username..."
                 autoComplete="off"
-                className="w-full rounded-xl border border-[#b7d2bb] bg-white py-2.5 pl-10 pr-4 text-sm text-[#385a43] outline-none transition focus:border-[#3f7d55] focus:ring-2 focus:ring-[#3f7d55]/20"
+                className="w-full rounded-xl border border-[#b7d2bb] dark:border-[#405747] bg-white dark:bg-[#172019] py-2.5 pl-10 pr-4 text-sm text-[#385a43] dark:text-[#aabdaf] outline-none transition focus:border-[#3f7d55] focus:ring-2 focus:ring-[#3f7d55]/20"
               />
             </div>
             {(isSearchingUsers ||
               userSearchError ||
               userResults.length > 0) && (
-              <div className="absolute left-0 right-0 top-[4.5rem] z-20 overflow-hidden rounded-xl border border-[#b7d2bb] bg-white shadow-lg">
+              <div className="absolute left-0 right-0 top-[4.5rem] z-20 overflow-hidden rounded-xl border border-[#b7d2bb] dark:border-[#405747] bg-white dark:bg-[#172019] shadow-lg">
                 {isSearchingUsers && (
-                  <p className="px-4 py-3 text-sm text-[#668170]">
+                  <p className="px-4 py-3 text-sm text-[#668170] dark:text-[#aabdaf]">
                     Searching users...
                   </p>
                 )}
@@ -671,7 +671,7 @@ export default function Profile() {
                   userResults.map((result) => (
                     <div
                       key={result._id}
-                      className="flex items-center gap-3 px-4 py-3 hover:bg-[#f1f8f1]"
+                      className="flex items-center gap-3 px-4 py-3 hover:bg-[#f1f8f1] dark:bg-[#172019]"
                       onClick={() => {
                         navigate(`/profile/?id=${result._id}`);
                       }}
@@ -683,15 +683,15 @@ export default function Profile() {
                           className="h-8 w-8 rounded-full object-cover"
                         />
                       ) : (
-                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#c5dfc9] text-sm font-bold text-[#3f7d55]">
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#c5dfc9] dark:bg-[#2b4636] text-sm font-bold text-[#3f7d55] dark:text-[#86c79a]">
                           {result.username.charAt(0).toUpperCase()}
                         </span>
                       )}
                       <div>
-                        <p className="text-sm font-semibold text-[#183226]">
+                        <p className="text-sm font-semibold text-[#183226] dark:text-[#edf4ef]">
                           {result.username}
                         </p>
-                        <p className="text-xs text-[#668170]">
+                        <p className="text-xs text-[#668170] dark:text-[#aabdaf]">
                           {result.role || "CodeArena member"}
                         </p>
                       </div>
@@ -700,7 +700,7 @@ export default function Profile() {
                 {!isSearchingUsers &&
                   !userSearchError &&
                   userResults.length === 0 && (
-                    <p className="px-4 py-3 text-sm text-[#668170]">
+                    <p className="px-4 py-3 text-sm text-[#668170] dark:text-[#aabdaf]">
                       No users found.
                     </p>
                   )}
@@ -710,13 +710,13 @@ export default function Profile() {
 
           {/* Top Page Breadcrumb & Title */}
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#3f7d55]">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#3f7d55] dark:text-[#86c79a]">
               Account & Profile
             </p>
-            <h1 className="mt-1 text-2xl sm:text-3xl font-black tracking-tight text-[#183226]">
+            <h1 className="mt-1 text-2xl sm:text-3xl font-black tracking-tight text-[#183226] dark:text-[#edf4ef]">
               {currentUsername}'s Profile
             </h1>
-            <p className="mt-1 text-xs sm:text-sm text-[#547060]">
+            <p className="mt-1 text-xs sm:text-sm text-[#547060] dark:text-[#aabdaf]">
               Manage your personal credentials, competitive record, and
               submission achievements.
             </p>

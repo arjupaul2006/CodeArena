@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+﻿import React, { useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 import { UserDataContext } from "../../context/UserContext";
 import axios from "axios";
@@ -69,21 +69,21 @@ export default function SubmissionHistoryTable() {
   }, []);
 
   return (
-    <div className="bg-[#f4faf1] rounded-2xl border border-[#b7d2bb] shadow-lg overflow-hidden">
+    <div className="bg-[#f4faf1] dark:bg-[#172019] rounded-2xl border border-[#b7d2bb] dark:border-[#405747] shadow-lg overflow-hidden">
       {/* Filtering toolbar block headers */}
-      <div className="p-4 sm:px-6 border-b border-[#b7d2bb] bg-[#eef7eb] flex flex-col sm:flex-row gap-3 justify-between sm:items-center">
-        <h3 className="text-base font-bold text-[#183226] tracking-tight">
+      <div className="p-4 sm:px-6 border-b border-[#b7d2bb] dark:border-[#405747] bg-[#eef7eb] dark:bg-[#1a241d] flex flex-col sm:flex-row gap-3 justify-between sm:items-center">
+        <h3 className="text-base font-bold text-[#183226] dark:text-[#edf4ef] tracking-tight">
           Submission History
         </h3>
 
         <div className="flex items-center gap-2 self-end sm:self-auto">
           {/* Dropdown 1 */}
-          <button className="bg-[#ffffff] hover:bg-[#dcecdf] text-xs font-semibold px-3.5 py-1.5 rounded-xl border border-[#b7d2bb] text-[#244333] flex items-center gap-1.5 transition-colors cursor-pointer">
-            All Verdicts <ChevronDown className="w-3.5 h-3.5 text-[#668170]" />
+          <button className="bg-[#ffffff] dark:bg-[#172019] hover:bg-[#dcecdf] dark:hover:bg-[#24382b] dark:bg-[#24382b] text-xs font-semibold px-3.5 py-1.5 rounded-xl border border-[#b7d2bb] dark:border-[#405747] text-[#244333] dark:text-[#edf4ef] flex items-center gap-1.5 transition-colors cursor-pointer">
+            All Verdicts <ChevronDown className="w-3.5 h-3.5 text-[#668170] dark:text-[#aabdaf]" />
           </button>
           {/* Dropdown 2 */}
-          <button className="bg-[#ffffff] hover:bg-[#dcecdf] text-xs font-semibold px-3.5 py-1.5 rounded-xl border border-[#b7d2bb] text-[#244333] flex items-center gap-1.5 transition-colors cursor-pointer">
-            All Languages <ChevronDown className="w-3.5 h-3.5 text-[#668170]" />
+          <button className="bg-[#ffffff] dark:bg-[#172019] hover:bg-[#dcecdf] dark:hover:bg-[#24382b] dark:bg-[#24382b] text-xs font-semibold px-3.5 py-1.5 rounded-xl border border-[#b7d2bb] dark:border-[#405747] text-[#244333] dark:text-[#edf4ef] flex items-center gap-1.5 transition-colors cursor-pointer">
+            All Languages <ChevronDown className="w-3.5 h-3.5 text-[#668170] dark:text-[#aabdaf]" />
           </button>
         </div>
       </div>
@@ -92,7 +92,7 @@ export default function SubmissionHistoryTable() {
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-[#b7d2bb] text-[11px] uppercase tracking-wider text-[#547060] font-bold bg-[#e8f3e8]">
+            <tr className="border-b border-[#b7d2bb] dark:border-[#405747] text-[11px] uppercase tracking-wider text-[#547060] dark:text-[#aabdaf] font-bold bg-[#e8f3e8] dark:bg-[#111813]">
               <th className="py-3.5 px-6">Verdict</th>
               <th className="py-3.5 px-6">Problem</th>
               <th className="py-3.5 px-6">Language</th>
@@ -101,12 +101,12 @@ export default function SubmissionHistoryTable() {
               <th className="py-3.5 px-6">Date</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#b7d2bb] text-sm font-medium text-[#244333]">
+          <tbody className="divide-y divide-[#b7d2bb] text-sm font-medium text-[#244333] dark:text-[#edf4ef]">
             {submissionHistory.length > 0 ? (
               submissionHistory.map((row, idx) => (
                 <tr
                   key={idx}
-                  className="hover:bg-[#eef7eb] transition-colors cursor-pointer"
+                  className="hover:bg-[#eef7eb] dark:bg-[#1a241d] transition-colors cursor-pointer"
                   onClick={() => {
                     navigate(`/write-code?submission_id=${row._id}`);
                   }}
@@ -114,19 +114,19 @@ export default function SubmissionHistoryTable() {
                   <td className={`py-4 px-6 font-bold font-mono ${row?.status == "accepted" ? "text-emerald-700" : "text-rose-700"}`}>
                     {row?.status == "accepted" ? "Accepted" : "Wrong Answer"}
                   </td>
-                  <td className="py-4 px-6 text-[#183226] font-semibold hover:text-[#2f6b45] transition-colors">
+                  <td className="py-4 px-6 text-[#183226] dark:text-[#edf4ef] font-semibold hover:text-[#2f6b45] dark:text-[#86c79a] transition-colors">
                     {row?.problemId?.title}
                   </td>
-                  <td className="py-4 px-6 text-[#547060] font-mono text-xs">
+                  <td className="py-4 px-6 text-[#547060] dark:text-[#aabdaf] font-mono text-xs">
                     {row.language}
                   </td>
-                  <td className="py-4 px-6 text-[#547060] font-mono text-xs">
+                  <td className="py-4 px-6 text-[#547060] dark:text-[#aabdaf] font-mono text-xs">
                     {row.runtime} ms
                   </td>
-                  <td className="py-4 px-6 text-[#547060] font-mono text-xs">
+                  <td className="py-4 px-6 text-[#547060] dark:text-[#aabdaf] font-mono text-xs">
                     {row.memory} KB
                   </td>
-                  <td className="py-4 px-6 text-[#668170] text-xs">
+                  <td className="py-4 px-6 text-[#668170] dark:text-[#aabdaf] text-xs">
                     {new Date(row.submissionDate).toDateString() } at {new Date(row.submissionDate).toLocaleTimeString()}
                   </td>
                 </tr>
@@ -136,7 +136,7 @@ export default function SubmissionHistoryTable() {
               <tr>
                 <td
                   colSpan="6"
-                  className="py-12 text-center text-sm text-[#547060] font-medium"
+                  className="py-12 text-center text-sm text-[#547060] dark:text-[#aabdaf] font-medium"
                 >
                   No submissions logged matching current search filters.
                 </td>

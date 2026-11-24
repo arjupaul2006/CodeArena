@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+﻿import React, { useEffect } from "react";
 import {
   CheckCircle2,
   Code2,
@@ -60,24 +60,24 @@ export default function ProblemSolvingCard({
   ).size || 0;
 
   return (
-    <section className="mt-6 rounded-3xl border border-[#b7d2bb] bg-[#f4faf1] p-5 sm:p-8 shadow-xl shadow-[#8eae94]/20 transition-all">
+    <section className="mt-6 rounded-3xl border border-[#b7d2bb] dark:border-[#405747] bg-[#f4faf1] dark:bg-[#172019] p-5 sm:p-8 shadow-xl shadow-[#8eae94]/20 transition-all">
       {/* Header with Title and Pending Badge */}
       <div className="mb-7 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
         <div>
           <div className="flex items-center gap-2">
-            <BarChart2 className="h-4 w-4 text-[#3f7d55]" />
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#3f7d55]">
+            <BarChart2 className="h-4 w-4 text-[#3f7d55] dark:text-[#86c79a]" />
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#3f7d55] dark:text-[#86c79a]">
               Problem Solving Skills
             </p>
           </div>
-          <h2 className="mt-1.5 text-2xl sm:text-3xl font-black tracking-tight text-[#183226]">
+          <h2 className="mt-1.5 text-2xl sm:text-3xl font-black tracking-tight text-[#183226] dark:text-[#edf4ef]">
             Difficulty & Topic Mastery
           </h2>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="rounded-xl border border-[#b7d2bb] bg-[#e8f3e8] px-4 py-2 text-xs sm:text-sm font-bold text-[#385a43] shadow-xs">
-            <span className="font-extrabold text-[#3f7d55]">{pending}</span>{" "}
+          <span className="rounded-xl border border-[#b7d2bb] dark:border-[#405747] bg-[#e8f3e8] dark:bg-[#111813] px-4 py-2 text-xs sm:text-sm font-bold text-[#385a43] dark:text-[#aabdaf] shadow-xs">
+            <span className="font-extrabold text-[#3f7d55] dark:text-[#86c79a]">{pending}</span>{" "}
             pending problems
           </span>
         </div>
@@ -115,7 +115,7 @@ export default function ProblemSolvingCard({
           return (
             <div
               key={diff.label}
-              className={`relative overflow-hidden rounded-2xl border border-[#b7d2bb] bg-[#e8f3e8]/70 p-5 transition-all hover:bg-[#e8f3e8] hover:shadow-md ${theme.glow}`}
+              className={`relative overflow-hidden rounded-2xl border border-[#b7d2bb] dark:border-[#405747] bg-[#e8f3e8] dark:bg-[#111813]/70 p-5 transition-all hover:bg-[#e8f3e8] dark:hover:bg-[#1a241d] dark:bg-[#111813] hover:shadow-md ${theme.glow}`}
             >
               <div className="flex items-center justify-between">
                 <span
@@ -123,9 +123,9 @@ export default function ProblemSolvingCard({
                 >
                   {diff.label}
                 </span>
-                <span className="text-sm font-extrabold text-[#183226]">
+                <span className="text-sm font-extrabold text-[#183226] dark:text-[#edf4ef]">
                   {diff.solved}{" "}
-                  <span className="text-xs font-medium text-[#668170]">
+                  <span className="text-xs font-medium text-[#668170] dark:text-[#aabdaf]">
                     / {diff.total}
                   </span>
                 </span>
@@ -144,10 +144,10 @@ export default function ProblemSolvingCard({
               </div>
 
               <div className="mt-3 flex items-center justify-between text-xs">
-                <span className="font-semibold text-[#547060]">
+                <span className="font-semibold text-[#547060] dark:text-[#aabdaf]">
                   {progress}% Solved
                 </span>
-                <span className="text-[#668170]">
+                <span className="text-[#668170] dark:text-[#aabdaf]">
                   {diff.total - diff.solved} Remaining
                 </span>
               </div>
@@ -159,15 +159,15 @@ export default function ProblemSolvingCard({
       {/* Two-Column Grid: Topic-wise Progress & Focus Areas */}
       <div className="mt-6 grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
         {/* Left: Topic-wise Progress */}
-        <div className="rounded-2xl border border-[#b7d2bb] bg-white/40 p-5 sm:p-6 backdrop-blur-xs">
-          <div className="flex items-center justify-between border-b border-[#b7d2bb]/60 pb-3">
+        <div className="rounded-2xl border border-[#b7d2bb] dark:border-[#405747] bg-white dark:bg-[#172019]/40 p-5 sm:p-6 backdrop-blur-xs">
+          <div className="flex items-center justify-between border-b border-[#b7d2bb] dark:border-[#405747]/60 pb-3">
             <div className="flex items-center gap-2">
-              <Layers className="h-4 w-4 text-[#3f7d55]" />
-              <h3 className="font-black text-[#183226] text-base">
+              <Layers className="h-4 w-4 text-[#3f7d55] dark:text-[#86c79a]" />
+              <h3 className="font-black text-[#183226] dark:text-[#edf4ef] text-base">
                 Topic-Wise Breakdown
               </h3>
             </div>
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#668170]">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#668170] dark:text-[#aabdaf]">
               Completed
             </span>
           </div>
@@ -180,14 +180,14 @@ export default function ProblemSolvingCard({
               return (
                 <div key={topic} className="group">
                   <div className="mb-1.5 flex items-center justify-between text-xs sm:text-sm">
-                    <span className="font-semibold text-[#385a43] group-hover:text-[#183226] transition-colors">
+                    <span className="font-semibold text-[#385a43] dark:text-[#aabdaf] group-hover:text-[#183226] dark:group-hover:text-[#edf4ef] dark:hover:text-[#edf4ef] dark:text-[#edf4ef] transition-colors">
                       {topic}
                     </span>
-                    <span className="font-bold text-[#3f7d55] bg-[#e8f3e8] px-2 py-0.5 rounded-md border border-[#b7d2bb]">
+                    <span className="font-bold text-[#3f7d55] dark:text-[#86c79a] bg-[#e8f3e8] dark:bg-[#111813] px-2 py-0.5 rounded-md border border-[#b7d2bb] dark:border-[#405747]">
                       {solved} solved
                     </span>
                   </div>
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-[#dcecdf]">
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-[#dcecdf] dark:bg-[#24382b]">
                     <div
                       className="h-full rounded-full bg-gradient-to-r from-[#59986b] to-[#3f7d55] transition-all duration-300"
                       style={{
@@ -208,7 +208,7 @@ export default function ProblemSolvingCard({
             <div className="absolute -right-8 -bottom-8 h-32 w-32 rounded-full bg-[#76a980]/20 blur-xl pointer-events-none" />
             <div className="flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-emerald-300" />
-              <p className="text-[11px] font-bold uppercase tracking-wider text-[#c5dfc9]">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-[#c5dfc9] dark:text-[#b9d7bf]">
                 Most Practiced Domain
               </p>
             </div>
@@ -221,12 +221,12 @@ export default function ProblemSolvingCard({
           </div>
 
           {/* Recently Solved List */}
-          <div className="flex-1 rounded-2xl border border-[#b7d2bb] bg-white/40 p-5 backdrop-blur-xs">
-            <div className="flex items-center justify-between border-b border-[#b7d2bb]/60 pb-3">
-              <h3 className="font-black text-[#183226] text-sm">
+          <div className="flex-1 rounded-2xl border border-[#b7d2bb] dark:border-[#405747] bg-white dark:bg-[#172019]/40 p-5 backdrop-blur-xs">
+            <div className="flex items-center justify-between border-b border-[#b7d2bb] dark:border-[#405747]/60 pb-3">
+              <h3 className="font-black text-[#183226] dark:text-[#edf4ef] text-sm">
                 Recently Solved
               </h3>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#3f7d55]">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#3f7d55] dark:text-[#86c79a]">
                 Verified
               </span>
             </div>
@@ -235,7 +235,7 @@ export default function ProblemSolvingCard({
               {recentlySolved.map((submission) => (
                 <li
                   key={submission?.submissionDate}
-                  className="flex items-center justify-between rounded-xl border border-[#b7d2bb]/50 bg-[#e8f3e8]/50 px-3 py-2 text-xs font-semibold text-[#183226] transition-colors hover:bg-[#e8f3e8]"
+                  className="flex items-center justify-between rounded-xl border border-[#b7d2bb] dark:border-[#405747]/50 bg-[#e8f3e8] dark:bg-[#111813]/50 px-3 py-2 text-xs font-semibold text-[#183226] dark:text-[#edf4ef] transition-colors hover:bg-[#e8f3e8] dark:hover:bg-[#1a241d] dark:bg-[#111813]"
                   onClick={() =>
                     navigation(`/write-code?submission_id=${submission?._id}`)
                   }
@@ -253,7 +253,7 @@ export default function ProblemSolvingCard({
                       {submission?.problemId?.title}
                     </span>
                   </div>
-                  <ChevronRight className="h-3.5 w-3.5 shrink-0 text-[#668170]" />
+                  <ChevronRight className="h-3.5 w-3.5 shrink-0 text-[#668170] dark:text-[#aabdaf]" />
                 </li>
               ))}
             </ul>

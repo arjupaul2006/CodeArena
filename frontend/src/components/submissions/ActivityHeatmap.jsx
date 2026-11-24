@@ -1,4 +1,4 @@
-import axios from "axios";
+﻿import axios from "axios";
 import React, { useEffect, useMemo, useState } from "react";
 
 export default function ActivityHeatmap() {
@@ -101,7 +101,7 @@ export default function ActivityHeatmap() {
 
   const getColor = (count) => {
     if (count === 0) {
-      return "bg-[#dcecdf] hover:bg-[#c9e1cc]";
+      return "bg-[#dcecdf] dark:bg-[#24382b] hover:bg-[#c9e1cc]";
     }
 
     if (count <= 2) {
@@ -151,18 +151,18 @@ export default function ActivityHeatmap() {
   // --------------------------------
 
   return (
-    <div className="bg-[#f4faf1] rounded-2xl border border-[#b7d2bb] p-5 shadow-lg space-y-4">
+    <div className="bg-[#f4faf1] dark:bg-[#172019] rounded-2xl border border-[#b7d2bb] dark:border-[#405747] p-5 shadow-lg space-y-4">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <h3 className="text-base font-bold text-[#183226] tracking-tight">
+        <h3 className="text-base font-bold text-[#183226] dark:text-[#edf4ef] tracking-tight">
           Activity Heatmap
         </h3>
 
         {/* Legend */}
-        <div className="flex items-center gap-1.5 text-[11px] text-[#547060] font-medium">
+        <div className="flex items-center gap-1.5 text-[11px] text-[#547060] dark:text-[#aabdaf] font-medium">
           <span>Less</span>
 
-          <div className="w-2.5 h-2.5 bg-[#dcecdf] rounded-xs" />
+          <div className="w-2.5 h-2.5 bg-[#dcecdf] dark:bg-[#24382b] rounded-xs" />
 
           <div className="w-2.5 h-2.5 bg-[#a6cbaa] rounded-xs" />
 
@@ -217,17 +217,17 @@ export default function ActivityHeatmap() {
       </div>
 
       {/* Footer */}
-      <div className="flex justify-between items-center pt-2 text-xs font-medium text-[#547060]">
+      <div className="flex justify-between items-center pt-2 text-xs font-medium text-[#547060] dark:text-[#aabdaf]">
         <span>
           Yearly Submissions:{" "}
-          <strong className="text-[#183226] font-mono">
+          <strong className="text-[#183226] dark:text-[#edf4ef] font-mono">
             {totalSubmissions}
           </strong>
         </span>
 
         <span>
           Last active:{" "}
-          <strong className="text-[#385a43]">
+          <strong className="text-[#385a43] dark:text-[#aabdaf]">
             {lastActiveDate || "No activity"}
           </strong>
         </span>

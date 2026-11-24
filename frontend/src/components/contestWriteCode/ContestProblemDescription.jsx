@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+﻿import React, { useState, useEffect, useContext } from "react";
 import {
   ThumbsUp,
   ThumbsDown,
@@ -162,20 +162,20 @@ export default function ContestProblemDescription({
   }, [contestId, problemId, submitExecutionResult, problem?._id, user?._id]);
 
   return (
-    <div className="flex flex-col h-full bg-[#e8f3e8]">
+    <div className="flex flex-col h-full bg-[#e8f3e8] dark:bg-[#111813]">
       {/* Top Tab Bar */}
-      <div className="flex items-center gap-1 border-b border-[#b7d2bb] bg-[#dcecdf]/70 px-4 pt-2 shrink-0">
+      <div className="flex items-center gap-1 border-b border-[#b7d2bb] dark:border-[#405747] bg-[#dcecdf] dark:bg-[#24382b]/70 px-4 pt-2 shrink-0">
         {/* Description Tab  */}
         <button
           type="button"
           onClick={() => setActiveTab("description")}
           className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold transition-all cursor-pointer border-b-2 -mb-px ${
             activeTab === "description"
-              ? "border-[#3f7d55] text-[#183226] bg-[#e8f3e8] rounded-t-lg shadow-xs"
-              : "border-transparent text-[#547060] hover:text-[#183226] hover:bg-[#e8f3e8]/60 rounded-t-lg"
+              ? "border-[#3f7d55] text-[#183226] dark:text-[#edf4ef] bg-[#e8f3e8] dark:bg-[#111813] rounded-t-lg shadow-xs"
+              : "border-transparent text-[#547060] dark:text-[#aabdaf] hover:text-[#183226] dark:hover:text-[#edf4ef] dark:text-[#edf4ef] hover:bg-[#e8f3e8] dark:hover:bg-[#1a241d] dark:bg-[#111813]/60 rounded-t-lg"
           }`}
         >
-          <FileText className="w-3.5 h-3.5 text-[#3f7d55]" />
+          <FileText className="w-3.5 h-3.5 text-[#3f7d55] dark:text-[#86c79a]" />
           Description
         </button>
 
@@ -185,14 +185,14 @@ export default function ContestProblemDescription({
           onClick={() => setActiveTab("testcases")}
           className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold transition-all cursor-pointer border-b-2 -mb-px ${
             activeTab === "testcases"
-              ? "border-[#3f7d55] text-[#183226] bg-[#e8f3e8] rounded-t-lg shadow-xs"
-              : "border-transparent text-[#547060] hover:text-[#183226] hover:bg-[#e8f3e8]/60 rounded-t-lg"
+              ? "border-[#3f7d55] text-[#183226] dark:text-[#edf4ef] bg-[#e8f3e8] dark:bg-[#111813] rounded-t-lg shadow-xs"
+              : "border-transparent text-[#547060] dark:text-[#aabdaf] hover:text-[#183226] dark:hover:text-[#edf4ef] dark:text-[#edf4ef] hover:bg-[#e8f3e8] dark:hover:bg-[#1a241d] dark:bg-[#111813]/60 rounded-t-lg"
           }`}
         >
-          <FlaskConical className="w-3.5 h-3.5 text-[#3f7d55]" />
+          <FlaskConical className="w-3.5 h-3.5 text-[#3f7d55] dark:text-[#86c79a]" />
           Testcases
           {testCasesList.length > 0 && (
-            <span className="text-[10px] bg-[#3f7d55]/15 text-[#2f6b45] px-2 py-0.5 rounded-full font-extrabold ml-0.5">
+            <span className="text-[10px] bg-[#3f7d55]/15 text-[#2f6b45] dark:text-[#86c79a] px-2 py-0.5 rounded-full font-extrabold ml-0.5">
               {testCasesList.length}
             </span>
           )}
@@ -204,11 +204,11 @@ export default function ContestProblemDescription({
           onClick={() => setActiveTab("submission")}
           className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold transition-all cursor-pointer border-b-2 -mb-px ${
             activeTab === "submission"
-              ? "border-[#3f7d55] text-[#183226] bg-[#e8f3e8] rounded-t-lg shadow-xs"
-              : "border-transparent text-[#547060] hover:text-[#183226] hover:bg-[#e8f3e8]/60 rounded-t-lg"
+              ? "border-[#3f7d55] text-[#183226] dark:text-[#edf4ef] bg-[#e8f3e8] dark:bg-[#111813] rounded-t-lg shadow-xs"
+              : "border-transparent text-[#547060] dark:text-[#aabdaf] hover:text-[#183226] dark:hover:text-[#edf4ef] dark:text-[#edf4ef] hover:bg-[#e8f3e8] dark:hover:bg-[#1a241d] dark:bg-[#111813]/60 rounded-t-lg"
           }`}
         >
-          <Send className="w-3.5 h-3.5 text-[#3f7d55]" />
+          <Send className="w-3.5 h-3.5 text-[#3f7d55] dark:text-[#86c79a]" />
           Submissions
           {submitFailedRuns.length > 0 && (
             <span className="text-[10px] bg-rose-500/20 text-rose-700 px-2 py-0.5 rounded-full font-extrabold ml-0.5">
@@ -224,15 +224,15 @@ export default function ContestProblemDescription({
           // Description Content
           <>
             {/* Title Header */}
-            <div className="space-y-2.5 border-b border-[#b7d2bb]/60 pb-5">
+            <div className="space-y-2.5 border-b border-[#b7d2bb] dark:border-[#405747]/60 pb-5">
               <div className="flex flex-wrap items-center gap-2.5">
-                <h1 className="text-2xl lg:text-3xl font-extrabold text-[#183226] tracking-tight">
+                <h1 className="text-2xl lg:text-3xl font-extrabold text-[#183226] dark:text-[#edf4ef] tracking-tight">
                   {problem?.title}
                 </h1>
                 <span
                   className={`text-[10px] uppercase font-extrabold tracking-wider px-2.5 py-0.5 rounded-md border ${
                     difficultyColor[problem?.difficulty] ||
-                    "bg-[#dcecdf] text-[#244333] border-[#b7d2bb]"
+                    "bg-[#dcecdf] dark:bg-[#24382b] text-[#244333] dark:text-[#edf4ef] border-[#b7d2bb] dark:border-[#405747]"
                   }`}
                 >
                   {problem?.difficulty}
@@ -244,7 +244,7 @@ export default function ContestProblemDescription({
                   problem?.tags.map((t, i) => (
                     <span
                       key={i}
-                      className="text-[11px] text-[#2f6b45] bg-[#f4faf1] px-2.5 py-0.5 rounded-lg border border-[#b7d2bb] font-semibold"
+                      className="text-[11px] text-[#2f6b45] dark:text-[#86c79a] bg-[#f4faf1] dark:bg-[#172019] px-2.5 py-0.5 rounded-lg border border-[#b7d2bb] dark:border-[#405747] font-semibold"
                     >
                       {t}
                     </span>
@@ -252,22 +252,22 @@ export default function ContestProblemDescription({
               </div>
 
               {/* Interaction Stats */}
-              <div className="flex items-center gap-4 text-xs font-semibold text-[#668170] pt-1">
+              <div className="flex items-center gap-4 text-xs font-semibold text-[#668170] dark:text-[#aabdaf] pt-1">
                 <button
                   type="button"
-                  className="flex items-center gap-1.5 hover:text-[#183226] transition-colors cursor-pointer bg-[#f4faf1] px-2.5 py-1 rounded-lg border border-[#b7d2bb]/60"
+                  className="flex items-center gap-1.5 hover:text-[#183226] dark:hover:text-[#edf4ef] dark:text-[#edf4ef] transition-colors cursor-pointer bg-[#f4faf1] dark:bg-[#172019] px-2.5 py-1 rounded-lg border border-[#b7d2bb] dark:border-[#405747]/60"
                 >
-                  <ThumbsUp className="w-3.5 h-3.5 text-[#3f7d55]" /> 14.2k
+                  <ThumbsUp className="w-3.5 h-3.5 text-[#3f7d55] dark:text-[#86c79a]" /> 14.2k
                 </button>
                 <button
                   type="button"
-                  className="flex items-center gap-1.5 hover:text-[#183226] transition-colors cursor-pointer bg-[#f4faf1] px-2.5 py-1 rounded-lg border border-[#b7d2bb]/60"
+                  className="flex items-center gap-1.5 hover:text-[#183226] dark:hover:text-[#edf4ef] dark:text-[#edf4ef] transition-colors cursor-pointer bg-[#f4faf1] dark:bg-[#172019] px-2.5 py-1 rounded-lg border border-[#b7d2bb] dark:border-[#405747]/60"
                 >
-                  <ThumbsDown className="w-3.5 h-3.5 text-[#547060]" /> 205
+                  <ThumbsDown className="w-3.5 h-3.5 text-[#547060] dark:text-[#aabdaf]" /> 205
                 </button>
                 <button
                   type="button"
-                  className="flex items-center gap-1.5 hover:text-[#183226] transition-colors cursor-pointer bg-[#f4faf1] px-2.5 py-1 rounded-lg border border-[#b7d2bb]/60"
+                  className="flex items-center gap-1.5 hover:text-[#183226] dark:hover:text-[#edf4ef] dark:text-[#edf4ef] transition-colors cursor-pointer bg-[#f4faf1] dark:bg-[#172019] px-2.5 py-1 rounded-lg border border-[#b7d2bb] dark:border-[#405747]/60"
                 >
                   <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />{" "}
                   Favorite
@@ -276,7 +276,7 @@ export default function ContestProblemDescription({
             </div>
 
             {/* Markdown / Body Prompt Text */}
-            <div className="text-sm sm:text-base text-[#385a43] leading-relaxed max-w-3xl font-medium whitespace-pre-line">
+            <div className="text-sm sm:text-base text-[#385a43] dark:text-[#aabdaf] leading-relaxed max-w-3xl font-medium whitespace-pre-line">
               {problem?.description}
             </div>
 
@@ -285,29 +285,29 @@ export default function ContestProblemDescription({
               {/* Examples Box */}
               {problem?.examples && problem.examples.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-extrabold text-[#183226] mb-3 flex items-center gap-2">
+                  <h3 className="text-sm font-extrabold text-[#183226] dark:text-[#edf4ef] mb-3 flex items-center gap-2">
                     <span>Examples</span>
                   </h3>
                   <div className="space-y-3">
                     {problem.examples.map((ex, idx) => (
                       <div
                         key={idx}
-                        className="bg-[#f4faf1] border border-[#b7d2bb] p-4 rounded-xl space-y-3 shadow-xs"
+                        className="bg-[#f4faf1] dark:bg-[#172019] border border-[#b7d2bb] dark:border-[#405747] p-4 rounded-xl space-y-3 shadow-xs"
                       >
                         <div className="space-y-3">
                           {/* Input */}
                           <div>
-                            <div className="text-xs text-[#547060] font-bold mb-1">
+                            <div className="text-xs text-[#547060] dark:text-[#aabdaf] font-bold mb-1">
                               Input
                             </div>
-                            <pre className="text-xs font-mono text-[#183226] bg-[#e8f3e8] p-2.5 rounded-lg border border-[#b7d2bb] overflow-auto whitespace-pre-wrap">
+                            <pre className="text-xs font-mono text-[#183226] dark:text-[#edf4ef] bg-[#e8f3e8] dark:bg-[#111813] p-2.5 rounded-lg border border-[#b7d2bb] dark:border-[#405747] overflow-auto whitespace-pre-wrap">
                               {renderFormatted(ex.input)}
                             </pre>
                           </div>
 
                           {/* Output */}
                           <div>
-                            <div className="text-xs text-[#547060] font-bold mb-1">
+                            <div className="text-xs text-[#547060] dark:text-[#aabdaf] font-bold mb-1">
                               Output
                             </div>
                             <div className="text-sm font-bold text-emerald-800 font-mono bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/30 inline-flex">
@@ -318,10 +318,10 @@ export default function ContestProblemDescription({
                           {/* Explanation */}
                           {ex.explanation && (
                             <div>
-                              <div className="text-xs text-[#547060] font-bold mb-1">
+                              <div className="text-xs text-[#547060] dark:text-[#aabdaf] font-bold mb-1">
                                 Explanation
                               </div>
-                              <div className="text-xs text-[#385a43]">
+                              <div className="text-xs text-[#385a43] dark:text-[#aabdaf]">
                                 {ex.explanation}
                               </div>
                             </div>
@@ -336,14 +336,14 @@ export default function ContestProblemDescription({
               {/* Constraints */}
               {problem?.constraints && problem.constraints.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-extrabold text-[#183226] mb-2">
+                  <h3 className="text-sm font-extrabold text-[#183226] dark:text-[#edf4ef] mb-2">
                     Constraints
                   </h3>
                   <ul className="space-y-2">
                     {problem.constraints.map((c, i) => (
                       <li
                         key={i}
-                        className="text-xs text-[#183226] font-mono bg-[#f4faf1] px-3 py-2 rounded-lg border border-[#b7d2bb]"
+                        className="text-xs text-[#183226] dark:text-[#edf4ef] font-mono bg-[#f4faf1] dark:bg-[#172019] px-3 py-2 rounded-lg border border-[#b7d2bb] dark:border-[#405747]"
                       >
                         {c}
                       </li>
@@ -357,10 +357,10 @@ export default function ContestProblemDescription({
           /* Testcases Tab View */
           <div className="space-y-5">
             <div>
-              <h2 className="text-lg font-extrabold text-[#183226]">
+              <h2 className="text-lg font-extrabold text-[#183226] dark:text-[#edf4ef]">
                 Problem Test Cases
               </h2>
-              <p className="text-xs text-[#547060] mt-0.5">
+              <p className="text-xs text-[#547060] dark:text-[#aabdaf] mt-0.5">
                 Preview sample inputs, expected outputs, and actual execution
                 results.
               </p>
@@ -387,7 +387,7 @@ export default function ContestProblemDescription({
             )}
 
             {testCasesList.length === 0 ? (
-              <div className="p-8 text-center bg-[#f4faf1] border border-[#b7d2bb] rounded-xl text-xs text-[#547060]">
+              <div className="p-8 text-center bg-[#f4faf1] dark:bg-[#172019] border border-[#b7d2bb] dark:border-[#405747] rounded-xl text-xs text-[#547060] dark:text-[#aabdaf]">
                 No test cases available for this problem.
               </div>
             ) : (
@@ -402,7 +402,7 @@ export default function ContestProblemDescription({
                       className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all cursor-pointer flex items-center gap-1.5 ${
                         selectedCaseIdx === idx
                           ? "bg-[#3f7d55] text-white border-[#3f7d55] shadow-xs"
-                          : "bg-[#f4faf1] text-[#244333] border-[#b7d2bb] hover:bg-[#e4f2e4]"
+                          : "bg-[#f4faf1] dark:bg-[#172019] text-[#244333] dark:text-[#edf4ef] border-[#b7d2bb] dark:border-[#405747] hover:bg-[#e4f2e4] dark:bg-[#1a241d]"
                       }`}
                     >
                       Case {idx + 1}
@@ -410,7 +410,7 @@ export default function ContestProblemDescription({
                         <span
                           className={`text-[9px] px-1.5 py-0.2 rounded font-extrabold ${
                             selectedCaseIdx === idx
-                              ? "bg-white/20 text-white"
+                              ? "bg-white dark:bg-[#172019]/20 text-white"
                               : "bg-emerald-500/15 text-emerald-800"
                           }`}
                         >
@@ -429,10 +429,10 @@ export default function ContestProblemDescription({
                     );
 
                     return (
-                      <div className="bg-[#f4faf1] border border-[#b7d2bb] p-5 rounded-xl space-y-4 shadow-xs">
+                      <div className="bg-[#f4faf1] dark:bg-[#172019] border border-[#b7d2bb] dark:border-[#405747] p-5 rounded-xl space-y-4 shadow-xs">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <h4 className="text-xs font-extrabold text-[#183226] uppercase tracking-wider">
+                            <h4 className="text-xs font-extrabold text-[#183226] dark:text-[#edf4ef] uppercase tracking-wider">
                               Case {selectedCaseIdx + 1} Details
                             </h4>
                             {runResult && (
@@ -456,10 +456,10 @@ export default function ContestProblemDescription({
 
                         {/* Input */}
                         <div>
-                          <div className="text-xs font-bold text-[#547060] mb-1.5">
+                          <div className="text-xs font-bold text-[#547060] dark:text-[#aabdaf] mb-1.5">
                             Input
                           </div>
-                          <pre className="text-xs font-mono text-[#183226] bg-[#e8f3e8] p-3 rounded-lg border border-[#b7d2bb] overflow-auto whitespace-pre-wrap">
+                          <pre className="text-xs font-mono text-[#183226] dark:text-[#edf4ef] bg-[#e8f3e8] dark:bg-[#111813] p-3 rounded-lg border border-[#b7d2bb] dark:border-[#405747] overflow-auto whitespace-pre-wrap">
                             {renderFormatted(
                               testCasesList[selectedCaseIdx].input,
                             )}
@@ -468,7 +468,7 @@ export default function ContestProblemDescription({
 
                         {/* Expected Output */}
                         <div>
-                          <div className="text-xs font-bold text-[#547060] mb-1.5">
+                          <div className="text-xs font-bold text-[#547060] dark:text-[#aabdaf] mb-1.5">
                             Expected Output
                           </div>
                           <pre className="text-xs font-mono text-emerald-800 bg-emerald-500/10 p-3 rounded-lg border border-emerald-500/30 overflow-auto whitespace-pre-wrap">
@@ -482,7 +482,7 @@ export default function ContestProblemDescription({
                         {/* Actual Output (Shown after running code) */}
                         {runResult && (
                           <div>
-                            <div className="text-xs font-bold text-[#547060] mb-1.5">
+                            <div className="text-xs font-bold text-[#547060] dark:text-[#aabdaf] mb-1.5">
                               Actual Output
                             </div>
                             <pre
@@ -502,10 +502,10 @@ export default function ContestProblemDescription({
                         {/* Explanation if present */}
                         {testCasesList[selectedCaseIdx].explanation && (
                           <div>
-                            <div className="text-xs font-bold text-[#547060] mb-1">
+                            <div className="text-xs font-bold text-[#547060] dark:text-[#aabdaf] mb-1">
                               Explanation
                             </div>
-                            <div className="text-xs text-[#385a43] bg-[#e8f3e8]/60 p-2.5 rounded-lg border border-[#b7d2bb]/50">
+                            <div className="text-xs text-[#385a43] dark:text-[#aabdaf] bg-[#e8f3e8] dark:bg-[#111813]/60 p-2.5 rounded-lg border border-[#b7d2bb] dark:border-[#405747]/50">
                               {testCasesList[selectedCaseIdx].explanation}
                             </div>
                           </div>
@@ -520,17 +520,17 @@ export default function ContestProblemDescription({
           /* Submission Tab View */
           <div className="space-y-5">
             <div>
-              <h2 className="text-lg font-extrabold text-[#183226]">
+              <h2 className="text-lg font-extrabold text-[#183226] dark:text-[#edf4ef]">
                 Submission Results
               </h2>
-              <p className="text-xs text-[#547060] mt-0.5">
+              <p className="text-xs text-[#547060] dark:text-[#aabdaf] mt-0.5">
                 Review failed test cases, wrong outputs, and compilation or
                 execution errors.
               </p>
             </div>
 
             {!submitExecutionResult?.verdict ? (
-              <div className="p-8 text-center bg-[#f4faf1] border border-[#b7d2bb] rounded-xl text-xs text-[#547060]">
+              <div className="p-8 text-center bg-[#f4faf1] dark:bg-[#172019] border border-[#b7d2bb] dark:border-[#405747] rounded-xl text-xs text-[#547060] dark:text-[#aabdaf]">
                 No submission results available yet. Submit your code to view
                 results here.
               </div>
@@ -621,17 +621,17 @@ export default function ContestProblemDescription({
 
                         {/* Input */}
                         <div>
-                          <div className="text-xs font-bold text-[#547060] mb-1.5">
+                          <div className="text-xs font-bold text-[#547060] dark:text-[#aabdaf] mb-1.5">
                             Input
                           </div>
-                          <pre className="text-xs font-mono text-[#183226] bg-[#e8f3e8] p-3 rounded-lg border border-[#b7d2bb] overflow-auto whitespace-pre-wrap">
+                          <pre className="text-xs font-mono text-[#183226] dark:text-[#edf4ef] bg-[#e8f3e8] dark:bg-[#111813] p-3 rounded-lg border border-[#b7d2bb] dark:border-[#405747] overflow-auto whitespace-pre-wrap">
                             {renderFormatted(run.input)}
                           </pre>
                         </div>
 
                         {/* Expected Output */}
                         <div>
-                          <div className="text-xs font-bold text-[#547060] mb-1.5">
+                          <div className="text-xs font-bold text-[#547060] dark:text-[#aabdaf] mb-1.5">
                             Expected Output
                           </div>
                           <pre className="text-xs font-mono text-emerald-800 bg-emerald-500/10 p-3 rounded-lg border border-emerald-500/30 overflow-auto whitespace-pre-wrap">
@@ -641,7 +641,7 @@ export default function ContestProblemDescription({
 
                         {/* Actual Output */}
                         <div>
-                          <div className="text-xs font-bold text-[#547060] mb-1.5">
+                          <div className="text-xs font-bold text-[#547060] dark:text-[#aabdaf] mb-1.5">
                             Actual Output
                           </div>
                           <pre className="text-xs font-mono text-rose-800 bg-rose-500/10 p-3 rounded-lg border border-rose-500/30 overflow-auto whitespace-pre-wrap">

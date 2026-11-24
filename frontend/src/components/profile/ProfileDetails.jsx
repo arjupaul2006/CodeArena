@@ -1,4 +1,4 @@
-import {
+﻿import {
   CalendarDays,
   Link as LinkIcon,
   MapPin,
@@ -25,12 +25,12 @@ const formatDate = (value) => {
 
 function DetailItem({ icon: Icon, label, value, href }) {
   return (
-    <div className="flex items-start gap-3 rounded-xl border border-[#d5e7d7] bg-[#f4faf1] p-4">
-      <div className="rounded-lg bg-[#e8f3e8] p-2 text-[#3f7d55]">
+    <div className="flex items-start gap-3 rounded-xl border border-[#d5e7d7] dark:border-[#405747] bg-[#f4faf1] dark:bg-[#172019] p-4">
+      <div className="rounded-lg bg-[#e8f3e8] dark:bg-[#111813] p-2 text-[#3f7d55] dark:text-[#86c79a]">
         <Icon className="h-4 w-4" />
       </div>
       <div className="min-w-0">
-        <p className="text-xs font-bold uppercase tracking-wider text-[#668170]">
+        <p className="text-xs font-bold uppercase tracking-wider text-[#668170] dark:text-[#aabdaf]">
           {label}
         </p>
         {href ? (
@@ -38,12 +38,12 @@ function DetailItem({ icon: Icon, label, value, href }) {
             href={href}
             target="_blank"
             rel="noreferrer"
-            className="mt-1 block break-all text-sm font-semibold text-[#3f7d55] hover:underline"
+            className="mt-1 block break-all text-sm font-semibold text-[#3f7d55] dark:text-[#86c79a] hover:underline"
           >
             {value}
           </a>
         ) : (
-          <p className="mt-1 text-sm font-semibold text-[#244333]">{value}</p>
+          <p className="mt-1 text-sm font-semibold text-[#244333] dark:text-[#edf4ef]">{value}</p>
         )}
       </div>
     </div>
@@ -57,10 +57,10 @@ export default function ProfileDetails({ user, profile }) {
     : "Not provided";
 
   return (
-    <section className="rounded-2xl border border-[#b7d2bb] bg-[#f4faf1]/80 p-5 shadow-sm sm:p-6">
+    <section className="rounded-2xl border border-[#b7d2bb] dark:border-[#405747] bg-[#f4faf1] dark:bg-[#172019]/80 p-5 shadow-sm sm:p-6">
       <div>
-        <h2 className="text-lg font-bold text-[#183226]">Personal Details</h2>
-        <p className="mt-1 text-sm text-[#668170]">
+        <h2 className="text-lg font-bold text-[#183226] dark:text-[#edf4ef]">Personal Details</h2>
+        <p className="mt-1 text-sm text-[#668170] dark:text-[#aabdaf]">
           Profile information shared by this user.
         </p>
       </div>

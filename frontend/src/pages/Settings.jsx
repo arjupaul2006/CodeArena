@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
+﻿import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import {
   Check,
   CheckCircle2,
@@ -37,7 +37,9 @@ export default function Settings() {
     github: user?.github || "",
     gender: user?.gender || "",
     xLink: user?.xLink || "",
-    birthday: user?.birthday ? new Date(user.birthday).toISOString().slice(0, 10) : "",
+    birthday: user?.birthday
+      ? new Date(user.birthday).toISOString().slice(0, 10)
+      : "",
     location: user?.location || "",
     bio: user?.bio || "",
   });
@@ -50,30 +52,42 @@ export default function Settings() {
   );
 
   // for editor preferences
-  const [preferences, setPreferences] = useState(defaultPreferences);
   const { settings, setSettings } = useContext(SettingsDataContext);
-  const [editorData, setEditorData] = useState({
-    theme: defaultPreferences.editorTheme,
-    fontFamily: defaultPreferences.fontFamily,
-    fontSize: defaultPreferences.fontSize,
-    fontWeight: defaultPreferences.fontWeight,
-    lineHeight: defaultPreferences.lineHeight,
-    letterSpacing: defaultPreferences.letterSpacing,
-    tabSize: defaultPreferences.tabSize,
-    wordWrap: defaultPreferences.wordWrap,
-    minimap: defaultPreferences.minimap,
-    lineNumbers: defaultPreferences.lineNumbers,
-    folding: defaultPreferences.folding,
-    autoIndent: defaultPreferences.autoIndent,
-    autoClosingBrackets: defaultPreferences.autoClosingBrackets,
-    formatOnPaste: defaultPreferences.formatOnPaste,
-    formatOnType: defaultPreferences.formatOnType,
-    matchBrackets: defaultPreferences.matchBrackets,
-    cursorStyle: defaultPreferences.cursorStyle,
-    smoothScrolling: defaultPreferences.smoothScrolling,
-    fontLigatures: defaultPreferences.fontLigatures,
-    defaultLanguage: defaultPreferences.defaultLanguage,
-  });
+  const [preferences, setPreferences] = useState(settings || defaultPreferences);
+  const [editorData, setEditorData] = useState(
+    settings?.editor || {
+      theme: defaultPreferences.theme,
+      fontSize: defaultPreferences.fontSize,
+      fontWeight: defaultPreferences.fontWeight,
+      lineHeight: defaultPreferences.lineHeight,
+      letterSpacing: defaultPreferences.letterSpacing,
+      tabSize: defaultPreferences.tabSize,
+      wordWrap: defaultPreferences.wordWrap,
+      minimap: defaultPreferences.minimap,
+      lineNumbers: defaultPreferences.lineNumbers,
+      folding: defaultPreferences.folding,
+      autoIndent: defaultPreferences.autoIndent,
+      autoClosingBrackets: defaultPreferences.autoClosingBrackets,
+      formatOnPaste: defaultPreferences.formatOnPaste,
+      formatOnType: defaultPreferences.formatOnType,
+      matchBrackets: defaultPreferences.matchBrackets,
+      cursorStyle: defaultPreferences.cursorStyle,
+      smoothScrolling: defaultPreferences.smoothScrolling,
+      fontLigatures: defaultPreferences.fontLigatures,
+      defaultLanguage: defaultPreferences.defaultLanguage,
+    },
+  );
+
+  // appearance preferences
+  const [appearanceData, setAppearanceData] = useState(
+    settings?.appearance || {
+      theme: defaultPreferences.theme,
+      accentColor: defaultPreferences.accentColor,
+      sidebarCollapsed: defaultPreferences.sidebarCollapsed,
+      density: defaultPreferences.density,
+      animations: defaultPreferences.animations,
+    },
+  );
 
   const [toast, setToast] = useState(null);
   const toastTimeoutRef = useRef(null);
@@ -101,36 +115,43 @@ export default function Settings() {
   }, [user]);
 
   // get all settings
-  useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        const backendUrl =
-          import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
-        const response = await axios.get(
-          `${backendUrl}/api/settings/getAllSettings`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          },
-        );
-        console.log("Fetched settings:", response.data);
-        const fetchedPreferences = response.data || {};
-        setPreferences(fetchedPreferences);
-        setSettings(fetchedPreferences);
-        if (fetchedPreferences.editor) {
-          setEditorData((current) => ({
-            ...current,
-            ...fetchedPreferences.editor,
-          }));
-        }
-      } catch (error) {
-        console.error("Error fetching settings:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchSettings = async () => {
+  //     try {
+  //       const backendUrl =
+  //         import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+  //       const response = await axios.get(
+  //         `${backendUrl}/api/settings/getAllSettings`,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //           },
+  //         },
+  //       );
+  //       console.log("Fetched settings:", response.data);
+  //       const fetchedPreferences = response.data || {};
+  //       setPreferences(fetchedPreferences);
+  //       setSettings(fetchedPreferences);
+  //       if (fetchedPreferences.editor) {
+  //         setEditorData((current) => ({
+  //           ...current,
+  //           ...fetchedPreferences.editor,
+  //         }));
+  //       }
 
-    fetchSettings();
-  }, []);
+  //       if (fetchedPreferences.appearance) {
+  //         setAppearanceData((current) => ({
+  //           ...current,
+  //           ...fetchedPreferences.appearance,
+  //         }));
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching settings:", error);
+  //     }
+  //   };
+
+  //   fetchSettings();
+  // }, []);
 
   const updatePreference = (key, value) => {
     setPreferences((current) => ({ ...current, [key]: value }));
@@ -153,8 +174,16 @@ export default function Settings() {
     }
 
     try {
-      setPreferences((current) => ({ ...current, editor: editorData }));
-      setSettings((current) => ({ ...current, editor: editorData }));
+      setPreferences((current) => ({
+        ...current,
+        editor: editorData,
+        appearance: appearanceData,
+      }));
+      setSettings((current) => ({
+        ...current,
+        editor: editorData,
+        appearance: appearanceData,
+      }));
       setUser((current) => ({ ...current, ...profile }));
 
       const backendUrl =
@@ -172,20 +201,18 @@ export default function Settings() {
         location: profile.location,
         bio: profile.bio,
       };
-      await axios.post(
-        `${backendUrl}/api/update-profile`,
-        profileData,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+      await axios.post(`${backendUrl}/api/update-profile`, profileData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      );
+      });
+      
       const response = await axios.post(
         `${backendUrl}/api/settings/updateSettings`,
         {
           preferences: {
             ...preferences,
+            appearance: appearanceData,
             editor: editorData,
           },
         },
@@ -248,19 +275,44 @@ export default function Settings() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#e8f3e8] font-sans text-[#244333] antialiased">
+    <div className="flex min-h-screen bg-[#e8f3e8] dark:bg-[#111813] font-sans text-[#244333] dark:text-[#edf4ef] antialiased">
+      {toast && (
+        <div
+          role="status"
+          className={`fixed right-4 top-4 z-[70] flex max-w-sm items-center gap-3 rounded-xl border px-4 py-3 text-sm font-semibold shadow-xl ${
+            toast.type === "success"
+              ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+              : "border-red-200 bg-red-50 text-red-800"
+          }`}
+        >
+          <span
+            className={`h-2.5 w-2.5 shrink-0 rounded-full ${
+              toast.type === "success" ? "bg-emerald-500" : "bg-red-500"
+            }`}
+          />
+          <span>{toast.message}</span>
+          <button
+            type="button"
+            onClick={() => setToast(null)}
+            className="ml-2 text-current/60 hover:text-current"
+            aria-label="Dismiss notification"
+          >
+            Ã—
+          </button>
+        </div>
+      )}
       <Sidebar />
       <div className="min-w-0 flex-1 pb-20 md:pl-64 md:pb-0">
         <TopNav />
         <main className="mx-auto w-full max-w-[1400px] space-y-6 p-4 sm:p-6 lg:p-8">
           <div>
-            <p className="mb-1 text-xs font-bold uppercase tracking-[0.2em] text-[#3f7d55]">
+            <p className="mb-1 text-xs font-bold uppercase tracking-[0.2em] text-[#3f7d55] dark:text-[#86c79a]">
               CodeArena Settings
             </p>
-            <h1 className="text-2xl font-black tracking-tight text-[#183226] sm:text-3xl">
+            <h1 className="text-2xl font-black tracking-tight text-[#183226] dark:text-[#edf4ef] sm:text-3xl">
               Make CodeArena yours
             </h1>
-            <p className="mt-2 text-sm text-[#668170]">
+            <p className="mt-2 text-sm text-[#668170] dark:text-[#aabdaf]">
               Manage your account, editor, appearance, and notifications in one
               place.
             </p>
@@ -271,16 +323,16 @@ export default function Settings() {
               activeSection={activeSection}
               onSelect={setActiveSection}
             />
-            <section className="rounded-2xl border border-[#b7d2bb] bg-[#f4faf1] p-5 shadow-lg sm:p-7">
-              <div className="mb-5 flex items-start gap-3 border-b border-[#d5e7d7] pb-5">
-                <div className="rounded-xl bg-[#dcecdf] p-2 text-[#3f7d55]">
+            <section className="rounded-2xl border border-[#b7d2bb] dark:border-[#405747] bg-[#f4faf1] dark:bg-[#172019] p-5 shadow-lg sm:p-7">
+              <div className="mb-5 flex items-start gap-3 border-b border-[#d5e7d7] dark:border-[#405747] pb-5">
+                <div className="rounded-xl bg-[#dcecdf] dark:bg-[#24382b] p-2 text-[#3f7d55] dark:text-[#86c79a]">
                   <SettingsIcon className="h-5 w-5" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-[#183226]">
+                  <h2 className="text-lg font-bold text-[#183226] dark:text-[#edf4ef]">
                     {currentSection.label}
                   </h2>
-                  <p className="mt-1 text-sm text-[#668170]">
+                  <p className="mt-1 text-sm text-[#668170] dark:text-[#aabdaf]">
                     {currentSection.description}
                   </p>
                 </div>
@@ -290,6 +342,7 @@ export default function Settings() {
                   profile={profile}
                   setProfile={setProfile}
                   onProfileImageChange={handleProfileImageChange}
+                  showToast={showToast}
                 />
               )}
               {activeSection === "editor" && (
@@ -300,8 +353,8 @@ export default function Settings() {
               )}
               {activeSection === "appearance" && (
                 <AppearanceSettings
-                  preferences={preferences}
-                  updatePreference={updatePreference}
+                  appearanceData={appearanceData}
+                  setAppearanceData={setAppearanceData}
                 />
               )}
               {activeSection === "notifications" && (
@@ -311,9 +364,9 @@ export default function Settings() {
                   setNotificationGroup={setNotificationGroup}
                 />
               )}
-              <div className="mt-7 flex items-center justify-end gap-3 border-t border-[#d5e7d7] pt-5">
+              <div className="mt-7 flex items-center justify-end gap-3 border-t border-[#d5e7d7] dark:border-[#405747] pt-5">
                 {saved && (
-                  <span className="flex items-center gap-1 text-xs font-semibold text-[#3f7d55]">
+                  <span className="flex items-center gap-1 text-xs font-semibold text-[#3f7d55] dark:text-[#86c79a]">
                     <CheckCircle2 className="h-4 w-4" /> Saved
                   </span>
                 )}

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+﻿import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   CheckCircle2,
@@ -112,7 +112,7 @@ export default function ProblemTable({ tag }) {
         );
       default:
         return (
-          <span className="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full bg-[#dcecdf] text-[#244333] border border-[#b7d2bb]">
+          <span className="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full bg-[#dcecdf] dark:bg-[#24382b] text-[#244333] dark:text-[#edf4ef] border border-[#b7d2bb] dark:border-[#405747]">
             {difficulty || "Unknown"}
           </span>
         );
@@ -120,12 +120,12 @@ export default function ProblemTable({ tag }) {
   };
 
   return (
-    <div className="bg-[#f4faf1] backdrop-blur-md rounded-2xl border border-[#b7d2bb] overflow-hidden shadow-xl">
+    <div className="bg-[#f4faf1] dark:bg-[#172019] backdrop-blur-md rounded-2xl border border-[#b7d2bb] dark:border-[#405747] overflow-hidden shadow-xl">
       {/* Table Header Controls / Toolbar */}
-      <div className="p-4 sm:p-5 border-b border-[#b7d2bb] bg-[#eef7eb] flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div className="p-4 sm:p-5 border-b border-[#b7d2bb] dark:border-[#405747] bg-[#eef7eb] dark:bg-[#1a241d] flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         {/* Search Input */}
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#668170]" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#668170] dark:text-[#aabdaf]" />
           <input
             type="text"
             placeholder="Search by title, tag, or #..."
@@ -134,14 +134,14 @@ export default function ProblemTable({ tag }) {
               setSearchQuery(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full bg-[#ffffff] text-[#183226] placeholder-[#7da188] text-xs sm:text-sm pl-10 pr-4 py-2 rounded-xl border border-[#b7d2bb] focus:outline-none focus:border-[#3f7d55] focus:ring-1 focus:ring-[#3f7d55] transition-all"
+            className="w-full bg-[#ffffff] dark:bg-[#172019] text-[#183226] dark:text-[#edf4ef] placeholder-[#7da188] dark:placeholder-[#819887] text-xs sm:text-sm pl-10 pr-4 py-2 rounded-xl border border-[#b7d2bb] dark:border-[#405747] focus:outline-none focus:border-[#3f7d55] focus:ring-1 focus:ring-[#3f7d55] transition-all"
           />
         </div>
 
         {/* Filters and Actions */}
         <div className="flex flex-wrap items-center gap-2.5">
           {/* Difficulty Filter */}
-          <div className="flex items-center bg-[#ffffff] p-1 rounded-xl border border-[#b7d2bb] text-xs">
+          <div className="flex items-center bg-[#ffffff] dark:bg-[#172019] p-1 rounded-xl border border-[#b7d2bb] dark:border-[#405747] text-xs">
             {["All", "Easy", "Medium", "Hard"].map((diff) => (
               <button
                 key={diff}
@@ -152,7 +152,7 @@ export default function ProblemTable({ tag }) {
                 className={`px-3 py-1.5 rounded-lg font-medium transition-all duration-150 cursor-pointer ${
                   selectedDifficulty === diff
                     ? "bg-[#3f7d55] text-white font-bold shadow-md shadow-[#8eae94]/40"
-                    : "text-[#547060] hover:text-[#183226] hover:bg-[#e8f3e8]"
+                    : "text-[#547060] dark:text-[#aabdaf] hover:text-[#183226] dark:hover:text-[#edf4ef] dark:text-[#edf4ef] hover:bg-[#e8f3e8] dark:hover:bg-[#1a241d] dark:bg-[#111813]"
                 }`}
               >
                 {diff}
@@ -172,10 +172,10 @@ export default function ProblemTable({ tag }) {
       </div>
 
       {/* Info Bar */}
-      <div className="px-5 py-2.5 bg-[#e8f3e8] border-b border-[#b7d2bb] flex items-center justify-between text-xs text-[#547060]">
+      <div className="px-5 py-2.5 bg-[#e8f3e8] dark:bg-[#111813] border-b border-[#b7d2bb] dark:border-[#405747] flex items-center justify-between text-xs text-[#547060] dark:text-[#aabdaf]">
         <span className="font-medium">
           Showing{" "}
-          <span className="text-[#183226] font-semibold">
+          <span className="text-[#183226] dark:text-[#edf4ef] font-semibold">
             {filteredProblems.length}
           </span>{" "}
           problems
@@ -183,7 +183,7 @@ export default function ProblemTable({ tag }) {
         {searchQuery && (
           <button
             onClick={() => setSearchQuery("")}
-            className="text-[#2f6b45] hover:text-[#183226] text-xs font-semibold transition-colors cursor-pointer"
+            className="text-[#2f6b45] dark:text-[#86c79a] hover:text-[#183226] dark:hover:text-[#edf4ef] dark:text-[#edf4ef] text-xs font-semibold transition-colors cursor-pointer"
           >
             Clear Search
           </button>
@@ -194,7 +194,7 @@ export default function ProblemTable({ tag }) {
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-[#b7d2bb] text-[11px] uppercase tracking-wider text-[#547060] bg-[#e8f3e8]">
+            <tr className="border-b border-[#b7d2bb] dark:border-[#405747] text-[11px] uppercase tracking-wider text-[#547060] dark:text-[#aabdaf] bg-[#e8f3e8] dark:bg-[#111813]">
               <th className="py-3.5 px-4 w-12 text-center font-bold">Status</th>
               <th className="py-3.5 px-4 font-bold">Title</th>
               <th className="py-3.5 px-4 w-32 font-bold">Difficulty</th>
@@ -210,26 +210,26 @@ export default function ProblemTable({ tag }) {
               [...Array(5)].map((_, i) => (
                 <tr key={i} className="animate-pulse">
                   <td className="py-4 px-4 text-center">
-                    <div className="h-4 w-4 bg-[#c5dfc9] rounded-full mx-auto" />
+                    <div className="h-4 w-4 bg-[#c5dfc9] dark:bg-[#2b4636] rounded-full mx-auto" />
                   </td>
                   <td className="py-4 px-4">
-                    <div className="h-4 w-48 bg-[#c5dfc9] rounded" />
+                    <div className="h-4 w-48 bg-[#c5dfc9] dark:bg-[#2b4636] rounded" />
                   </td>
                   <td className="py-4 px-4">
-                    <div className="h-5 w-16 bg-[#c5dfc9] rounded-full" />
+                    <div className="h-5 w-16 bg-[#c5dfc9] dark:bg-[#2b4636] rounded-full" />
                   </td>
                   <td className="py-4 px-4 hidden lg:table-cell">
-                    <div className="h-4 w-32 bg-[#c5dfc9] rounded" />
+                    <div className="h-4 w-32 bg-[#c5dfc9] dark:bg-[#2b4636] rounded" />
                   </td>
                   <td className="py-4 px-4 text-center">
-                    <div className="h-4 w-6 bg-[#c5dfc9] rounded mx-auto" />
+                    <div className="h-4 w-6 bg-[#c5dfc9] dark:bg-[#2b4636] rounded mx-auto" />
                   </td>
                 </tr>
               ))
             ) : displayedProblems.length === 0 ? (
               // Empty State
               <tr>
-                <td colSpan="5" className="py-12 text-center text-[#547060]">
+                <td colSpan="5" className="py-12 text-center text-[#547060] dark:text-[#aabdaf]">
                   No problems found matching your criteria.
                 </td>
               </tr>
@@ -245,20 +245,20 @@ export default function ProblemTable({ tag }) {
                         `/write-code?id=${prob._id || prob.slug || probId}`,
                       )
                     }
-                    className="hover:bg-[#eef7eb] transition-all duration-150 group cursor-pointer border-l-2 border-l-transparent hover:border-l-[#3f7d55]"
+                    className="hover:bg-[#eef7eb] dark:bg-[#1a241d] transition-all duration-150 group cursor-pointer border-l-2 border-l-transparent hover:border-l-[#3f7d55]"
                   >
                     {/* Status Icon */}
                     <td className="py-3.5 px-4 text-center">
                       {solvedProblems.some((p) => p._id === prob._id) ? (
                         <CheckCircle2 className="h-4 w-4 text-emerald-600 inline" />
                       ) : (
-                        <Circle className="h-4 w-4 text-[#8eae94] inline group-hover:text-[#3f7d55] transition-colors" />
+                        <Circle className="h-4 w-4 text-[#8eae94] inline group-hover:text-[#3f7d55] dark:group-hover:text-[#86c79a] dark:hover:text-[#86c79a] dark:text-[#86c79a] transition-colors" />
                       )}
                     </td>
 
                     {/* Title */}
-                    <td className="py-3.5 px-4 font-medium text-[#183226] group-hover:text-[#2f6b45] transition-colors">
-                      <span className="text-[#668170] font-mono text-xs mr-2">
+                    <td className="py-3.5 px-4 font-medium text-[#183226] dark:text-[#edf4ef] group-hover:text-[#2f6b45] dark:text-[#86c79a] transition-colors">
+                      <span className="text-[#668170] dark:text-[#aabdaf] font-mono text-xs mr-2">
                         #{probId}
                       </span>
                       <span className="font-semibold">{prob.title}</span>
@@ -276,7 +276,7 @@ export default function ProblemTable({ tag }) {
                           prob.tags.map((tag, i) => (
                             <span
                               key={i}
-                              className="bg-[#e8f3e8] hover:bg-[#dcecdf] text-[#2f6b45] text-[11px] font-semibold px-2.5 py-0.5 rounded-full border border-[#b7d2bb] transition-colors"
+                              className="bg-[#e8f3e8] dark:bg-[#111813] hover:bg-[#dcecdf] dark:hover:bg-[#24382b] dark:bg-[#24382b] text-[#2f6b45] dark:text-[#86c79a] text-[11px] font-semibold px-2.5 py-0.5 rounded-full border border-[#b7d2bb] dark:border-[#405747] transition-colors"
                             >
                               {tag}
                             </span>
@@ -286,7 +286,7 @@ export default function ProblemTable({ tag }) {
 
                     {/* Action Arrow */}
                     <td className="py-3.5 px-4 text-center">
-                      <div className="flex justify-center items-center text-[#668170] group-hover:text-[#3f7d55] group-hover:translate-x-1 transition-all">
+                      <div className="flex justify-center items-center text-[#668170] dark:text-[#aabdaf] group-hover:text-[#3f7d55] dark:group-hover:text-[#86c79a] dark:hover:text-[#86c79a] dark:text-[#86c79a] group-hover:translate-x-1 transition-all">
                         <ArrowRight className="h-4 w-4" />
                       </div>
                     </td>
@@ -299,18 +299,18 @@ export default function ProblemTable({ tag }) {
       </div>
 
       {/* Pagination Footer */}
-      <div className="p-4 sm:px-6 border-t border-[#b7d2bb] bg-[#eef7eb] flex flex-col sm:flex-row gap-3 justify-between items-center text-xs text-[#547060]">
+      <div className="p-4 sm:px-6 border-t border-[#b7d2bb] dark:border-[#405747] bg-[#eef7eb] dark:bg-[#1a241d] flex flex-col sm:flex-row gap-3 justify-between items-center text-xs text-[#547060] dark:text-[#aabdaf]">
         <div>
           Page{" "}
-          <span className="text-[#183226] font-semibold">{currentPage}</span> of{" "}
-          <span className="text-[#183226] font-semibold">{totalPages}</span>
+          <span className="text-[#183226] dark:text-[#edf4ef] font-semibold">{currentPage}</span> of{" "}
+          <span className="text-[#183226] dark:text-[#edf4ef] font-semibold">{totalPages}</span>
         </div>
 
         <div className="flex items-center gap-1.5">
           <button
             onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
             disabled={currentPage === 1}
-            className="p-1.5 rounded-lg bg-[#ffffff] hover:bg-[#dcecdf] text-[#244333] disabled:opacity-40 disabled:hover:bg-[#ffffff] transition-colors cursor-pointer border border-[#b7d2bb]"
+            className="p-1.5 rounded-lg bg-[#ffffff] dark:bg-[#172019] hover:bg-[#dcecdf] dark:hover:bg-[#24382b] dark:bg-[#24382b] text-[#244333] dark:text-[#edf4ef] disabled:opacity-40 disabled:hover:bg-[#ffffff] dark:hover:bg-[#172019] dark:bg-[#172019] transition-colors cursor-pointer border border-[#b7d2bb] dark:border-[#405747]"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
@@ -326,7 +326,7 @@ export default function ProblemTable({ tag }) {
             ) {
               if (Math.abs(pageNum - currentPage) === 2) {
                 return (
-                  <span key={pageNum} className="px-1 text-[#668170]">
+                  <span key={pageNum} className="px-1 text-[#668170] dark:text-[#aabdaf]">
                     ...
                   </span>
                 );
@@ -341,7 +341,7 @@ export default function ProblemTable({ tag }) {
                 className={`w-7 h-7 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   currentPage === pageNum
                     ? "bg-[#3f7d55] text-white font-bold shadow-md shadow-[#8eae94]/40"
-                    : "text-[#547060] hover:bg-[#dcecdf] hover:text-[#183226]"
+                    : "text-[#547060] dark:text-[#aabdaf] hover:bg-[#dcecdf] dark:hover:bg-[#24382b] dark:bg-[#24382b] hover:text-[#183226] dark:hover:text-[#edf4ef] dark:text-[#edf4ef]"
                 }`}
               >
                 {pageNum}
@@ -354,7 +354,7 @@ export default function ProblemTable({ tag }) {
               setCurrentPage((prev) => Math.min(totalPages, prev + 1))
             }
             disabled={currentPage === totalPages}
-            className="p-1.5 rounded-lg bg-[#ffffff] hover:bg-[#dcecdf] text-[#244333] disabled:opacity-40 disabled:hover:bg-[#ffffff] transition-colors cursor-pointer border border-[#b7d2bb]"
+            className="p-1.5 rounded-lg bg-[#ffffff] dark:bg-[#172019] hover:bg-[#dcecdf] dark:hover:bg-[#24382b] dark:bg-[#24382b] text-[#244333] dark:text-[#edf4ef] disabled:opacity-40 disabled:hover:bg-[#ffffff] dark:hover:bg-[#172019] dark:bg-[#172019] transition-colors cursor-pointer border border-[#b7d2bb] dark:border-[#405747]"
           >
             <ChevronRight className="h-4 w-4" />
           </button>

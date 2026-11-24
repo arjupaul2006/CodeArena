@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import {
   Trophy,
   Crown,
@@ -34,16 +34,16 @@ export default function ContestPerformanceCard({ contestStats = [], user }) {
 
 
   return (
-    <section className="mt-6 overflow-hidden rounded-3xl border border-[#b7d2bb] bg-[#f4faf1] shadow-xl shadow-[#8eae94]/20 transition-all">
+    <section className="mt-6 overflow-hidden rounded-3xl border border-[#b7d2bb] dark:border-[#405747] bg-[#f4faf1] dark:bg-[#172019] shadow-xl shadow-[#8eae94]/20 transition-all">
       {/* Contest Banner Header */}
       <div className="relative overflow-hidden bg-gradient-to-r from-[#1e4530] via-[#2d6142] to-[#3f7d55] p-6 text-white sm:p-8">
-        <div className="absolute -right-10 -bottom-10 h-44 w-44 rounded-full bg-white/10 blur-2xl pointer-events-none" />
+        <div className="absolute -right-10 -bottom-10 h-44 w-44 rounded-full bg-white dark:bg-[#172019]/10 blur-2xl pointer-events-none" />
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
               <Trophy className="h-4 w-4 text-amber-300" />
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#c5dfc9]">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#c5dfc9] dark:text-[#b9d7bf]">
                 Competitive Arena Record
               </p>
             </div>
@@ -76,29 +76,29 @@ export default function ContestPerformanceCard({ contestStats = [], user }) {
               key={stat.label}
               className={`relative overflow-hidden rounded-2xl border p-4.5 transition-all duration-200 hover:-translate-y-1 hover:shadow-md ${
                 isHighPriority
-                  ? "border-[#76a980] bg-[#e8f3e8] shadow-xs"
-                  : "border-[#b7d2bb] bg-white/50 hover:bg-[#e8f3e8]/40"
+                  ? "border-[#76a980] bg-[#e8f3e8] dark:bg-[#111813] shadow-xs"
+                  : "border-[#b7d2bb] dark:border-[#405747] bg-white dark:bg-[#172019]/50 hover:bg-[#e8f3e8] dark:hover:bg-[#1a241d] dark:bg-[#111813]/40"
               }`}
             >
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#547060]">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#547060] dark:text-[#aabdaf]">
                   {stat.label}
                 </span>
                 <div
                   className={`flex h-7 w-7 items-center justify-center rounded-lg ${
                     isHighPriority
                       ? "bg-[#3f7d55] text-white"
-                      : "bg-[#dcecdf] text-[#3f7d55]"
+                      : "bg-[#dcecdf] dark:bg-[#24382b] text-[#3f7d55] dark:text-[#86c79a]"
                   }`}
                 >
                   <Icon className="h-3.5 w-3.5" />
                 </div>
               </div>
 
-              <p className="mt-3 text-2xl font-black tracking-tight text-[#183226]">
+              <p className="mt-3 text-2xl font-black tracking-tight text-[#183226] dark:text-[#edf4ef]">
                 {stat.value}
               </p>
-              <p className="mt-1 text-xs text-[#668170]">
+              <p className="mt-1 text-xs text-[#668170] dark:text-[#aabdaf]">
                 {stat.description}
               </p>
             </div>

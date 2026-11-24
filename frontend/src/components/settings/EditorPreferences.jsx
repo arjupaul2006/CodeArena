@@ -1,4 +1,4 @@
-import { SelectControl, SettingRow, Toggle } from "./SettingsControls";
+﻿import { SelectControl, SettingRow, Toggle } from "./SettingsControls";
 
 const editorToggles = [
   ["wordWrap", "Word Wrap", "Wrap long lines in the editor"],
@@ -208,7 +208,7 @@ export default function EditorPreferences({ editorData, setEditorData }) {
       </div>
 
 
-      <div className="mt-3 divide-y divide-[#d5e7d7]">
+      <div className="mt-3 divide-y divide-[#d5e7d7] dark:divide-[#405747]">
         {editorToggles.map(([key, label, description]) => (
           <SettingRow key={key} label={label} description={description}>
             <Toggle

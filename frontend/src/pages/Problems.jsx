@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+﻿import React, { useContext, useEffect } from "react";
 import Sidebar from "../components/problems/SideBar";
 import TopNav from "../components/problems/TopNav";
 import ProblemTable from "../components/problems/ProblemTable";
@@ -14,7 +14,7 @@ const Problems = () => {
   const tag = searchParams.get("tag") || null;
 
   return (
-    <div className="flex min-h-screen bg-[#e8f3e8] text-[#244333] font-sans antialiased">
+    <div className="flex min-h-screen bg-[#e8f3e8] dark:bg-[#111813] text-[#244333] dark:text-[#edf4ef] font-sans antialiased">
       {/* Sidebar - Hidden on mobile, visible on desktop */}
       <Sidebar />
 
@@ -26,10 +26,10 @@ const Problems = () => {
           {/* Left/Middle: Header & Table (Takes 3 cols on massive screens) */}
           <div className="xl:col-span-3 space-y-6 min-w-0">
             <div>
-              <h1 className="text-2xl lg:text-3xl font-bold text-[#183226] tracking-tight">
+              <h1 className="text-2xl lg:text-3xl font-bold text-[#183226] dark:text-[#edf4ef] tracking-tight">
                 Problem Set
               </h1>
-              <p className="text-[#547060] text-sm mt-1">
+              <p className="text-[#547060] dark:text-[#aabdaf] text-sm mt-1">
                 Sharpen your skills with our curated collection of challenges.
               </p>
             </div>

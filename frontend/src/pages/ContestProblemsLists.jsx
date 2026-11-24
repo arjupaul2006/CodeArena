@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+﻿import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, RefreshCw, Share2 } from "lucide-react";
 import { io } from "socket.io-client";
@@ -241,7 +241,7 @@ export default function ContestProblems({ contestIdProp, onBackProp }) {
       case "hard":
         return "bg-rose-500/15 text-rose-700 border-rose-500/30";
       default:
-        return "bg-gray-500/15 text-gray-700 border-gray-500/30";
+        return "bg-gray-50 dark:bg-[#172019]0/15 text-gray-700 dark:text-[#aabdaf] border-gray-500/30";
     }
   };
 
@@ -254,7 +254,7 @@ export default function ContestProblems({ contestIdProp, onBackProp }) {
   );
 
   return (
-    <div className="flex min-h-screen bg-[#e8f3e8] font-sans text-[#244333] antialiased">
+    <div className="flex min-h-screen bg-[#e8f3e8] dark:bg-[#111813] font-sans text-[#244333] dark:text-[#edf4ef] antialiased">
       <Sidebar />
 
       <div className="flex min-w-0 flex-1 flex-col pb-16 md:pl-64 md:pb-0">
@@ -265,16 +265,16 @@ export default function ContestProblems({ contestIdProp, onBackProp }) {
           <div className="flex flex-wrap items-center justify-between gap-4">
             <button
               onClick={() => (onBackProp ? onBackProp() : navigate("/contests"))}
-              className="inline-flex items-center gap-2 rounded-xl border border-[#b7d2bb] bg-[#f4faf1] px-4 py-2 text-xs font-bold text-[#244333] shadow-sm transition-all hover:bg-[#eef7eb] hover:border-[#8eae94]"
+              className="inline-flex items-center gap-2 rounded-xl border border-[#b7d2bb] dark:border-[#405747] bg-[#f4faf1] dark:bg-[#172019] px-4 py-2 text-xs font-bold text-[#244333] dark:text-[#edf4ef] shadow-sm transition-all hover:bg-[#eef7eb] dark:bg-[#1a241d] hover:border-[#8eae94]"
             >
-              <ArrowLeft className="h-4 w-4 text-[#3f7d55]" />
+              <ArrowLeft className="h-4 w-4 text-[#3f7d55] dark:text-[#86c79a]" />
               Back to Contests
             </button>
 
             <div className="flex items-center gap-2">
               <button
                 onClick={() => window.location.reload()}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-[#b7d2bb] bg-[#f4faf1] px-3 py-2 text-xs font-semibold text-[#547060] transition-colors hover:text-[#183226]"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-[#b7d2bb] dark:border-[#405747] bg-[#f4faf1] dark:bg-[#172019] px-3 py-2 text-xs font-semibold text-[#547060] dark:text-[#aabdaf] transition-colors hover:text-[#183226] dark:hover:text-[#edf4ef] dark:text-[#edf4ef]"
                 title="Refresh Contest Data"
               >
                 <RefreshCw className="h-3.5 w-3.5" />
@@ -286,7 +286,7 @@ export default function ContestProblems({ contestIdProp, onBackProp }) {
                   navigator.clipboard.writeText(window.location.href);
                   alert("Contest link copied to clipboard!");
                 }}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-[#b7d2bb] bg-[#f4faf1] px-3 py-2 text-xs font-semibold text-[#547060] transition-colors hover:text-[#183226]"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-[#b7d2bb] dark:border-[#405747] bg-[#f4faf1] dark:bg-[#172019] px-3 py-2 text-xs font-semibold text-[#547060] dark:text-[#aabdaf] transition-colors hover:text-[#183226] dark:hover:text-[#edf4ef] dark:text-[#edf4ef]"
               >
                 <Share2 className="h-3.5 w-3.5" />
                 Share
@@ -310,8 +310,8 @@ export default function ContestProblems({ contestIdProp, onBackProp }) {
           />
 
           {/* Tab Navigation Menu */}
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#b7d2bb] pb-2">
-            <div className="flex gap-2 rounded-2xl border border-[#b7d2bb] bg-[#f4faf1] p-1.5 shadow-sm text-xs font-bold">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#b7d2bb] dark:border-[#405747] pb-2">
+            <div className="flex gap-2 rounded-2xl border border-[#b7d2bb] dark:border-[#405747] bg-[#f4faf1] dark:bg-[#172019] p-1.5 shadow-sm text-xs font-bold">
               {[
                 { id: "problems", label: "Problems List", count: contest.problems?.length },
                 { id: "leaderboard", label: "Live Leaderboard" },
@@ -323,15 +323,15 @@ export default function ContestProblems({ contestIdProp, onBackProp }) {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-2 rounded-xl px-4 py-2.5 transition-all ${activeTab === tab.id
                       ? "bg-[#3f7d55] text-white shadow-md shadow-[#8eae94]/20"
-                      : "text-[#547060] hover:bg-[#eef7eb] hover:text-[#183226]"
+                      : "text-[#547060] dark:text-[#aabdaf] hover:bg-[#eef7eb] dark:bg-[#1a241d] hover:text-[#183226] dark:hover:text-[#edf4ef] dark:text-[#edf4ef]"
                     }`}
                 >
                   {tab.label}
                   {tab.count !== undefined && (
                     <span
                       className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold ${activeTab === tab.id
-                          ? "bg-white/20 text-white"
-                          : "bg-[#c5dfc9] text-[#244333]"
+                          ? "bg-white dark:bg-[#172019]/20 text-white"
+                          : "bg-[#c5dfc9] dark:bg-[#2b4636] text-[#244333] dark:text-[#edf4ef]"
                         }`}
                     >
                       {tab.count}

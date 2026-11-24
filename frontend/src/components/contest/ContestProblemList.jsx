@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { CheckCircle2, Code2, Filter, Info, Search, X } from "lucide-react";
 
 export default function ContestProblemList({
@@ -16,18 +16,18 @@ export default function ContestProblemList({
       {/* Search & Filter Controls */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#668170]" />
+          <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#668170] dark:text-[#aabdaf]" />
           <input
             type="text"
             placeholder="Search by title, tag, or letter..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-xl border border-[#b7d2bb] bg-[#f4faf1] pl-10 pr-4 py-2 text-xs font-medium text-[#183226] placeholder-[#668170] focus:border-[#3f7d55] focus:outline-none focus:ring-1 focus:ring-[#3f7d55]"
+            className="w-full rounded-xl border border-[#b7d2bb] dark:border-[#405747] bg-[#f4faf1] dark:bg-[#172019] pl-10 pr-4 py-2 text-xs font-medium text-[#183226] dark:text-[#edf4ef] placeholder-[#668170] focus:border-[#3f7d55] focus:outline-none focus:ring-1 focus:ring-[#3f7d55]"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#668170] hover:text-[#183226]"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#668170] dark:text-[#aabdaf] hover:text-[#183226] dark:hover:text-[#edf4ef] dark:text-[#edf4ef]"
             >
               <X className="h-3.5 w-3.5" />
             </button>
@@ -35,8 +35,8 @@ export default function ContestProblemList({
         </div>
 
         <div className="flex items-center gap-2 text-xs font-semibold">
-          <Filter className="h-4 w-4 text-[#547060]" />
-          <span className="text-[#668170]">Difficulty:</span>
+          <Filter className="h-4 w-4 text-[#547060] dark:text-[#aabdaf]" />
+          <span className="text-[#668170] dark:text-[#aabdaf]">Difficulty:</span>
           {["All", "Easy", "Medium", "Hard"].map((diff) => (
             <button
               key={diff}
@@ -44,7 +44,7 @@ export default function ContestProblemList({
               className={`rounded-lg px-3 py-1.5 transition-colors ${
                 difficultyFilter === diff
                   ? "bg-[#3f7d55] text-white"
-                  : "bg-[#f4faf1] text-[#547060] border border-[#b7d2bb] hover:border-[#8eae94]"
+                  : "bg-[#f4faf1] dark:bg-[#172019] text-[#547060] dark:text-[#aabdaf] border border-[#b7d2bb] dark:border-[#405747] hover:border-[#8eae94]"
               }`}
             >
               {diff}
@@ -59,7 +59,7 @@ export default function ContestProblemList({
           filteredProblems.map((problem) => (
             <div
               key={problem._id || problem.letter}
-              className="group flex flex-col justify-between gap-4 rounded-2xl border border-[#b7d2bb] bg-[#f4faf1] p-5 shadow-sm transition-all hover:border-[#8eae94] hover:shadow-md md:flex-row md:items-center"
+              className="group flex flex-col justify-between gap-4 rounded-2xl border border-[#b7d2bb] dark:border-[#405747] bg-[#f4faf1] dark:bg-[#172019] p-5 shadow-sm transition-all hover:border-[#8eae94] hover:shadow-md md:flex-row md:items-center"
             >
               <div className="flex items-start gap-4">
                 {/* Problem Letter Icon Badge */}
@@ -67,7 +67,7 @@ export default function ContestProblemList({
                   className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl font-black text-lg transition-transform group-hover:scale-105 ${
                     problem.status === "solved"
                       ? "bg-emerald-500/20 text-emerald-800 border border-emerald-500/40"
-                      : "bg-[#c5dfc9] text-[#3f7d55] border border-[#8eae94]/40"
+                      : "bg-[#c5dfc9] dark:bg-[#2b4636] text-[#3f7d55] dark:text-[#86c79a] border border-[#8eae94]/40"
                   }`}
                 >
                   {problem.status === "solved" ? (
@@ -79,7 +79,7 @@ export default function ContestProblemList({
 
                 <div className="space-y-1.5">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-bold text-xs text-[#3f7d55]">
+                    <span className="font-bold text-xs text-[#3f7d55] dark:text-[#86c79a]">
                       Problem {problem.letter}
                     </span>
                     <span
@@ -96,28 +96,28 @@ export default function ContestProblemList({
 
                   <h3
                     onClick={() => onSelectProblemModal(problem)}
-                    className="text-base font-bold text-[#183226] cursor-pointer hover:text-[#3f7d55] transition-colors"
+                    className="text-base font-bold text-[#183226] dark:text-[#edf4ef] cursor-pointer hover:text-[#3f7d55] dark:hover:text-[#86c79a] dark:text-[#86c79a] transition-colors"
                   >
                     {problem.title}
                   </h3>
 
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#668170]">
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#668170] dark:text-[#aabdaf]">
                     <span>
                       Your attempts:{" "}
-                      <strong className="text-[#244333]">
+                      <strong className="text-[#244333] dark:text-[#edf4ef]">
                         {problem.attempts || 0}
                       </strong>
                     </span>
-                    <span>•</span>
+                    <span>â€¢</span>
                     <span>
                       Last verdict:{" "}
-                      <strong className="text-[#244333]">
+                      <strong className="text-[#244333] dark:text-[#edf4ef]">
                         {problem.lastStatus || "Not attempted"}
                       </strong>
                     </span>
-                    <span>•</span>
+                    <span>â€¢</span>
                     <span>Time Limit: {problem.timeLimit || 2000}ms</span>
-                    <span>•</span>
+                    <span>â€¢</span>
                     <span>Memory: {problem.memoryLimit || 128}MB</span>
                   </div>
 
@@ -126,7 +126,7 @@ export default function ContestProblemList({
                     {problem.tags?.map((tag) => (
                       <span
                         key={tag}
-                        className="rounded-md bg-[#eef7eb] border border-[#b7d2bb] px-2 py-0.5 text-[10px] font-medium text-[#547060]"
+                        className="rounded-md bg-[#eef7eb] dark:bg-[#1a241d] border border-[#b7d2bb] dark:border-[#405747] px-2 py-0.5 text-[10px] font-medium text-[#547060] dark:text-[#aabdaf]"
                       >
                         {tag}
                       </span>
@@ -139,7 +139,7 @@ export default function ContestProblemList({
               <div className="flex items-center gap-2 self-end md:self-center">
                 <button
                   onClick={() => onSelectProblemModal(problem)}
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-[#b7d2bb] bg-[#eef7eb] px-3.5 py-2 text-xs font-bold text-[#3f7d55] transition-all hover:bg-[#c5dfc9] hover:text-[#183226]"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-[#b7d2bb] dark:border-[#405747] bg-[#eef7eb] dark:bg-[#1a241d] px-3.5 py-2 text-xs font-bold text-[#3f7d55] dark:text-[#86c79a] transition-all hover:bg-[#c5dfc9] dark:bg-[#2b4636] hover:text-[#183226] dark:hover:text-[#edf4ef] dark:text-[#edf4ef]"
                 >
                   <Info className="h-3.5 w-3.5" />
                   Quick View
@@ -156,7 +156,7 @@ export default function ContestProblemList({
             </div>
           ))
         ) : (
-          <div className="rounded-2xl border border-dashed border-[#b7d2bb] bg-[#f4faf1] p-12 text-center text-sm text-[#668170]">
+          <div className="rounded-2xl border border-dashed border-[#b7d2bb] dark:border-[#405747] bg-[#f4faf1] dark:bg-[#172019] p-12 text-center text-sm text-[#668170] dark:text-[#aabdaf]">
             No problems matching your current filter search.
           </div>
         )}

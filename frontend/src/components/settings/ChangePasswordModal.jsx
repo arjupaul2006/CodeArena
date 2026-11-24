@@ -1,15 +1,18 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Eye, EyeOff, X } from "lucide-react";
 import axios from "axios";
 
-export default function ChangePasswordModal({ isOpen, onClose }) {
+export default function ChangePasswordModal({
+  isOpen,
+  onClose,
+  onPasswordUpdated,
+}) {
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
   const [passwordError, setPasswordError] = useState("");
-  const [passwordSuccess, setPasswordSuccess] = useState("");
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
   const [visiblePasswordFields, setVisiblePasswordFields] = useState({});
 
@@ -22,7 +25,6 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
         confirmPassword: "",
       });
       setPasswordError("");
-      setPasswordSuccess("");
       setVisiblePasswordFields({});
     }
   }, [isOpen]);
@@ -37,7 +39,6 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
     const { name, value } = event.target;
     setPasswordForm((current) => ({ ...current, [name]: value }));
     setPasswordError("");
-    setPasswordSuccess("");
   };
 
   const handlePasswordUpdate = async (event) => {
@@ -58,7 +59,7 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
 
     setIsUpdatingPassword(true);
     setPasswordError("");
-    setPasswordSuccess("");
+    setPasswordError("");
 
     try {
       const backendUrl =
@@ -75,12 +76,13 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
           },
         },
       );
-      setPasswordSuccess("Password updated successfully.");
       setPasswordForm({
         currentPassword: "",
         newPassword: "",
         confirmPassword: "",
       });
+      onPasswordUpdated?.("Password updated successfully.");
+      onClose();
     } catch (error) {
       setPasswordError(
         error.response?.data?.message ||
@@ -97,14 +99,14 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="change-password-title"
-        className="w-full max-w-md rounded-2xl border border-[#b7d2bb] bg-[#f4faf1] p-6 shadow-2xl"
+        className="w-full max-w-md rounded-2xl border border-[#b7d2bb] dark:border-[#405747] bg-[#f4faf1] dark:bg-[#172019] p-6 shadow-2xl"
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 id="change-password-title" className="text-lg font-bold text-[#183226]">
+            <h2 id="change-password-title" className="text-lg font-bold text-[#183226] dark:text-[#edf4ef]">
               Change Password
             </h2>
-            <p className="mt-1 text-xs text-[#668170]">
+            <p className="mt-1 text-xs text-[#668170] dark:text-[#aabdaf]">
               Enter your current password and choose a new one.
             </p>
           </div>
@@ -113,7 +115,7 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
             onClick={closeModal}
             disabled={isUpdatingPassword}
             aria-label="Close change password"
-            className="rounded-full p-1.5 text-[#547060] hover:bg-[#dcecdf] disabled:opacity-50"
+            className="rounded-full p-1.5 text-[#547060] dark:text-[#aabdaf] hover:bg-[#dcecdf] dark:hover:bg-[#24382b] dark:bg-[#24382b] disabled:opacity-50"
           >
             <X className="h-4 w-4" />
           </button>
@@ -125,7 +127,7 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
             ["newPassword", "New Password"],
             ["confirmPassword", "Confirm New Password"],
           ].map(([name, label]) => (
-            <label key={name} className="block space-y-1.5 text-sm font-semibold text-[#385a43]">
+            <label key={name} className="block space-y-1.5 text-sm font-semibold text-[#385a43] dark:text-[#aabdaf]">
               {label}
               <div className="relative">
                 <input
@@ -135,7 +137,7 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
                   onChange={handlePasswordChange}
                   required
                   autoComplete={name === "currentPassword" ? "current-password" : "new-password"}
-                  className="w-full rounded-lg border border-[#b7d2bb] bg-[#f4faf1] px-3 py-2.5 pr-10 font-normal outline-none focus:border-[#3f7d55] focus:ring-1 focus:ring-[#3f7d55]"
+                  className="w-full rounded-lg border border-[#b7d2bb] dark:border-[#405747] bg-[#f4faf1] dark:bg-[#172019] px-3 py-2.5 pr-10 font-normal outline-none focus:border-[#3f7d55] focus:ring-1 focus:ring-[#3f7d55]"
                 />
                 <button
                   type="button"
@@ -146,7 +148,7 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
                     }))
                   }
                   aria-label={`${visiblePasswordFields[name] ? "Hide" : "Show"} ${label.toLowerCase()}`}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#668170] hover:text-[#183226]"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#668170] dark:text-[#aabdaf] hover:text-[#183226] dark:hover:text-[#edf4ef] dark:text-[#edf4ef]"
                 >
                   {visiblePasswordFields[name] ? (
                     <EyeOff className="h-4 w-4" />
@@ -163,18 +165,12 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
               {passwordError}
             </p>
           )}
-          {passwordSuccess && (
-            <p role="status" className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700">
-              {passwordSuccess}
-            </p>
-          )}
-
-          <div className="flex justify-end gap-3 border-t border-[#d5e7d7] pt-4">
+          <div className="flex justify-end gap-3 border-t border-[#d5e7d7] dark:border-[#405747] pt-4">
             <button
               type="button"
               onClick={closeModal}
               disabled={isUpdatingPassword}
-              className="rounded-lg border border-[#b7d2bb] px-4 py-2 text-sm font-semibold text-[#385a43] hover:bg-[#e8f3e8] disabled:opacity-50"
+              className="rounded-lg border border-[#b7d2bb] dark:border-[#405747] px-4 py-2 text-sm font-semibold text-[#385a43] dark:text-[#aabdaf] hover:bg-[#e8f3e8] dark:hover:bg-[#1a241d] dark:bg-[#111813] disabled:opacity-50"
             >
               Cancel
             </button>

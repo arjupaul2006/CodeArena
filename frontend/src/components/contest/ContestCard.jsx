@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowRight,
@@ -67,10 +67,10 @@ function ContestCard({
   }, [contest?.startTime, contest?.endTime, navigate]);
 
   return (
-    <article className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-[#b7d2bb] bg-[#f4faf1] shadow-lg shadow-[#8eae94]/10 transition-all hover:-translate-y-0.5 hover:border-[#8eae94] hover:shadow-xl">
+    <article className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-[#b7d2bb] dark:border-[#405747] bg-[#f4faf1] dark:bg-[#172019] shadow-lg shadow-[#8eae94]/10 transition-all hover:-translate-y-0.5 hover:border-[#8eae94] hover:shadow-xl">
       <div>
-        <div className="flex items-start justify-between border-b border-[#b7d2bb] bg-[#eef7eb] p-5">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#c5dfc9] text-[#3f7d55]">
+        <div className="flex items-start justify-between border-b border-[#b7d2bb] dark:border-[#405747] bg-[#eef7eb] dark:bg-[#1a241d] p-5">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#c5dfc9] dark:bg-[#2b4636] text-[#3f7d55] dark:text-[#86c79a]">
             <Trophy className="h-5 w-5" />
           </div>
           <span
@@ -84,31 +84,31 @@ function ContestCard({
         </div>
         <div className="space-y-3 p-5">
           <div>
-            <h3 className="text-lg font-bold tracking-tight text-[#183226]">
+            <h3 className="text-lg font-bold tracking-tight text-[#183226] dark:text-[#edf4ef]">
               {contest.title}
             </h3>
-            <p className="mt-1.5 min-h-10 text-sm leading-5 text-[#668170]">
+            <p className="mt-1.5 min-h-10 text-sm leading-5 text-[#668170] dark:text-[#aabdaf]">
               {contest.description}
             </p>
           </div>
-          <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs font-medium text-[#547060]">
+          <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs font-medium text-[#547060] dark:text-[#aabdaf]">
             <span className="inline-flex items-center gap-1.5">
-              <CalendarDays className="h-3.5 w-3.5 text-[#3f7d55]" />
+              <CalendarDays className="h-3.5 w-3.5 text-[#3f7d55] dark:text-[#86c79a]" />
               {formatDate(contest.startTime)}
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <Clock3 className="h-3.5 w-3.5 text-[#3f7d55]" />
+              <Clock3 className="h-3.5 w-3.5 text-[#3f7d55] dark:text-[#86c79a]" />
               {status === "live" ? "Ends in 1h 25m" : "90 minutes"}
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <Code2 className="h-3.5 w-3.5 text-[#3f7d55]" />
+              <Code2 className="h-3.5 w-3.5 text-[#3f7d55] dark:text-[#86c79a]" />
               {problemCount} problems
             </span>
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-between border-t border-[#b7d2bb] px-5 py-4">
-        <span className="inline-flex items-center gap-1.5 text-xs text-[#668170]">
+      <div className="flex items-center justify-between border-t border-[#b7d2bb] dark:border-[#405747] px-5 py-4">
+        <span className="inline-flex items-center gap-1.5 text-xs text-[#668170] dark:text-[#aabdaf]">
           <Users className="h-3.5 w-3.5" />
           {(contest.participants?.length || 0).toLocaleString()} registered
         </span>
@@ -116,7 +116,7 @@ function ContestCard({
         {status === "live" ? (
           <button
             onClick={() => handleEnterContest(contest._id)}
-            className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${joined ? "bg-[#dcecdf] text-[#2f6b45]" : "bg-[#3f7d55] text-white shadow-md shadow-[#8eae94]/30 hover:bg-[#326844]"}`}
+            className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${joined ? "bg-[#dcecdf] dark:bg-[#24382b] text-[#2f6b45] dark:text-[#86c79a]" : "bg-[#3f7d55] text-white shadow-md shadow-[#8eae94]/30 hover:bg-[#326844]"}`}
           >
             {joined ? (
               <>
@@ -137,7 +137,7 @@ function ContestCard({
                 ? handleEnterContest(contest._id)
                 : onJoin(contest._id)
             }
-            className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${joined ? "bg-[#dcecdf] text-[#2f6b45]" : "bg-[#3f7d55] text-white shadow-md shadow-[#8eae94]/30 hover:bg-[#326844]"}`}
+            className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${joined ? "bg-[#dcecdf] dark:bg-[#24382b] text-[#2f6b45] dark:text-[#86c79a]" : "bg-[#3f7d55] text-white shadow-md shadow-[#8eae94]/30 hover:bg-[#326844]"}`}
           >
             {status === "ended" ? (
               <>

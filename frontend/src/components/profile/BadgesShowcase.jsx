@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import {
   Award,
   Flame,
@@ -75,20 +75,20 @@ export default function BadgesShowcase() {
   ];
 
   return (
-    <section className="mt-6 rounded-3xl border border-[#b7d2bb] bg-[#f4faf1] p-5 sm:p-7 shadow-xl shadow-[#8eae94]/20 transition-all">
-      <div className="flex items-center justify-between border-b border-[#b7d2bb]/60 pb-4">
+    <section className="mt-6 rounded-3xl border border-[#b7d2bb] dark:border-[#405747] bg-[#f4faf1] dark:bg-[#172019] p-5 sm:p-7 shadow-xl shadow-[#8eae94]/20 transition-all">
+      <div className="flex items-center justify-between border-b border-[#b7d2bb] dark:border-[#405747]/60 pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <Award className="h-4 w-4 text-[#3f7d55]" />
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#3f7d55]">
+            <Award className="h-4 w-4 text-[#3f7d55] dark:text-[#86c79a]" />
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#3f7d55] dark:text-[#86c79a]">
               Honor Roll & Milestones
             </p>
           </div>
-          <h2 className="mt-1 text-2xl font-black tracking-tight text-[#183226]">
+          <h2 className="mt-1 text-2xl font-black tracking-tight text-[#183226] dark:text-[#edf4ef]">
             Earned Badges
           </h2>
         </div>
-        <span className="rounded-full bg-[#e8f3e8] border border-[#b7d2bb] px-3 py-1 text-xs font-bold text-[#3f7d55]">
+        <span className="rounded-full bg-[#e8f3e8] dark:bg-[#111813] border border-[#b7d2bb] dark:border-[#405747] px-3 py-1 text-xs font-bold text-[#3f7d55] dark:text-[#86c79a]">
           4 Unlocked
         </span>
       </div>
@@ -102,8 +102,8 @@ export default function BadgesShowcase() {
               key={badge.id}
               className={`relative overflow-hidden rounded-2xl border p-4 transition-all duration-200 hover:-translate-y-1 ${
                 badge.unlocked
-                  ? "border-[#a6cbaa] bg-[#e8f3e8]/70 hover:bg-[#e8f3e8]"
-                  : "border-dashed border-[#b7d2bb] bg-white/30 opacity-60"
+                  ? "border-[#a6cbaa] dark:border-[#405747] bg-[#e8f3e8] dark:bg-[#111813]/70 hover:bg-[#e8f3e8] dark:hover:bg-[#1a241d] dark:bg-[#111813]"
+                  : "border-dashed border-[#b7d2bb] dark:border-[#405747] bg-white dark:bg-[#172019]/30 opacity-60"
               }`}
             >
               <div className="flex items-start gap-3.5">
@@ -111,7 +111,7 @@ export default function BadgesShowcase() {
                   className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl shadow-md ${
                     badge.unlocked
                       ? `bg-gradient-to-br ${badge.color} text-white`
-                      : "bg-[#dcecdf] text-[#668170]"
+                      : "bg-[#dcecdf] dark:bg-[#24382b] text-[#668170] dark:text-[#aabdaf]"
                   }`}
                 >
                   <Icon className="h-5 w-5" />
@@ -119,7 +119,7 @@ export default function BadgesShowcase() {
 
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-1">
-                    <h3 className="truncate text-xs sm:text-sm font-extrabold text-[#183226]">
+                    <h3 className="truncate text-xs sm:text-sm font-extrabold text-[#183226] dark:text-[#edf4ef]">
                       {badge.title}
                     </h3>
                     <span
@@ -128,7 +128,7 @@ export default function BadgesShowcase() {
                       {badge.tier}
                     </span>
                   </div>
-                  <p className="mt-1 text-[11px] leading-tight text-[#547060]">
+                  <p className="mt-1 text-[11px] leading-tight text-[#547060] dark:text-[#aabdaf]">
                     {badge.description}
                   </p>
                 </div>

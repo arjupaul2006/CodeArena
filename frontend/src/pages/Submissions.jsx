@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+﻿import React, { useContext } from "react";
 import Sidebar from "../components/problems/SideBar";
 import TopNav from "../components/problems/TopNav";
 import ProfileCard from "../components/submissions/ProfileCard";
@@ -13,7 +13,7 @@ export default function Submissions() {
   console.log("User in Submissions Page:", user);
 
   return (
-    <div className="flex min-h-screen bg-[#e8f3e8] text-[#244333] font-sans antialiased">
+    <div className="flex min-h-screen bg-[#e8f3e8] dark:bg-[#111813] text-[#244333] dark:text-[#edf4ef] font-sans antialiased">
       {/* Sidebar - Persistent layout component */}
       <Sidebar />
 

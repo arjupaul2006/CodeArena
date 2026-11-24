@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 
 export default function StatsOverviewCard({ user }) {
   const [problems, setProblems] = useState([]);
@@ -96,7 +96,7 @@ export default function StatsOverviewCard({ user }) {
   ];
 
   return (
-    <div className="bg-[#f4faf1] rounded-2xl border border-[#b7d2bb] p-6 flex flex-col md:flex-row items-center justify-around gap-8 h-full shadow-lg">
+    <div className="bg-[#f4faf1] dark:bg-[#172019] rounded-2xl border border-[#b7d2bb] dark:border-[#405747] p-6 flex flex-col md:flex-row items-center justify-around gap-8 h-full shadow-lg">
       {/* Circular Chart Gauge Visual */}
       <div className="flex flex-col items-center justify-center text-center space-y-2 shrink-0">
         <div className="relative w-36 h-36 flex items-center justify-center">
@@ -127,13 +127,13 @@ export default function StatsOverviewCard({ user }) {
             />
           </svg>
           <div className="flex flex-col items-center justify-center">
-            <span className="text-3xl font-black text-[#183226] font-mono tracking-tight">
+            <span className="text-3xl font-black text-[#183226] dark:text-[#edf4ef] font-mono tracking-tight">
               {solvedCount} /
-              <span className="text-[#668170] font-normal text-sm ml-1">
+              <span className="text-[#668170] dark:text-[#aabdaf] font-normal text-sm ml-1">
                 {totalProblemsCount}
               </span>
             </span>
-            <span className="text-xs font-semibold text-[#547060]">
+            <span className="text-xs font-semibold text-[#547060] dark:text-[#aabdaf]">
               Problems Solved
             </span>
           </div>
@@ -148,9 +148,9 @@ export default function StatsOverviewCard({ user }) {
               <span className={`uppercase tracking-wider ${item.labelColor}`}>
                 {item.label}
               </span>
-              <span className="text-[#183226] font-mono">{item.count}</span>
+              <span className="text-[#183226] dark:text-[#edf4ef] font-mono">{item.count}</span>
             </div>
-            <div className="w-full bg-[#e8f3e8] h-2 rounded-full overflow-hidden border border-[#b7d2bb]">
+            <div className="w-full bg-[#e8f3e8] dark:bg-[#111813] h-2 rounded-full overflow-hidden border border-[#b7d2bb] dark:border-[#405747]">
               <div
                 className={`h-full ${item.barColor} rounded-full transition-all duration-500`}
                 style={{ width: item.pct }}

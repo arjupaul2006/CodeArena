@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import {
   Clock,
   Cpu,
@@ -73,22 +73,22 @@ export default function SubmissionHistoryCard({ submissions = [] }) {
   console.log("Submissions:", submissions);
 
   return (
-    <section className="mt-6 overflow-hidden rounded-3xl border border-[#b7d2bb] bg-[#f4faf1] shadow-xl shadow-[#8eae94]/20 transition-all">
+    <section className="mt-6 overflow-hidden rounded-3xl border border-[#b7d2bb] dark:border-[#405747] bg-[#f4faf1] dark:bg-[#172019] shadow-xl shadow-[#8eae94]/20 transition-all">
       {/* Header and Filter Tabs */}
-      <div className="border-b border-[#b7d2bb] p-5 sm:p-7">
+      <div className="border-b border-[#b7d2bb] dark:border-[#405747] p-5 sm:p-7">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <div>
             <div className="flex items-center gap-2">
-              <History className="h-4 w-4 text-[#3f7d55]" />
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#3f7d55]">
+              <History className="h-4 w-4 text-[#3f7d55] dark:text-[#86c79a]" />
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#3f7d55] dark:text-[#86c79a]">
                 Submission Audit Stream
               </p>
             </div>
-            <h2 className="mt-1 text-2xl sm:text-3xl font-black tracking-tight text-[#183226]">
+            <h2 className="mt-1 text-2xl sm:text-3xl font-black tracking-tight text-[#183226] dark:text-[#edf4ef]">
               Recent Submissions
             </h2>
           </div>
-          <span className="text-xs font-semibold text-[#547060]">
+          <span className="text-xs font-semibold text-[#547060] dark:text-[#aabdaf]">
             Showing {filteredSubmissions.length} of {submissions.length} attempts
           </span>
         </div>
@@ -111,15 +111,15 @@ export default function SubmissionHistoryCard({ submissions = [] }) {
                 className={`inline-flex shrink-0 items-center gap-2 rounded-xl px-3.5 py-1.5 text-xs font-bold transition-all cursor-pointer ${
                   isActive
                     ? "bg-[#3f7d55] text-white shadow-sm shadow-[#3f7d55]/40"
-                    : "bg-[#e8f3e8] text-[#547060] border border-[#b7d2bb] hover:bg-[#dcecdf] hover:text-[#183226]"
+                    : "bg-[#e8f3e8] dark:bg-[#111813] text-[#547060] dark:text-[#aabdaf] border border-[#b7d2bb] dark:border-[#405747] hover:bg-[#dcecdf] dark:hover:bg-[#24382b] dark:bg-[#24382b] hover:text-[#183226] dark:hover:text-[#edf4ef] dark:text-[#edf4ef]"
                 }`}
               >
                 <span>{filter}</span>
                 <span
                   className={`rounded-full px-1.5 py-0.2 text-[10px] font-semibold ${
                     isActive
-                      ? "bg-white/20 text-white"
-                      : "bg-[#c5dfc9] text-[#244333]"
+                      ? "bg-white dark:bg-[#172019]/20 text-white"
+                      : "bg-[#c5dfc9] dark:bg-[#2b4636] text-[#244333] dark:text-[#edf4ef]"
                   }`}
                 >
                   {count}
@@ -131,7 +131,7 @@ export default function SubmissionHistoryCard({ submissions = [] }) {
       </div>
 
       {/* Submission Rows */}
-      <div className="divide-y divide-[#d5e7d7]">
+      <div className="divide-y divide-[#d5e7d7] dark:divide-[#405747]">
         {filteredSubmissions.length > 0 ? (
           filteredSubmissions.map((submission, index) => {
             const badge = getStatusBadge(submission.status);
@@ -140,7 +140,7 @@ export default function SubmissionHistoryCard({ submissions = [] }) {
             return (
               <div
                 key={`${submission.problemId?.title}-${submission.submissionDate}-${index}`}
-                className="group p-4 sm:p-6 transition-all hover:bg-[#e8f3e8]/70"
+                className="group p-4 sm:p-6 transition-all hover:bg-[#e8f3e8] dark:hover:bg-[#1a241d] dark:bg-[#111813]/70"
                 onClick={() => {
                   // Navigate to the submission details page
                   navigate(`/write-code?submission_id=${submission._id}`);
@@ -150,15 +150,15 @@ export default function SubmissionHistoryCard({ submissions = [] }) {
                   {/* Left Column: Problem Name & Meta */}
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2.5">
-                      <h3 className="truncate font-extrabold text-[#183226] text-base group-hover:text-[#3f7d55] transition-colors">
+                      <h3 className="truncate font-extrabold text-[#183226] dark:text-[#edf4ef] text-base group-hover:text-[#3f7d55] dark:group-hover:text-[#86c79a] dark:hover:text-[#86c79a] dark:text-[#86c79a] transition-colors">
                         {submission.problemId?.title}
                       </h3>
-                      <span className="rounded-md border border-[#b7d2bb] bg-[#e8f3e8] px-2 py-0.5 text-[11px] font-mono font-bold text-[#385a43]">
+                      <span className="rounded-md border border-[#b7d2bb] dark:border-[#405747] bg-[#e8f3e8] dark:bg-[#111813] px-2 py-0.5 text-[11px] font-mono font-bold text-[#385a43] dark:text-[#aabdaf]">
                         {submission.language}
                       </span>
                     </div>
 
-                    <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-[#668170]">
+                    <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-[#668170] dark:text-[#aabdaf]">
                       <span className="flex items-center gap-1">
                         <Clock className="h-3 w-3 text-[#76a980]" />
                         {submission.submissionDate}
@@ -168,23 +168,23 @@ export default function SubmissionHistoryCard({ submissions = [] }) {
 
                   {/* Right Column: Execution Metrics & Status Chip */}
                   <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 text-xs">
-                    {submission.runtime && submission.runtime !== "—" && (
-                      <div className="flex items-center gap-1.5 rounded-xl border border-[#b7d2bb] bg-[#e8f3e8] px-2.5 py-1.5 font-mono text-[#385a43]">
-                        <Cpu className="h-3.5 w-3.5 text-[#547060]" />
+                    {submission.runtime && submission.runtime !== "â€”" && (
+                      <div className="flex items-center gap-1.5 rounded-xl border border-[#b7d2bb] dark:border-[#405747] bg-[#e8f3e8] dark:bg-[#111813] px-2.5 py-1.5 font-mono text-[#385a43] dark:text-[#aabdaf]">
+                        <Cpu className="h-3.5 w-3.5 text-[#547060] dark:text-[#aabdaf]" />
                         <span>{submission.runtime}</span>
                       </div>
                     )}
 
-                    {submission.memory && submission.memory !== "—" && (
-                      <div className="flex items-center gap-1.5 rounded-xl border border-[#b7d2bb] bg-[#e8f3e8] px-2.5 py-1.5 font-mono text-[#385a43]">
-                        <HardDrive className="h-3.5 w-3.5 text-[#547060]" />
+                    {submission.memory && submission.memory !== "â€”" && (
+                      <div className="flex items-center gap-1.5 rounded-xl border border-[#b7d2bb] dark:border-[#405747] bg-[#e8f3e8] dark:bg-[#111813] px-2.5 py-1.5 font-mono text-[#385a43] dark:text-[#aabdaf]">
+                        <HardDrive className="h-3.5 w-3.5 text-[#547060] dark:text-[#aabdaf]" />
                         <span>{submission.memory}</span>
                       </div>
                     )}
 
                     {!submission.tests && (
-                      <div className="flex items-center gap-1.5 rounded-xl border border-[#b7d2bb] bg-[#e8f3e8] px-2.5 py-1.5 font-mono font-semibold text-[#183226]">
-                        <span className="text-[#668170]">Tests:</span>
+                      <div className="flex items-center gap-1.5 rounded-xl border border-[#b7d2bb] dark:border-[#405747] bg-[#e8f3e8] dark:bg-[#111813] px-2.5 py-1.5 font-mono font-semibold text-[#183226] dark:text-[#edf4ef]">
+                        <span className="text-[#668170] dark:text-[#aabdaf]">Tests:</span>
                         <span>fully passed</span>
                       </div>
                     )}
@@ -203,11 +203,11 @@ export default function SubmissionHistoryCard({ submissions = [] }) {
           })
         ) : (
           <div className="py-12 text-center">
-            <Filter className="mx-auto h-8 w-8 text-[#a6cbaa]" />
-            <p className="mt-2 text-sm font-semibold text-[#183226]">
+            <Filter className="mx-auto h-8 w-8 text-[#a6cbaa] dark:text-[#b9d7bf]" />
+            <p className="mt-2 text-sm font-semibold text-[#183226] dark:text-[#edf4ef]">
               No submissions found for "{activeFilter}"
             </p>
-            <p className="mt-0.5 text-xs text-[#668170]">
+            <p className="mt-0.5 text-xs text-[#668170] dark:text-[#aabdaf]">
               Try selecting a different filter above.
             </p>
           </div>

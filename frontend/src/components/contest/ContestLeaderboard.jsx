@@ -1,14 +1,14 @@
-import React from "react";
+﻿import React from "react";
 
 export default function ContestLeaderboard({ leaderboard }) {
   return (
-    <div className="rounded-2xl border border-[#b7d2bb] bg-[#f4faf1] p-5 shadow-sm">
+    <div className="rounded-2xl border border-[#b7d2bb] dark:border-[#405747] bg-[#f4faf1] dark:bg-[#172019] p-5 shadow-sm">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h3 className="font-bold text-[#183226] text-lg">Contest Standings</h3>
-          <p className="text-xs text-[#668170]">Updated live every 30 seconds</p>
+          <h3 className="font-bold text-[#183226] dark:text-[#edf4ef] text-lg">Contest Standings</h3>
+          <p className="text-xs text-[#668170] dark:text-[#aabdaf]">Updated live every 30 seconds</p>
         </div>
-        <div className="flex items-center gap-2 text-xs text-[#547060]">
+        <div className="flex items-center gap-2 text-xs text-[#547060] dark:text-[#aabdaf]">
           <span className="flex items-center gap-1">
             <span className="h-2 w-2 rounded-full bg-emerald-500" /> Solved
           </span>
@@ -19,8 +19,8 @@ export default function ContestLeaderboard({ leaderboard }) {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs text-[#244333]">
-          <thead className="border-b border-[#b7d2bb] bg-[#eef7eb] text-[11px] font-bold uppercase tracking-wider text-[#547060]">
+        <table className="w-full text-left text-xs text-[#244333] dark:text-[#edf4ef]">
+          <thead className="border-b border-[#b7d2bb] dark:border-[#405747] bg-[#eef7eb] dark:bg-[#1a241d] text-[11px] font-bold uppercase tracking-wider text-[#547060] dark:text-[#aabdaf]">
             <tr>
               <th className="px-4 py-3">Rank</th>
               <th className="px-4 py-3">Participant</th>
@@ -38,8 +38,8 @@ export default function ContestLeaderboard({ leaderboard }) {
                 key={item.rank}
                 className={`transition-colors ${
                   item.isUser
-                    ? "bg-[#eef7eb] font-bold text-[#183226]"
-                    : "hover:bg-[#eef7eb]/60"
+                    ? "bg-[#eef7eb] dark:bg-[#1a241d] font-bold text-[#183226] dark:text-[#edf4ef]"
+                    : "hover:bg-[#eef7eb] dark:bg-[#1a241d]/60"
                 }`}
               >
                 <td className="px-4 py-3.5 font-bold">
@@ -62,7 +62,7 @@ export default function ContestLeaderboard({ leaderboard }) {
 
                 <td className="px-4 py-3.5">
                   <div className="flex items-center gap-2.5">
-                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#c5dfc9] text-xs font-bold text-[#3f7d55]">
+                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#c5dfc9] dark:bg-[#2b4636] text-xs font-bold text-[#3f7d55] dark:text-[#86c79a]">
                       {item.avatar}
                     </div>
                     <span>{item.name}</span>
@@ -74,11 +74,11 @@ export default function ContestLeaderboard({ leaderboard }) {
                   </div>
                 </td>
 
-                <td className="px-4 py-3.5 font-black text-[#183226]">
-                  {item.score} <span className="text-[10px] font-normal text-[#668170]">pts</span>
+                <td className="px-4 py-3.5 font-black text-[#183226] dark:text-[#edf4ef]">
+                  {item.score} <span className="text-[10px] font-normal text-[#668170] dark:text-[#aabdaf]">pts</span>
                 </td>
 
-                <td className="px-4 py-3.5 font-mono text-xs text-[#547060]">
+                <td className="px-4 py-3.5 font-mono text-xs text-[#547060] dark:text-[#aabdaf]">
                   {item.penalty}
                 </td>
 
@@ -86,10 +86,10 @@ export default function ContestLeaderboard({ leaderboard }) {
                   <td key={letter} className="px-4 py-3.5 text-center">
                     {item.problemsSolved?.[letter] ? (
                       <span className="inline-flex h-6 w-6 items-center justify-center rounded-lg bg-emerald-500/20 text-emerald-800 font-bold text-xs">
-                        ✓
+                        âœ“
                       </span>
                     ) : (
-                      <span className="inline-flex h-6 w-6 items-center justify-center rounded-lg bg-gray-200/60 text-gray-400 text-xs">
+                      <span className="inline-flex h-6 w-6 items-center justify-center rounded-lg bg-gray-200 dark:bg-[#24382b]/60 text-gray-400 text-xs">
                         -
                       </span>
                     )}

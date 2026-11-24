@@ -1,4 +1,5 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const { validationResult } = require("express-validator");
 const User = require("../model/user");
 const { createUser } = require("../services/userServices");
@@ -6,6 +7,8 @@ const jwt = require("jsonwebtoken");
 const userModel = require("../model/user");
 const cloudinary = require("../config/cloudinary");
 const { Readable } = require("stream");
+const Contest = require("../model/contest");
+const Submission = require("../model/submission");
 
 module.exports.createNewUser = async (req, res, next) => {
   // error handling for express-validator is done in middleware
@@ -138,10 +141,14 @@ module.exports.changePassword = async (req, res) => {
     const userId = req.user?._id;
 
     if (!currentPassword || !newPassword) {
-      return res.status(400).json({ message: "Both password fields are required" });
+      return res
+        .status(400)
+        .json({ message: "Both password fields are required" });
     }
     if (newPassword.length < 6) {
-      return res.status(400).json({ message: "New password must be at least 6 characters" });
+      return res
+        .status(400)
+        .json({ message: "New password must be at least 6 characters" });
     }
 
     const user = await userModel.findById(userId);
@@ -278,4 +285,61 @@ module.exports.updateProfileImage = async (req, res) => {
 
 module.exports.userLogout = async (req, res, next) => {
   res.status(200).json({ message: "User logged out successfully" });
+};
+
+module.exports.deleteAccount = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { password } = req.body;
+
+    if (!password) {
+      return res
+        .status(400)
+        .json({ message: "Password is required to delete account" });
+    }
+
+    const isCurrentPasswordValid = await req.user.comparePassword(password);
+    if (!isCurrentPasswordValid) {
+      return res.status(400).json({ message: "Current password is incorrect" });
+    }
+
+    const session = await mongoose.startSession();
+
+    try {
+      await session.withTransaction(async () => {
+        // Delete user from database
+        await userModel.findByIdAndDelete(userId).session(session);
+
+        // Remove user from contests
+        await Contest.updateMany(
+          { participants: userId },
+          { $pull: { participants: userId } },
+          { session },
+        );
+
+        // Set userId to null in submissions
+        await Submission.updateMany(
+          { userId: userId },
+          { $set: { userId: null } },
+          { session },
+        );
+
+        // Delete profile image from cloudinary
+        if (req.user.profileImage) {
+          const publicId = req.user.profileImage.split("/").pop().split(".")[0];
+          await cloudinary.uploader.destroy(`profile_images/${publicId}`);
+        }
+      });
+    } catch (error) {
+      console.error("Error during transaction:", error);
+      return res.status(500).json({ message: "Unable to delete account" });
+    } finally {
+      await session.endSession();
+    }
+
+    return res.status(200).json({ message: "Account deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting account:", error);
+    return res.status(500).json({ message: "Unable to delete account" });
+  }
 };

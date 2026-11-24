@@ -1,11 +1,175 @@
 @import "tailwindcss";
 
+/* Enable class-based dark mode */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Default accent color */
+:root {
+  --accent-color: #16a34a;
+  --accent-hover: #15803d;
+  --accent-light: #dcfce7;
+  --accent-app: #f0fdf4;
+  --accent-panel: #f7fff9;
+  --accent-soft: #dcfce7;
+  --accent-border: #86efac;
+  --accent-dark-app: #0b150e;
+  --accent-dark-panel: #111a14;
+  --accent-dark-soft: #17251b;
+  --accent-dark-border: #274832;
+}
+
+/* Purple accent */
+[data-accent="purple"] {
+  --accent-color: #9333ea;
+  --accent-hover: #7e22ce;
+  --accent-light: #f3e8ff;
+  --accent-app: #faf5ff;
+  --accent-panel: #fdfaff;
+  --accent-soft: #f3e8ff;
+  --accent-border: #d8b4fe;
+  --accent-dark-app: #100d16;
+  --accent-dark-panel: #18141f;
+  --accent-dark-soft: #251a32;
+  --accent-dark-border: #483261;
+}
+
+/* Blue accent */
+[data-accent="blue"] {
+  --accent-color: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-light: #dbeafe;
+  --accent-app: #eff6ff;
+  --accent-panel: #f8fbff;
+  --accent-soft: #dbeafe;
+  --accent-border: #93c5fd;
+  --accent-dark-app: #0b1119;
+  --accent-dark-panel: #111820;
+  --accent-dark-soft: #182536;
+  --accent-dark-border: #2d4b70;
+}
+
+/* Orange accent */
+[data-accent="orange"] {
+  --accent-color: #ea580c;
+  --accent-hover: #c2410c;
+  --accent-light: #ffedd5;
+  --accent-app: #fff7ed;
+  --accent-panel: #fffaf5;
+  --accent-soft: #ffedd5;
+  --accent-border: #fdba74;
+  --accent-dark-app: #19110d;
+  --accent-dark-panel: #201711;
+  --accent-dark-soft: #322218;
+  --accent-dark-border: #664224;
+}
+
+/* Green accent */
+[data-accent="green"] {
+  --accent-color: #16a34a;
+  --accent-hover: #15803d;
+  --accent-light: #dcfce7;
+  --accent-app: #f0fdf4;
+  --accent-panel: #f7fff9;
+  --accent-soft: #dcfce7;
+  --accent-border: #86efac;
+  --accent-dark-app: #0b150e;
+  --accent-dark-panel: #111a14;
+  --accent-dark-soft: #17251b;
+  --accent-dark-border: #274832;
+}
+
+@theme inline {
+  --color-accent: var(--accent-color);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-light: var(--accent-light);
+}
+
+/* Accent-aware replacements for existing sage utility classes. */
+:root [class*="text-[#3f7d55]"],
+:root [class*="text-[#2f6b45]"] {
+  color: var(--accent-color) !important;
+}
+
+:root [class*="bg-[#3f7d55]"] {
+  background-color: var(--accent-color) !important;
+}
+
+:root [class*="hover:bg-[#dcecdf]"]:hover,
+:root [class*="bg-[#dcecdf]"] {
+  background-color: var(--accent-light) !important;
+}
+
+:root [class*="border-[#3f7d55]"] {
+  border-color: var(--accent-color) !important;
+}
+
+:root [class*="bg-[#e8f3e8]"] {
+  background-color: var(--accent-app) !important;
+}
+
+:root [class*="bg-[#f4faf1]"],
+:root [class*="bg-[#eef7eb]"],
+:root [class*="bg-[#ffffff]"] {
+  background-color: var(--accent-panel) !important;
+}
+
+:root [class*="bg-[#c5dfc9]"],
+:root [class*="bg-[#d5e7d7]"],
+:root [class*="bg-[#c5dcc8]"] {
+  background-color: var(--accent-soft) !important;
+}
+
+:root [class*="border-[#b7d2bb]"],
+:root [class*="border-[#d5e7d7]"],
+:root [class*="border-[#dcecdf]"] {
+  border-color: var(--accent-border) !important;
+}
+
+.dark [class*="bg-[#e8f3e8]"],
+.dark [class*="bg-[#111813]"] {
+  background-color: var(--accent-dark-app) !important;
+}
+
+.dark [class*="bg-[#f4faf1]"],
+.dark [class*="bg-[#172019]"],
+.dark [class*="bg-[#eef7eb]"] {
+  background-color: var(--accent-dark-panel) !important;
+}
+
+.dark [class*="bg-[#dcecdf]"],
+.dark [class*="bg-[#24382b]"],
+.dark [class*="bg-[#c5dfc9]"],
+.dark [class*="bg-[#c5dcc8]"],
+.dark [class*="bg-[#d5e7d7]"] {
+  background-color: var(--accent-dark-soft) !important;
+}
+
+.dark [class*="border-[#405747]"],
+.dark [class*="border-[#b7d2bb]"],
+.dark [class*="border-[#d5e7d7]"],
+.dark [class*="border-[#dcecdf]"] {
+  border-color: var(--accent-dark-border) !important;
+}
+
 @layer base {
   body {
-    background-color: #e8f3e8;
+    background-color: var(--accent-app);
     color: #183226;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family:
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      Oxygen,
+      Ubuntu,
+      Cantarell,
+      sans-serif;
   }
+}
+
+.dark body {
+  background-color: var(--accent-dark-app);
 }
 
 /* Custom Scrollbar for the sage workspace */
@@ -35,4 +199,4 @@
 
 .glow-emerald {
   box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.3);
-}
+}

@@ -1,16 +1,19 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { ImagePlus } from "lucide-react";
 import ChangePasswordModal from "./ChangePasswordModal";
+import DeleteAccountModal from "./DeleteAccountModal";
 
 export default function AccountSettings({
   profile,
   setProfile,
   onProfileImageChange,
+  showToast,
 }) {
   const [imageError, setImageError] = useState(false);
   const [imageUploadError, setImageUploadError] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     setImageError(false);
@@ -73,7 +76,7 @@ export default function AccountSettings({
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col gap-5 rounded-xl border border-[#d5e7d7] bg-[#e8f3e8] p-5 sm:flex-row sm:items-center">
+      <div className="flex flex-col gap-5 rounded-xl border border-[#d5e7d7] dark:border-[#405747] bg-[#e8f3e8] dark:bg-[#111813] p-5 sm:flex-row sm:items-center">
         <div className="relative h-20 w-20 shrink-0">
           {profile.profileImage && !imageError ? (
             <img
@@ -92,7 +95,7 @@ export default function AccountSettings({
           )}
           <label
             htmlFor="settings-profile-image"
-            className="absolute -bottom-1 -right-1 cursor-pointer rounded-full border border-[#a6cbaa] bg-white p-2 text-[#3f7d55] shadow-sm"
+            className="absolute -bottom-1 -right-1 cursor-pointer rounded-full border border-[#a6cbaa] dark:border-[#405747] bg-white dark:bg-[#172019] p-2 text-[#3f7d55] dark:text-[#86c79a] shadow-sm"
             title="Change profile picture"
           >
             <ImagePlus className="h-4 w-4" />
@@ -108,8 +111,8 @@ export default function AccountSettings({
         </div>
 
         <div>
-          <p className="font-semibold text-[#244333]">Profile Picture</p>
-          <p className="mt-1 text-xs text-[#668170]">
+          <p className="font-semibold text-[#244333] dark:text-[#edf4ef]">Profile Picture</p>
+          <p className="mt-1 text-xs text-[#668170] dark:text-[#aabdaf]">
             Upload a JPG, PNG, or GIF up to 5 MB.
           </p>
           {imageUploadError && (
@@ -130,7 +133,7 @@ export default function AccountSettings({
         ].map(([key, label]) => (
           <label
             key={key}
-            className="space-y-1.5 text-sm font-semibold text-[#385a43]"
+            className="space-y-1.5 text-sm font-semibold text-[#385a43] dark:text-[#aabdaf]"
           >
             {label}
             <input
@@ -139,7 +142,7 @@ export default function AccountSettings({
               name={key}
               onChange={handleChange}
               aria-invalid={key === "username" && Boolean(usernameError)}
-              className={`w-full rounded-lg border bg-[#f4faf1] px-3 py-2.5 font-normal outline-none focus:ring-1 ${key === "username" && usernameError ? "border-rose-400 focus:border-rose-500 focus:ring-rose-500" : "border-[#b7d2bb] focus:border-[#3f7d55] focus:ring-[#3f7d55]"}`}
+              className={`w-full rounded-lg border bg-[#f4faf1] dark:bg-[#172019] px-3 py-2.5 font-normal outline-none focus:ring-1 ${key === "username" && usernameError ? "border-rose-400 focus:border-rose-500 focus:ring-rose-500" : "border-[#b7d2bb] dark:border-[#405747] focus:border-[#3f7d55] focus:ring-[#3f7d55]"}`}
             />
           </label>
         ))}
@@ -151,18 +154,18 @@ export default function AccountSettings({
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <label className="space-y-1.5 text-sm font-semibold text-[#385a43]">
+        <label className="space-y-1.5 text-sm font-semibold text-[#385a43] dark:text-[#aabdaf]">
           Birthday
           <input
             type="date"
             name="birthday"
             value={profile.birthday || ""}
             onChange={handleChange}
-            className="w-full rounded-lg border border-[#b7d2bb] bg-[#f4faf1] px-3 py-2.5 font-normal outline-none focus:border-[#3f7d55] focus:ring-1 focus:ring-[#3f7d55]"
+            className="w-full rounded-lg border border-[#b7d2bb] dark:border-[#405747] bg-[#f4faf1] dark:bg-[#172019] px-3 py-2.5 font-normal outline-none focus:border-[#3f7d55] focus:ring-1 focus:ring-[#3f7d55]"
           />
         </label>
 
-        <label className="space-y-1.5 text-sm font-semibold text-[#385a43]">
+        <label className="space-y-1.5 text-sm font-semibold text-[#385a43] dark:text-[#aabdaf]">
           Location
           <input
             type="text"
@@ -170,17 +173,17 @@ export default function AccountSettings({
             value={profile.location || ""}
             onChange={handleChange}
             placeholder="City, Country"
-            className="w-full rounded-lg border border-[#b7d2bb] bg-[#f4faf1] px-3 py-2.5 font-normal outline-none focus:border-[#3f7d55] focus:ring-1 focus:ring-[#3f7d55]"
+            className="w-full rounded-lg border border-[#b7d2bb] dark:border-[#405747] bg-[#f4faf1] dark:bg-[#172019] px-3 py-2.5 font-normal outline-none focus:border-[#3f7d55] focus:ring-1 focus:ring-[#3f7d55]"
           />
         </label>
 
-        <label className="space-y-1.5 text-sm font-semibold text-[#385a43]">
+        <label className="space-y-1.5 text-sm font-semibold text-[#385a43] dark:text-[#aabdaf]">
           Gender
           <select
             name="gender"
             value={profile.gender || ""}
             onChange={handleChange}
-            className="w-full rounded-lg border border-[#b7d2bb] bg-[#f4faf1] px-3 py-2.5 font-normal outline-none focus:border-[#3f7d55] focus:ring-1 focus:ring-[#3f7d55]"
+            className="w-full rounded-lg border border-[#b7d2bb] dark:border-[#405747] bg-[#f4faf1] dark:bg-[#172019] px-3 py-2.5 font-normal outline-none focus:border-[#3f7d55] focus:ring-1 focus:ring-[#3f7d55]"
           >
             <option value="">Select gender</option>
             <option value="male">Male</option>
@@ -197,7 +200,7 @@ export default function AccountSettings({
         ].map(([key, label, placeholder]) => (
           <label
             key={key}
-            className="space-y-1.5 text-sm font-semibold text-[#385a43]"
+            className="space-y-1.5 text-sm font-semibold text-[#385a43] dark:text-[#aabdaf]"
           >
             {label}
             <input
@@ -206,13 +209,13 @@ export default function AccountSettings({
               value={profile[key] || ""}
               onChange={handleChange}
               placeholder={placeholder}
-              className="w-full rounded-lg border border-[#b7d2bb] bg-[#f4faf1] px-3 py-2.5 font-normal outline-none focus:border-[#3f7d55] focus:ring-1 focus:ring-[#3f7d55]"
+              className="w-full rounded-lg border border-[#b7d2bb] dark:border-[#405747] bg-[#f4faf1] dark:bg-[#172019] px-3 py-2.5 font-normal outline-none focus:border-[#3f7d55] focus:ring-1 focus:ring-[#3f7d55]"
             />
           </label>
         ))}
       </div>
 
-      <label className="block space-y-1.5 text-sm font-semibold text-[#385a43]">
+      <label className="block space-y-1.5 text-sm font-semibold text-[#385a43] dark:text-[#aabdaf]">
         About Me
         <textarea
           name="bio"
@@ -220,19 +223,20 @@ export default function AccountSettings({
           onChange={handleChange}
           rows={4}
           placeholder="Tell the CodeArena community about yourself"
-          className="w-full resize-none rounded-lg border border-[#b7d2bb] bg-[#f4faf1] px-3 py-2.5 font-normal outline-none focus:border-[#3f7d55] focus:ring-1 focus:ring-[#3f7d55]"
+          className="w-full resize-none rounded-lg border border-[#b7d2bb] dark:border-[#405747] bg-[#f4faf1] dark:bg-[#172019] px-3 py-2.5 font-normal outline-none focus:border-[#3f7d55] focus:ring-1 focus:ring-[#3f7d55]"
         />
       </label>
-      <div className="flex flex-wrap gap-3 border-t border-[#d5e7d7] pt-5">
+      <div className="flex flex-wrap gap-3 border-t border-[#d5e7d7] dark:border-[#405747] pt-5">
         <button
           type="button"
           onClick={openPasswordModal}
-          className="rounded-lg border border-[#b7d2bb] px-4 py-2 text-sm font-semibold text-[#385a43] hover:bg-[#e8f3e8]"
+          className="rounded-lg border border-[#b7d2bb] dark:border-[#405747] px-4 py-2 text-sm font-semibold text-[#385a43] dark:text-[#aabdaf] hover:bg-[#e8f3e8] dark:hover:bg-[#1a241d] dark:bg-[#111813]"
         >
           Change Password
         </button>
         <button
           type="button"
+          onClick={() => setIsDeleteModalOpen(true)}
           className="rounded-lg border border-rose-200 px-4 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-50"
         >
           Delete Account
@@ -242,6 +246,11 @@ export default function AccountSettings({
       <ChangePasswordModal
         isOpen={isPasswordModalOpen}
         onClose={() => setIsPasswordModalOpen(false)}
+        onPasswordUpdated={(message) => showToast?.("success", message)}
+      />
+      <DeleteAccountModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
       />
     </div>
   );

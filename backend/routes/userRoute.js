@@ -47,7 +47,7 @@ route.post("/logout", userController.userLogout);
 
 route.get("/users/search", authUser, userController.searchUsers);
 
-route.get('/users/:userId', authUser, userController.getUserById);
+route.get("/users/:userId", authUser, userController.getUserById);
 
 route.post("/update-profile", authUser, userController.updateProfile);
 
@@ -59,5 +59,7 @@ route.patch(
   upload.single("profileImage"),
   userController.updateProfileImage,
 );
+
+route.delete("/delete-account", authUser, userController.deleteAccount);
 
 module.exports = route;
